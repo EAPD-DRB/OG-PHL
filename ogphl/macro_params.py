@@ -22,7 +22,7 @@ def get_macro_params():
 
     # set beginning and end dates for data
     # format is year (1940),month (1),day (1)
-    country_iso = "IDN"
+    country_iso = "PHL"
     start = datetime.datetime(1947, 1, 1)
     end = datetime.date.today()  # go through today
     baseline_date = datetime.datetime(2019, 3, 31)
@@ -110,35 +110,6 @@ def get_macro_params():
         )
 
     ilo_data = df_temp[["time", "obs_value"]]
-
-    """
-    This retrieves data from FRED.
-    """
-
-    fred_variable_dict = {
-        # "Labor share": "LABSHPINA156NRUG",
-        # "BAA Corp Bond Rates": "DBAA",
-        # "10 year govt bond rate": "IRLTLT01ZAM156N",
-        # "Nominal GDP": "MKTGDPZAA646NWDB",
-        "Total Expenditure to GDP": "IDNGGXG01GDPPT",
-        "Total gov transfer payments": "B087RC1Q027SBEA",
-        "Social Security payments": "W823RC1",
-        "Gov interest payments": "A091RC1Q027SBEA",
-        "Labor share of income": "LABSHPZAA156NRUG",
-    }
-
-    # pull series of interest using pandas_datareader
-    fred_data = web.DataReader(fred_variable_dict.values(), "fred", start, end)
-    fred_data.rename(
-        columns=dict((y, x) for x, y in fred_variable_dict.items()),
-        inplace=True,
-    )
-    # make data quarterly
-    fred_data_q = fred_data.resample("Q").mean()
-
-    # Separate quartely, monthly, and annual FRED dataseries
-
-    # fred_data_d = fred_data[["BAA Corp Bond Rates", "10 year govt bond rate"]]
 
     # initialize a dictionary of parameters
     macro_parameters = {}
