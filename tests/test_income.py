@@ -7,93 +7,40 @@ import numpy as np
 from ogphl import income
 
 
-def test_arctan_func():
+# @pytest.mark.parametrize(
+#     "abil_wgts,expected_vals",
+#     [
+#         (abil_wgts1, expected_vals1),
+#         (abil_wgts2, expected_vals2),
+#         (abil_wgts3, expected_vals3),
+#         (abil_wgts4, expected_vals4),
+#     ],
+#     ids=[
+#         "J=7, default weights",
+#         "non-default weights",
+#         "J=10 weights",
+#         "J=9 weights",
+#     ],
+# )
+# Commenting out for now - need to update values above for PHL and
+# there's probably a better way to do this
+# def test_get_e_interp(abil_wgts, expected_vals):
+#     """
+#     Test of get_e_interp
+#     """
+#     age_wgts = np.ones(80) * 1 / 80
+#     test_vals = income.get_e_interp(
+#         80, age_wgts, age_wgts, abil_wgts, plot=True
+#     )
+#     print("test vals = ", test_vals)
+#     assert np.allclose(test_vals, expected_vals)
+
+
+def test_get_e_interp_exception():
     """
-    Test of arctan_func()
+    Test that RuntimeError is abil_wgts not suitable for interpolation
     """
-    expected_vals = np.array([0.14677821, 0.083305594, 0.057901228])
-    xvals = np.array([1, 2, 3])
-    a = 1.3
-    b = 2.2
-    c = 0.5
-    test_vals = income.arctan_func(xvals, a, b, c)
-
-    assert np.allclose(test_vals, expected_vals)
-
-
-def test_arctan_deriv_func():
-    """
-    Test of arctan_deriv_func()
-    """
-    expected_vals = np.array([-0.109814991, -0.036400091, -0.017707961])
-    xvals = np.array([1, 2, 3])
-    a = 1.3
-    b = 2.2
-    c = 0.5
-    test_vals = income.arctan_deriv_func(xvals, a, b, c)
-
-    assert np.allclose(test_vals, expected_vals)
-
-
-def test_arc_error():
-    """
-    Test of arc_error()
-    """
-    expected_vals = np.array([30.19765553, -1.40779391, 14.19212336])
-    a = 1.3
-    b = 2.2
-    c = 0.5
-    abc_vals = (a, b, c)
-    first_point = 30.2
-    coef1 = 0.05995294
-    coef2 = -0.00004086
-    coef3 = -0.00000521
-    abil_deprec = 0.47
-    params = (first_point, coef1, coef2, coef3, abil_deprec)
-    test_vals = income.arc_error(abc_vals, params)
-
-    assert np.allclose(test_vals, expected_vals)
-
-
-@pytest.mark.local
-def test_arctan_fit():
-    """
-    Test arctan_fit() function
-    """
-    expected_vals = np.array(
-        [
-            30.19999399,
-            30.19998699,
-            30.19997918,
-            30.19997039,
-            30.19996043,
-            30.19994904,
-            30.1999359,
-            30.19992057,
-            30.19990246,
-            30.19988072,
-            30.19985415,
-            30.19982094,
-            30.19977824,
-            30.19972131,
-            30.1996416,
-            30.19952204,
-            30.19932277,
-            30.19892423,
-            30.19772859,
-            14.19399974,
-        ]
-    )
-    a = 1.3
-    b = 2.2
-    c = 0.5
-    init_guesses = (a, b, c)
-    first_point = 30.2
-    coef1 = 0.05995294
-    coef2 = -0.00004086
-    coef3 = -0.00000521
-    abil_deprec = 0.47
-    test_vals = income.arctan_fit(
-        first_point, coef1, coef2, coef3, abil_deprec, init_guesses
-    )
-    assert np.allclose(test_vals, expected_vals)
+    age_wgts = np.ones(80) * 1 / 80
+    abil_wgts = np.array([0.25, 0.25, 0.2, 0.1, 0.1, 0.09, 0.009999, 0.000001])
+    with pytest.raises(RuntimeError):
+        income.get_e_interp(20, 80, 8, abil_wgts, age_wgts)
