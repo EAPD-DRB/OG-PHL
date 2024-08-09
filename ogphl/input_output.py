@@ -1,20 +1,22 @@
 import pandas as pd
 import numpy as np
+import os
 from ogphl.constants import CONS_DICT, PROD_DICT
 
+
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 """
 Read in Social Accounting Matrix (SAM) file
 """
 # Read in SAM file
-storage_options = {"User-Agent": "Mozilla/5.0"}
-SAM_path = "https://www.wider.unu.edu/sites/default/files/Data/SASAM-2015-Data-Resource.xlsx"
-SAM = pd.read_excel(
-    SAM_path,
-    sheet_name="Micro SAM 2015",
-    skiprows=6,
-    index_col=0,
-    storage_options=storage_options,
+# SAM file:
+sam_path = os.path.join(CUR_DIR, "data", "002_IFPRI_SAM_IDN_2018_SAM.csv")
+SAM = pd.read_csv(
+    sam_path,
+    index_col=1,
 )
+# replace NaN with 0
+SAM.fillna(0, inplace=True)
 
 
 def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
@@ -29,14 +31,24 @@ def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
     Returns:
         alpha_c (dict): Dictionary of shares of household expenditures
     """
+
+    hh_cols = [
+        "hhd-r1",
+        "hhd-r2",
+        "hhd-r3",
+        "hhd-r4",
+        "hhd-r5",
+        "hhd-u1",
+        "hhd-u2",
+        "hhd-u3",
+        "hhd-u4",
+        "hhd-u5",
+    ]
     alpha_c = {}
     overall_sum = 0
     for key, value in cons_dict.items():
         # note the subtraction of the row to focus on domestic consumption
-        category_total = (
-            sam.loc[sam.index.isin(value), "total"].sum()
-            - sam.loc[sam.index.isin(value), "row"].sum()
-        )
+        category_total = sam.loc[sam.index.isin(value), hh_cols].values.sum()
         alpha_c[key] = category_total
         overall_sum += category_total
     for key, value in cons_dict.items():
