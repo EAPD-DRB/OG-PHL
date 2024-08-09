@@ -10,7 +10,7 @@ Read in Social Accounting Matrix (SAM) file
 """
 # Read in SAM file
 # SAM file:
-sam_path = os.path.join(CUR_DIR, "data", "002_IFPRI_SAM_IDN_2018_SAM.csv")
+sam_path = os.path.join(CUR_DIR, "data", "002_IFPRI_SAM_PHL_2018_SAM.csv")
 SAM = pd.read_csv(
     sam_path,
     index_col=1,
@@ -31,7 +31,6 @@ def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
     Returns:
         alpha_c (dict): Dictionary of shares of household expenditures
     """
-
     hh_cols = [
         "hhd-r1",
         "hhd-r2",
@@ -44,9 +43,11 @@ def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
         "hhd-u4",
         "hhd-u5",
     ]
+    print("COLS = ", SAM[hh_cols].columns)
     alpha_c = {}
     overall_sum = 0
     for key, value in cons_dict.items():
+        print("value = ", value)
         # note the subtraction of the row to focus on domestic consumption
         category_total = sam.loc[sam.index.isin(value), hh_cols].values.sum()
         alpha_c[key] = category_total
