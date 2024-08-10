@@ -164,3 +164,15 @@ pp.plot_ability_profiles(
     include_title=False,
     path=os.path.join(plot_path, "USA_plots"),
 )
+
+"""
+Create table for exogenous parameters
+"""
+import ogcore.parameter_tables as pt
+from ogcore import Specifications
+
+table = pt.param_table(
+    p,
+    table_format="md",
+    path=os.path.join(plot_path, "exogenous_parameters_table.md"),
+)
