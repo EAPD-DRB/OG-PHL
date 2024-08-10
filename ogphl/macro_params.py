@@ -16,7 +16,7 @@ from io import StringIO
 
 def get_macro_params(
     data_start_date=datetime.datetime(1947, 1, 1),
-    data_end_date=datetime.date.today(),
+    data_end_date=2023,
     country_iso="PHL",
 ):
     """
@@ -32,12 +32,6 @@ def get_macro_params(
     """
     # initialize a dictionary of parameters
     macro_parameters = {}
-    # baseline date formatted for World Bank data
-    baseline_YYYYQ = (
-        str(data_end_date.year)
-        + "Q"
-        + str(pd.Timestamp(data_end_date).quarter)
-    )
 
     """
     Retrieve data from the World Bank World Development Indicators.
@@ -49,76 +43,72 @@ def get_macro_params(
         "Real GDP (constant 2015 US$)": "NY.GDP.MKTP.KD",
         "Nominal GDP (current US$)": "NY.GDP.MKTP.CD",
         "General government final consumption expenditure (current US$)": "NE.CON.GOVT.CD",
+        "External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)": "DT.DOD.DPPG.CD",
+        "External debt stocks, total (DOD, current US$)": "DT.DOD.DECT.CD",
+        r"External debt stocks (% of GNI)": "DT.DOD.DECT.GN.ZS",
+        r"Central government debt, total (% of GDP)": "GC.DOD.TOTL.GD.ZS",
+        r"General government final consumption expenditure (% of GDP)": "NE.CON.GOVT.ZS",
     }
-    # Quarterly data
-    wb_q_variable_dict = {
-        "Gross PSD USD - domestic creditors": "DP.DOD.DECD.CR.PS.CD",
-        "Gross PSD USD - external creditors": "DP.DOD.DECX.CR.PS.CD",
-        "Gross PSD Gen Gov - percentage of GDP": "DP.DOD.DECT.CR.GG.Z1",
-    }
-
     try:
         # pull series of interest from the WB using pandas_datareader
         # Annual data
-        wb_data_a = wb.download(
-            indicator=wb_a_variable_dict.values(),
-            country=country_iso,
+        wb_data_a = wb.WorldBankReader(
+            symbols=wb_a_variable_dict.values(),
+            countries=country_iso,
             start=data_start_date,
             end=data_end_date,
-        )
+            freq="A",
+        ).read()
         wb_data_a.rename(
             columns=dict((y, x) for x, y in wb_a_variable_dict.items()),
             inplace=True,
         )
-        # Quarterly data
-        wb_data_q = wb.download(
-            indicator=wb_q_variable_dict.values(),
-            country=country_iso,
-            start=data_start_date,
-            end=data_end_date,
-        )
-        wb_data_q.rename(
-            columns=dict((y, x) for x, y in wb_q_variable_dict.items()),
-            inplace=True,
-        )
         # Remove the hierarchical index (country and year) of
-        # wb_data_q and create a single row index using year
-        wb_data_q = wb_data_q.reset_index()
-        wb_data_q = wb_data_q.set_index("year")
-
+        # wb_data_a and create a single row index using year
+        wb_data_a.reset_index(inplace=True)
+        wb_data_a["year"] = wb_data_a.year.astype(int)
+        wb_data_a = wb_data_a.set_index("year")
         # Compute macro parameters from WB data
-        macro_parameters["initial_debt_ratio"] = (
-            pd.Series(wb_data_q["Gross PSD Gen Gov - percentage of GDP"]).loc[
-                baseline_YYYYQ
-            ]
-        ) / 100
-        macro_parameters["initial_foreign_debt_ratio"] = pd.Series(
-            wb_data_q["Gross PSD USD - external creditors"]
-            / (
-                wb_data_q["Gross PSD USD - domestic creditors"]
-                + wb_data_q["Gross PSD USD - external creditors"]
-            )
-        ).loc[baseline_YYYYQ]
+        # Latest from WB WDI data is 2014, so use: https://www.treasury.gov.ph/?p=64737
+        macro_parameters["initial_debt_ratio"] = 0.60
+        macro_parameters["initial_foreign_debt_ratio"] = (
+            pd.Series(
+                wb_data_a[r"External debt stocks (% of GNI)"]
+                * (
+                    wb_data_a[
+                        "External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)"
+                    ]
+                    / wb_data_a[
+                        "External debt stocks, total (DOD, current US$)"
+                    ]
+                )
+            ).loc[data_end_date.year - 2]
+            / 100
+        )
         # zeta_D = share of new debt issues from government that are
         # purchased by foreigners
-        macro_parameters["zeta_D"] = [
-            pd.Series(
-                wb_data_q["Gross PSD USD - external creditors"]
-                / (
-                    wb_data_q["Gross PSD USD - domestic creditors"]
-                    + wb_data_q["Gross PSD USD - external creditors"]
-                )
-            ).loc[baseline_YYYYQ]
+        # set to initial ratio without better info
+        macro_parameters["zeta_D"] = macro_parameters[
+            "initial_foreign_debt_ratio"
         ]
         macro_parameters["g_y_annual"] = (
             wb_data_a["GDP per capita (constant 2015 US$)"]
-            .pct_change(-1)
+            .loc[2000:2019]  # stop pre-COVID
+            .pct_change()
             .mean()
+        )
+        macro_parameters["alpha_G"] = (
+            wb_data_a[
+                r"General government final consumption expenditure (% of GDP)"
+            ].loc[data_end_date.year]
+            / 100
         )
     except:
         print("Failed to retrieve data from World Bank")
         print("Will not update the following parameters:")
-        print("[initial_debt_ratio, initial_foreign_debt_ratio, zeta_D, g_y]")
+        print(
+            "[initial_debt_ratio, initial_foreign_debt_ratio, zeta_D, g_y, alpha_G]"
+        )
 
     """
     Retrieve labour share data from the United Nations ILOSTAT Data API
@@ -162,11 +152,10 @@ def get_macro_params(
     Calibrate parameters from IMF data
     """
     # alpha_T, non-social security benefits as a fraction of GDP
-    # source: https://data.imf.org/?sk=b052f0f0-c166-43b6-84fa-47cccae3e219&hide_uv=1
-    macro_parameters["alpha_T"] = [0.013 - 0.0]
-    # alpha_G, gov't consumption expenditures as a fraction of GDP
-    # source: https://data.imf.org/?sk=edb0cd70-0af3-40e1-a9c3-bdef83ee4d1e&hide_uv=1
-    macro_parameters["alpha_G"] = [0.165 - 0.02 - 0.013]
+    # can't find this specifically, so use primary expenditures minus
+    # final consumption expenditures
+    # source: https://www.imf.org/external/datamapper/profile/PHL
+    macro_parameters["alpha_T"] = 0.2391 - 0.142
 
     """"
     Esimate the discount on sovereign yields relative to private debt

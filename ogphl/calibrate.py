@@ -15,7 +15,7 @@ class Calibration:
         self,
         p,
         macro_data_start_year=datetime.datetime(1947, 1, 1),
-        macro_data_end_year=datetime.date.today(),
+        macro_data_end_year=2023,
         demographic_data_path=None,
         output_path=None,
     ):
