@@ -6,10 +6,13 @@ This script creates tables and figures from the OG-PHL documentation.
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import importlib
+import json
 import ogcore
 from ogcore.parameters import Specifications
 from ogcore import parameter_plots as pp
 from ogcore import demographics as demog
+import ogphl
 
 
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -26,10 +29,10 @@ plt.style.use("ogcore.OGcorePlots")
 Load specifications object with default parameters
 """
 p = Specifications()
-p.update_specifications(
-    # "github://EAPD-DRB:OG-PHL@main/ogphl/ogphl_default_parameters.json"
-    "/Users/jason.debacker/repos/OG-PHL/ogphl/ogphl_default_parameters.json"
-)
+with importlib.resources.open_text(
+    "ogphl", "ogphl_default_parameters.json"
+) as file:
+    defaults = json.load(file)
 p.start_year = YEAR_TO_PLOT
 
 # also load parameters from OG-USA for comparison
