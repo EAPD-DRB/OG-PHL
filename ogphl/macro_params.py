@@ -88,21 +88,23 @@ def get_macro_params(
         # zeta_D = share of new debt issues from government that are
         # purchased by foreigners
         # set to initial ratio without better info
-        macro_parameters["zeta_D"] = [macro_parameters[
-            "initial_foreign_debt_ratio"
-        ]]
+        macro_parameters["zeta_D"] = [
+            macro_parameters["initial_foreign_debt_ratio"]
+        ]
         macro_parameters["g_y_annual"] = (
             wb_data_a["GDP per capita (constant 2015 US$)"]
             .loc[2000:2019]  # stop pre-COVID
             .pct_change()
             .mean()
         )
-        macro_parameters["alpha_G"] = [(
-            wb_data_a[
-                r"General government final consumption expenditure (% of GDP)"
-            ].loc[data_end_date.year]
-            / 100
-        )]
+        macro_parameters["alpha_G"] = [
+            (
+                wb_data_a[
+                    r"General government final consumption expenditure (% of GDP)"
+                ].loc[data_end_date.year]
+                / 100
+            )
+        ]
     except:
         print("Failed to retrieve data from World Bank")
         print("Will not update the following parameters:")
