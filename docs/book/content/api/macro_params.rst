@@ -5,8 +5,8 @@ Macro Parameter Estimation Functions
 
 **macro_params.py modules**
 
-ogidn.macro_params
+ogphl.macro_params
 ------------------------------------------
 
-.. automodule:: ogidn.macro_params
+.. automodule:: ogphl.macro_params
   :members: get_macro_params
