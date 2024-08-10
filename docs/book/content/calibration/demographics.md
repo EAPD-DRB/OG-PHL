@@ -53,6 +53,7 @@ We discuss the approach to estimating fertility rates $f_{s,t}$, mortality rates
 (SecDemogFert)=
 ## Fertility rates
 
+<<<<<<< HEAD
    Our data for Indonesia fertility rates by age come from United Nations fertility rate data for a country for some range of years (at least one year) and by age. The country_id=710 is for Indonesia. These data come from the United Nations Data Portal API for UN population data (see https://population.un.org/dataportal/about/dataapi). The UN variable code for Population by 1-year age groups and sex is "47" and that for Fertility rates by age of mother (1-year) is "68".
 
   {numref}`Figure %s <FigFertRatesPHL>` was created using the [`ogcore.demographics.get_fert()`](https://github.com/PSLmodels/OG-Core/blob/master/ogcore/demographics.py#L146) function, which downloaded the data from the United National Data Portal API and plotted it in Python.[^un_data_portal]
@@ -88,6 +89,9 @@ We discuss the approach to estimating fertility rates $f_{s,t}$, mortality rates
 
   The fertility rates in the UN data are births per 1,000 women of age-$s$. We adjust the units of those rates to represent the number of births per total population of both men and women of age-$s$.
 
+=======
+  In `OG-PHL`, we assume that the fertility rates for each age cohort $f_s$ are constant across time. However, this assumption is conceptually straightforward to relax. Our data for Philippines fertility rates by age come from United Nations fertility rate data for a country for some range of years (at least one year) and by age. The country_id=608 is for Philippines. These data come from the United Nations Data Portal API for UN population data (see https://population.un.org/dataportal/about/dataapi). The UN variable code for Population by 1-year age groups and sex is "47" and that for Fertility rates by age of mother (1-year) is "68".
+>>>>>>> upstream/main
 
 (SecDemogMort)=
 ## Mortality rates
