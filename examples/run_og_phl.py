@@ -6,20 +6,19 @@ import os
 import json
 import time
 import copy
+import importlib.resources
 import matplotlib.pyplot as plt
-from ogphl.calibrate import Calibration
+import ogcore
 from ogcore.parameters import Specifications
 from ogcore import output_tables as ot
 from ogcore import output_plots as op
 from ogcore.execute import runner
 from ogcore.utils import safe_read_pickle, param_dump_json
+from ogphl.calibrate import Calibration
+from ogphl.utils import is_connected
 
 # Use a custom matplotlib style file for plots
-style_file_url = (
-    "https://raw.githubusercontent.com/PSLmodels/OG-Core/"
-    + "master/ogcore/OGcorePlots.mplstyle"
-)
-plt.style.use(style_file_url)
+# plt.style.use("ogcore.OGcorePlots")
 
 
 def main():
@@ -30,8 +29,9 @@ def main():
 
     # Directories to save data
     CUR_DIR = os.path.dirname(os.path.realpath(__file__))
-    base_dir = os.path.join(CUR_DIR, "OG-PHL-Example", "OUTPUT_BASELINE")
-    reform_dir = os.path.join(CUR_DIR, "OG-PHL-Example", "OUTPUT_REFORM")
+    save_dir = os.path.join(CUR_DIR, "OG-PHL-Example")
+    base_dir = os.path.join(save_dir, "OUTPUT_BASELINE")
+    reform_dir = os.path.join(save_dir, "OUTPUT_REFORM")
 
     """
     ---------------------------------------------------------------------------
@@ -46,31 +46,16 @@ def main():
         output_base=base_dir,
     )
     # Update parameters for baseline from default json file
-    p.update_specifications(
-        json.load(
-            open(
-                os.path.join(
-                    CUR_DIR, "..", "ogphl", "ogphl_default_parameters.json"
-                )
-            )
-        )
-    )
+    with importlib.resources.open_text(
+        "ogphl", "ogphl_default_parameters.json"
+    ) as file:
+        defaults = json.load(file)
+    p.update_specifications(defaults)
     # Update parameters from calibrate.py Calibration class
-    c = Calibration(p)
-    updated_params = c.get_dict()
-    p.update_specifications(updated_params)
-    # set tax rates
-    p.update_specifications(
-        {
-            "cit_rate": [[0.27]],
-            "tax_func_type": "linear",
-            "age_specific": False,
-            # "etr_params": [[[0.22]]],
-            # "mtrx_params": [[[0.31]]],
-            # "mtry_params": [[[0.25]]],
-            "tau_c": [[0.15]],
-        }
-    )
+    if is_connected():  # only update if connected to internet
+        c = Calibration(p)
+        updated_params = c.get_dict()
+        p.update_specifications(updated_params)
 
     # Run model
     start_time = time.time()
@@ -88,9 +73,9 @@ def main():
     p2.baseline = False
     p2.output_base = reform_dir
 
-    # additional parameters to change
+    # Parameter change for the reform run: corporate income tax rate cut
     updated_params_ref = {
-        "cit_rate": [[0.30]],
+        "cit_rate": [[0.20]],
     }
     p2.update_specifications(updated_params_ref)
 
@@ -126,12 +111,12 @@ def main():
 
     # create plots of output
     op.plot_all(
-        base_dir, reform_dir, os.path.join(CUR_DIR, "OG-PHL_example_plots")
+        base_dir, reform_dir, os.path.join(save_dir, "OG-PHL_example_plots")
     )
 
     print("Percentage changes in aggregates:", ans)
     # save percentage change output to csv file
-    ans.to_csv("ogphl_example_output.csv")
+    ans.to_csv(os.path.join(save_dir, "OG-PHL_example_output.csv"))
 
 
 if __name__ == "__main__":
