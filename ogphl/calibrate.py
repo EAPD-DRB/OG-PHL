@@ -15,7 +15,7 @@ class Calibration:
         self,
         p,
         macro_data_start_year=datetime.datetime(1947, 1, 1),
-        macro_data_end_year=2023,
+        macro_data_end_year=datetime.datetime(2023, 1, 1),
         demographic_data_path=None,
         output_path=None,
     ):
@@ -91,7 +91,6 @@ class Calibration:
             p.J,
             p.lambdas,
             demog80["omega_SS"],
-            plot_path=output_path,
         )
 
     # method to return all newly calibrated parameters in a dictionary
