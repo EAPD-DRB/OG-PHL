@@ -40,11 +40,9 @@ def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
         "hhd-u4",
         "hhd-u5",
     ]
-    print("COLS = ", SAM[hh_cols].columns)
     alpha_c = {}
     overall_sum = 0
     for key, value in cons_dict.items():
-        print("value = ", value)
         # note the subtraction of the row to focus on domestic consumption
         category_total = (
             sam.loc[sam.index.isin(value), hh_cols].values.astype(float).sum()
