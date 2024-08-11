@@ -438,17 +438,17 @@ document.write(`
 <span id="chap-macrocalib"></span><h1>Calibration of Macroeconomic Parameters<a class="headerlink" href="#calibration-of-macroeconomic-parameters" title="Link to this heading">#</a></h1>
 <section id="economic-assumptions">
 <h2>Economic Assumptions<a class="headerlink" href="#economic-assumptions" title="Link to this heading">#</a></h2>
-<p>As the default rate of labor augmenting technological change, <span class="math notranslate nohighlight">\(g_y\)</span>, we use a value of 3.8%.  The average annual growth rate in GDP per capita in the Philippines between 2000 and 2019 is 3.8% per year.</p>
+<p>As the default rate of labor augmenting technological change, <span class="math notranslate nohighlight">\(g_y\)</span>, we use a value of 3.6%.  The average annual growth rate in GDP per capita in the Philippines between 2000 and 2019 is 3.6% per year.</p>
 </section>
 <section id="open-economy-parameters">
 <h2>Open Economy Parameters<a class="headerlink" href="#open-economy-parameters" title="Link to this heading">#</a></h2>
 <section id="foreign-holding-of-government-debt-in-the-initial-period">
 <h3>Foreign holding of government debt in the initial period<a class="headerlink" href="#foreign-holding-of-government-debt-in-the-initial-period" title="Link to this heading">#</a></h3>
-<p>The path of foreign holding of domestic debt is endogenous, but the initial period stock of debt held by foreign investors is exogenous.  We set this parameter, <code class="docutils literal notranslate"><span class="pre">initial_foreign_debt_ratio</span></code> to 0.76, as determined from data from the World Bank’s World Development Indicators.</p>
+<p>The path of foreign holding of domestic debt is endogenous, but the initial period stock of debt held by foreign investors is exogenous.  We set this parameter, <code class="docutils literal notranslate"><span class="pre">initial_foreign_debt_ratio</span></code> to 0.142, as determined from data from the World Bank’s World Development Indicators.</p>
 </section>
 <section id="foreign-purchases-of-newly-issued-debt">
 <h3>Foreign purchases of newly issued debt<a class="headerlink" href="#foreign-purchases-of-newly-issued-debt" title="Link to this heading">#</a></h3>
-<p>We set <span class="math notranslate nohighlight">\(\zeta_D = 0.9\)</span>.  This is the average share of foreign purchases of newly issued government debt found from the World Bank WDI.</p>
+<p>We set <span class="math notranslate nohighlight">\(\zeta_D = 0.142\)</span>.  This was not directly observed in the data, so the value was set to the current share of foreign holdings of government debt.</p>
 </section>
 <section id="foreign-holdings-of-excess-capital">
 <h3>Foreign holdings of excess capital<a class="headerlink" href="#foreign-holdings-of-excess-capital" title="Link to this heading">#</a></h3>
@@ -459,17 +459,17 @@ document.write(`
 <h2>Government Debt, Spending and Transfers<a class="headerlink" href="#government-debt-spending-and-transfers" title="Link to this heading">#</a></h2>
 <section id="government-debt">
 <h3>Government Debt<a class="headerlink" href="#government-debt" title="Link to this heading">#</a></h3>
-<p>The path of government debt is endogenous.  But the initial value is exogenous.  To avoid converting between model units and dollars, we calibrate the initial debt to GDP ratio, rather than the dollar value of the debt.  This is the model parameter <span class="math notranslate nohighlight">\(\alpha_D\)</span>.  We compute this from the ratio of publicly held debt outstanding to GDP.  Based on 2023 values, this gives us a ratio of 0.398.</p>
+<p>The path of government debt is endogenous.  But the initial value is exogenous.  To avoid converting between model units and dollars, we calibrate the initial debt to GDP ratio, rather than the dollar value of the debt.  This is the model parameter <span class="math notranslate nohighlight">\(\alpha_D\)</span>.  We compute this from the ratio of publicly held debt outstanding to GDP.  Based on <a class="reference external" href="https://www.treasury.gov.ph/?p=64737">a 2024Q1 report from Treasury</a> the value is 0.60.</p>
 </section>
 <section id="aggregate-transfers">
 <h3>Aggregate transfers<a class="headerlink" href="#aggregate-transfers" title="Link to this heading">#</a></h3>
-<p>Aggregate (non-Social Security) transfers to households are set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_T\)</span>. We exclude Social Security from transfers since it is modeled specifically. With this definition, the share of transfers to GDP in 2015 is 1.3% according to <a class="reference external" href="https://data.imf.org/?sk=b052f0f0-c166-43b6-84fa-47cccae3e219&amp;amp;hide_uv=1">IMF data</a>.</p>
+<p>Aggregate (non-Social Security) transfers to households are set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_T\)</span>. We exclude Social Security from transfers since it is modeled specifically. With this definition, the share of transfers to GDP in 2023 is found to be 9.7% using <a class="reference external" href="https://www.imf.org/external/datamapper/profile/PHL">IMF data</a>.  The value found by differencing out government consumption expenditures (described below) from total government spending as report in the IMF data.</p>
 </section>
 <section id="government-expenditures">
 <h3>Government expenditures<a class="headerlink" href="#government-expenditures" title="Link to this heading">#</a></h3>
 <p>Government spending on goods and services are also set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_G\)</span>. We define government spending as:
 <center>Government Spending = Total Outlays - Transfers - Net Interest on Debt - Social Security</center>
-With this definition, the share of government expenditure to GDP is 13.2% based on <a class="reference external" href="https://data.imf.org/?sk=b052f0f0-c166-43b6-84fa-47cccae3e219&amp;amp;hide_uv=1">data from the IMF</a>.</p>
+With this definition, the share of government expenditure to GDP is 14.2% based on the World Bank World Development Indicators.</p>
 </section>
 </section>
 </section>

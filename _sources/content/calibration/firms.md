@@ -11,4 +11,4 @@ The [OG-Core firm theory documentation](https://pslmodels.github.io/OG-Core/cont
 
 ### Capital's share of output
 
-Here, we use a default value of $\gamma =0.41$, which comes from national accounts data.
+Here, we use a default value of $\gamma =0.588$, which comes from national accounts data.

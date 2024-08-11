@@ -406,11 +406,9 @@ document.write(`
         <span class="s2">&quot;hhd-u4&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hhd-u5&quot;</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;COLS = &quot;</span><span class="p">,</span> <span class="n">SAM</span><span class="p">[</span><span class="n">hh_cols</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="n">alpha_c</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">overall_sum</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cons_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value = &quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="c1"># note the subtraction of the row to focus on domestic consumption</span>
         <span class="n">category_total</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">sam</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sam</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">hh_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
