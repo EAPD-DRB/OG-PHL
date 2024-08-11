@@ -5,13 +5,13 @@ with open("README.md", "r") as readme_file:
 
 setuptools.setup(
     name="ogphl",
-    version="0.0.2",
+    version="0.0.3",
     author="Marcelo LaFleur, Richard W. Evans, and Jason DeBacker",
     license="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
     description="Philippines Calibration for OG-Core",
     long_description_content_type="text/markdown",
     long_description=longdesc,
-    keywords="IDN Philippines calibration of large scale overlapping generations model of fiscal policy",
+    keywords="PHL Philippines calibration of large scale overlapping generations model of fiscal policy",
     url="https://github.com/EAPD-DRB/OG-PHL/",
     download_url="https://github.com/EAPD-DRB/OG-PHL/",
     project_urls={

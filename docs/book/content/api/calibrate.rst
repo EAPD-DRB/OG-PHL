@@ -5,10 +5,10 @@ Main Calibration Functions
 
 **calibrate.py classes, methods, and modules**
 
-ogidn.calibrate
+ogphl.calibrate
 ------------------------------------------
 
-.. currentmodule:: ogidn.calibrate
+.. currentmodule:: ogphl.calibrate
 
 .. autoclass:: Calibration
   :members: get_dict
