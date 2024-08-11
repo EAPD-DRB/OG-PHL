@@ -356,7 +356,7 @@ PROD_DICT = {
         "avege",
         "asugr",
         "atoba",
-        "acott",
+        "acoff",
         "afrui",
         "acoff",
         "aocrp",
