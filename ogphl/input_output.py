@@ -11,10 +11,7 @@ Read in Social Accounting Matrix (SAM) file
 # Read in SAM file
 # SAM file:
 sam_path = os.path.join(CUR_DIR, "data", "002_IFPRI_SAM_PHL_2018_SAM.csv")
-SAM = pd.read_csv(
-    sam_path,
-    index_col=1,
-)
+SAM = pd.read_csv(sam_path, index_col=1, thousands=",")
 # replace NaN with 0
 SAM.fillna(0, inplace=True)
 
@@ -49,7 +46,9 @@ def get_alpha_c(sam=SAM, cons_dict=CONS_DICT):
     for key, value in cons_dict.items():
         print("value = ", value)
         # note the subtraction of the row to focus on domestic consumption
-        category_total = sam.loc[sam.index.isin(value), hh_cols].values.sum()
+        category_total = (
+            sam.loc[sam.index.isin(value), hh_cols].values.astype(float).sum()
+        )
         alpha_c[key] = category_total
         overall_sum += category_total
     for key, value in cons_dict.items():
@@ -84,9 +83,9 @@ def get_io_matrix(sam=SAM, cons_dict=CONS_DICT, prod_dict=PROD_DICT):
     # the production categories from columns
     for ck, cv in cons_dict.items():
         for pk, pv in prod_dict.items():
-            io_df.loc[io_df.index == ck, pk] = sam.loc[
-                sam.index.isin(cv), pv
-            ].values.sum()
+            io_df.loc[io_df.index == ck, pk] = (
+                sam.loc[sam.index.isin(cv), pv].values.astype(float).sum()
+            )
     # change from levels to share (where each row sums to one)
     io_df = io_df.div(io_df.sum(axis=1), axis=0)
 
