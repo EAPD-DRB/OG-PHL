@@ -1,1 +1,2 @@
 include ogphl/ogphl_default_parameters.json
+include ogphl/data/002_IFPRI_SAM_IDN_2018_SAM.csv
