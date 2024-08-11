@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Updates the calibration of OG-PHL
+- Updates the calibration of `OG-PHL`
 - Updates the documentation
 
 ## [0.0.0] - 2024-06-20 12:00:00
