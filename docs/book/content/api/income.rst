@@ -5,8 +5,8 @@ Life-cycle productivity profiles
 
 **income.py modules**
 
-ogidn.income
+ogphl.income
 ------------------------------------------
 
-.. automodule:: ogidn.income
+.. automodule:: ogphl.income
   :members: get_e_interp

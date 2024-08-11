@@ -41,6 +41,7 @@ envs/
 *.coverage*
 *coverage.xml*
 docs/book/_build/*
-*/OG-ZAF_example_plots/*
-*ogzaf_example_output.csv
-*/OG-ZAF-Example/*
+*/OG-PHL_example_plots/*
+*ogphl_example_output.csv
+*/OG-PHL-Example/*
+*run_api_token.txt

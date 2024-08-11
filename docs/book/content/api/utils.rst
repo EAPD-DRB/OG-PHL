@@ -5,13 +5,13 @@ Calibration Utilities
 
 **utils.py modules**
 
-ogidn.utils
+ogphl.utils
 ------------------------------------------
 
-.. currentmodule:: ogidn.utils
+.. currentmodule:: ogphl.utils
 
 .. autoclass:: CustomHttpAdapter
   :members: init_poolmanager
 
-.. automodule:: ogidn.utils
+.. automodule:: ogphl.utils
   :members: get_legacy_session, is_connected
