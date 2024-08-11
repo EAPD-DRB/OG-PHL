@@ -34,6 +34,7 @@ with importlib.resources.open_text(
 ) as file:
     defaults = json.load(file)
 p.start_year = YEAR_TO_PLOT
+p.update_specifications(defaults)
 
 # also load parameters from OG-USA for comparison
 p2 = Specifications()
