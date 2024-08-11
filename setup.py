@@ -11,7 +11,7 @@ setuptools.setup(
     description="Philippines Calibration for OG-Core",
     long_description_content_type="text/markdown",
     long_description=longdesc,
-    keywords="IDN Philippines calibration of large scale overlapping generations model of fiscal policy",
+    keywords="PHL Philippines calibration of large scale overlapping generations model of fiscal policy",
     url="https://github.com/EAPD-DRB/OG-PHL/",
     download_url="https://github.com/EAPD-DRB/OG-PHL/",
     project_urls={
