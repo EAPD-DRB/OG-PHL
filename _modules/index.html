@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -186,21 +186,24 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../content/api/public_api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../content/api/calibrate.html">Main Calibration Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../content/api/demographics.html">Demographics Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/income.html">Life-cycle productivity profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/input_output.html">Output-Consumption Bridge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../content/api/macro_params.html">Macro Parameter Estimation Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/utils.html">Calibration Utilities</a></li>
 </ul>
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Calibration</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../content/calibration/exogenous_parameters.html">Exogenous Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/calibration/households.html">Calibration of Household Preference Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/calibration/firms.html">Calibration of Firms Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/calibration/macro.html">Calibration of Macroeconomic Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/calibration/demographics.html">Demographics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/calibration/earnings.html">Lifetime Earnings Profiles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/calibration/tax_functions.html">Tax Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/calibration/bequests.html">Bequest Process Calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/calibration/taxes.html">Taxes in OG-PHL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/calibration/UBI.html">Universal Basic Income (UBI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/calibration/matching_lwi.html">Matching Labor, Wealth, and Income Moments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/calibration/exogenous_parameters.html">Exogenous Parameters</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References</span></p>
 <ul class="nav bd-sidenav">
@@ -360,7 +363,10 @@ document.write(`
                   
   <h1>All modules for which code is available</h1>
 <ul><li><a href="ogphl/calibrate.html">ogphl.calibrate</a></li>
+<li><a href="ogphl/income.html">ogphl.income</a></li>
+<li><a href="ogphl/input_output.html">ogphl.input_output</a></li>
 <li><a href="ogphl/macro_params.html">ogphl.macro_params</a></li>
+<li><a href="ogphl/utils.html">ogphl.utils</a></li>
 </ul>
 
                 </article>
@@ -389,7 +395,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By Marcelo LaFleur and Richard W. Evans
+By Marcelo LaFleur, Richard W. Evans, and Jason DeBacker
 </p>
 
   </div>
@@ -399,7 +405,7 @@ By Marcelo LaFleur and Richard W. Evans
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2024.
       <br/>
     
   </p>

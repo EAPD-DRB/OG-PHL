@@ -1,5 +1,5 @@
 # References
 
-```{bibliography} ../OGZAF_references.bib
+```{bibliography} ../OGPHL_references.bib
 :style: alpha
 ```
