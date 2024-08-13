@@ -2413,7 +2413,7 @@
     ],
     "budget_balance": false,
     "baseline_spending": false,
-    "start_year": 2023,
+    "start_year": 2025,
     "tax_func_type": "linear",
     "labor_income_tax_noncompliance_rate": [
         [
