@@ -97,11 +97,65 @@ To install the Anaconda distribution of Python, go to https://www.anaconda.com/d
 
 ### Verifying you have already installed Git
 
+#### On Mac or Windows
+Open your terminal (Mac) or command prompt (Windows) and type `git --version`. You should get output like `git version 2.37.2`.
+```{code}
+>>> git --version
+git version 2.37.2
+```
+
+#### On Linux
+Open your terminal and type `git -version`. You should get output like `git version 2.37.2.
+```{code}
+>>> git -version
+git version 2.37.2
+```
+
+### Installing Git
+If you do not already have Git installed on your computer, we recommend that you follow the instructions on the GitHub page https://github.com/git-guides/install-git for installing Git. This page has downloadable executable installers that are easy to use.
+
+
+### Basic configuring of Git on your machine
+Once you have Git installed, you will need to configure some of the basic settings in Git. To view all of your Git settings, you can type the following into your computers terminal:
+```{code}
+git config --list --show-origin
+```
+When getting set up, it’s important to enter your credentials so that `git` on your local machine is linked to your account on GitHub. You’ll do this by first entering your name:
+```{code}
+git config --global user.name "Your Name"
+```
+Then, you’ll enter your email (using the email that you used to register your account on GitHub.com):
+```{code}
+git config --global user.email yourname@example.com
+```
+You can also set your default text editor for use with `git` by following the example below, which makes vim the default:
+```{code}
+git config --global core.editor vim
+```
+
+For more information on configuring `git`, see the full instructions from `git` [here](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup).
+
+
 ### Set up a GitHub account
+You will need a GitHub account to properly interact with OG-PHL. This will allow you to interact with the repository with a wide range of collaborative functionalities, including forking repositories, creating issues and discussions, and submitting pull requests. To set up a GitHub account, follow [these instructions](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github) at GitHub.com.
 
-### Fork and clone OG-PHL repository
+Most likely, the free organization account will be the right place to start for you. We recommend choosing a username suitable for a professional setting, as this will be your public profile on GitHub.
 
-## Creating the ogphl-dev conda environment
+## Fork and clone OG-PHL repository
+
+## Create the ogphl-dev conda environment
 
 ## Using Jupyter notebooks
-A nice way to execute lines of code on your local computer is to use Jupyter notebooks
+A nice way to execute lines of code on your local computer is to use Jupyter notebooks. The `jupyter` package is installed as part of the `ogphl-dev` conda environment from the previous step. You can open a Jupyter notebook directly in VS Code, or you can open one from your terminal or command prompt.
+
+### Open Jupyter notebook from terminal or command prompt
+- If you are using Mac or Linux, open your terminal. If you are using Windows, open your command prompt.
+- Navigate to the folder of the OG-PHL repository on your local machine.
+- Activate the `ogphl-dev` conda environment by typing `conda activate ogphl-dev`.
+- Open a Jupyter notebook session by typing `jupyter notebook`. This will open a local server page that opens in your browser. This page will show the directory where you are currently working.
+- Either click the "New" button in the upper-right portion of the screen, or select "File" then "New" then "Notebook" from the menu at the upper-right. Make sure to select the `ogphl-dev` kernel.
+
+Once you have completed these steps, you can interactively write code and execute it in steps using the Python code cells in the Jupyter notebook. You can also write text descriptions in the markdown cells.
+
+## Choosing a text editor
+Using a good text editor for your coding is a key productivity choice. We recommend the [VS Code (Visual Studio Code)](https://code.visualstudio.com/) editor from Microsoft (download from https://code.visualstudio.com/Download). This text editor is free, it is open source, and it has the largest community of active users and active developers. It also has a ton of extensions that help you customize and increase the efficiency of your coding workflow.
