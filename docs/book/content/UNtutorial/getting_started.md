@@ -142,6 +142,25 @@ You will need a GitHub account to properly interact with OG-PHL. This will allow
 Most likely, the free organization account will be the right place to start for you. We recommend choosing a username suitable for a professional setting, as this will be your public profile on GitHub.
 
 ## Fork and clone OG-PHL repository
+1. Forking the OG-PHL repository means that you are making a copy of that repository on your GitHub account in the cloud.
+    - Go to the UN GitHub organization's main repository for OG-PHL (https://github.com/EAPD-DRB/OG-PHL).
+    - In the upper-right area of the browser page, click the "Fork" button and select "Create fork". This will create an exact copy of the OG-PHL repository on your account. When you do this, you should see that the URL to the page has changed to `https://github.com/[YourGitHubHandle]/OG-PHL`.
+
+2. The next step is to clone the repository from its current place in the cloud to your local computer's hard drive.
+    - Open your terminal or Anaconda prompt
+    - Navigate to the folder where you want this repository to reside. Make sure this is not a location on your hard drive that is mapped from the cloud. This file should live on your local computer. You already have the repository in the cloud on your GitHub account.
+    - Copy the contents of your repository in the cloud to your hard drive by typing: `git clone https://github.com/[YourGitHubHandle]/OG-PHL.git`
+    - Change directory to this new directory by typing: `cd OG-PHL`
+    - Create an additional git remote named "upstream" that points to the main UN remote repository by typing: `git remote add upstream https://github.com/EAPD-DRB/OG-PHL.git`
+
+```{figure} ./images/GitFlowDiag.png
+---
+scale: 50%
+align: center
+name: GitFlowDiag
+---
+Flow diagram of Git and GitHub workflow
+```
 
 ## Create the ogphl-dev conda environment
 
