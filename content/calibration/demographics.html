@@ -28,12 +28,14 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -60,6 +62,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/calibration/demographics';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Lifetime Earnings Profiles" href="earnings.html" />
@@ -208,6 +211,11 @@
 <li class="toctree-l1"><a class="reference internal" href="matching_lwi.html">Matching Labor, Wealth, and Income Moments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exogenous_parameters.html">Exogenous Parameters</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">UN Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../UNtutorial/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../UNtutorial/3perOG.html">A “Simple” 3-period-lived agent OG model</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../OGPHL_references.html">References</a></li>
@@ -256,6 +264,37 @@
         <div class="header-article-item">
 
 <div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/EAPD-DRB/OG-PHL/blob/main/docs/book/content/calibration/demographics.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
 
 
 
@@ -313,6 +352,23 @@
     <i class="fas fa-download"></i>
   </button>
   <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/calibration/demographics.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
       
       
       
@@ -427,7 +483,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="demographics">
 <span id="chap-demog"></span><h1>Demographics<a class="headerlink" href="#demographics" title="Link to this heading">#</a></h1>
-<p>Demographics are a key component of the macroeconmic model. <span id="id1">[<a class="reference internal" href="../OGPHL_references.html#id58" title="Shinichi Nishiyama. Fiscal policy effects in a heterogeneous-agent olg economy with an aging population. Journal of Economic Dynamics and Control, 61:114-132, December 2015.">Nishiyama, 2015</a>]</span> and <span id="id2">[<a class="reference internal" href="../OGPHL_references.html#id25" title="Jason DeBacker, Richard W. Evans, and Kerk L. Phillips. Integrating microsimulation models of tax policy into a dge macroeconomic model. Public Finance Review, 47(2):207-275, March 2019.">DeBacker <em>et al.</em>, 2019</a>]</span> have recently shown that demographic dynamics are likely the biggest influence on macroeconomic time series, exhibiting more influence than fiscal variables or household preference parameters.</p>
+<p>Demographics are a key component of the macroeconmic model. <span id="id1">[<a class="reference internal" href="../OGPHL_references.html#id58" title="Shinichi Nishiyama. Fiscal policy effects in a heterogeneous-agent olg economy with an aging population. Journal of Economic Dynamics and Control, 61:114-132, December 2015.">Nishiyama, 2015</a>]</span> and <span id="id2">[<a class="reference internal" href="../OGPHL_references.html#id26" title="Jason DeBacker, Richard W. Evans, and Kerk L. Phillips. Integrating microsimulation models of tax policy into a dge macroeconomic model. Public Finance Review, 47(2):207-275, March 2019.">DeBacker <em>et al.</em>, 2019</a>]</span> have recently shown that demographic dynamics are likely the biggest influence on macroeconomic time series, exhibiting more influence than fiscal variables or household preference parameters.</p>
 <p>In this chapter, we characterize the equations and parameters that govern the transition dynamics of the population distribution by age. In <code class="docutils literal notranslate"><span class="pre">OG-PHL</span></code>, we take the approach of taking mortality rates and fertility rates from outside estimates. But we estimate our immigration rates as residuals using the mortality rates, fertility rates, and at least two consecutive periods of population distribution data. This approach makes sense if one is modeling a country in which one is not confident in the immigration rate data. If the country has good immigration data, then the immigration residual approach we describe below can be skipped.</p>
 <p>We define <span class="math notranslate nohighlight">\(\omega_{s,t}\)</span> as the number of households of age <span class="math notranslate nohighlight">\(s\)</span> alive at time <span class="math notranslate nohighlight">\(t\)</span>. A measure <span class="math notranslate nohighlight">\(\omega_{1,t}\)</span> of households is born in each period <span class="math notranslate nohighlight">\(t\)</span> and live for up to <span class="math notranslate nohighlight">\(E+S\)</span> periods, with <span class="math notranslate nohighlight">\(S\geq 4\)</span>.<a class="footnote-reference brackets" href="#calibage-note" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> Households are termed “youth”, and do not participate in market activity during ages <span class="math notranslate nohighlight">\(1\leq s\leq E\)</span>. The households enter the workforce and economy in period <span class="math notranslate nohighlight">\(E+1\)</span> and remain in the workforce until they unexpectedly die or live until age <span class="math notranslate nohighlight">\(s=E+S\)</span>. We model the population with households age <span class="math notranslate nohighlight">\(s\leq E\)</span> outside of the workforce and economy in order most closely match the empirical population dynamics.</p>
 <p>The population of agents of each age in each period <span class="math notranslate nohighlight">\(\omega_{s,t}\)</span> evolves according to the following function,</p>
