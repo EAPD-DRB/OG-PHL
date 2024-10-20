@@ -26,10 +26,10 @@ For the October 21-25, 2024 United Nations `OG-PHL` training in Manila, we will 
   - Topic
 * - Mon.
   - Morning
-  - Organizer introductions <br> Setup Python, Git, GitHub, and OG-PHL
+  - Organizer introductions <br> [Setup Python](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#install-python), [Git, GitHub](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#installing-git-and-github), and [OG-PHL](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#fork-and-clone-og-phl-repository)
 * -
   - Afternoon
-  - Theory: "Simple" 3-period-lived agent model
+  - Theory: ["Simple" 3-period-lived agent model](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html)
 * - Tue.
   - Morning
   - Review 3-period-lived-agent exercises <br> Review OG-Core and OG-PHL modules <br> Quick Git and GitHub workflow review
@@ -163,6 +163,15 @@ Flow diagram of Git and GitHub workflow
 ```
 
 ## Create the ogphl-dev conda environment
+[Conda environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) are a functionality that comes with the Anaconda distribution of Python. Conda environments allow the users across operating system platforms and different hardware configurations to run Python code in an environment that has the same packages, functionality, and results. A Conda environment is similar to a Docker image.
+
+If you have installed the Anaconda distribution of Python and you have cloned your OG-PHL fork of the repository to your local machine, you can create the `ogphl-dev` conda environment by doing the following steps:
+- Open your terminal or command prompt and navigate to the OG-PHL repository folder on your hard drive.
+- Type the following command: `conda env create -f environment.yml`
+- Once the environment has been created, you must activate it: `conda activate ogphl-dev`
+- In the activated `ogphl-dev` conda environment, install the `ogphl` Python package directly from your repository by typing: `pip install -e .`
+
+Now you have the `ogphl` Python package installed in your `ogphl-dev` conda environment. Now you will be able to run the modules of the OG-PHL model from scripts and from Jupyter notebooks.
 
 ## Using Jupyter notebooks
 A nice way to execute lines of code on your local computer is to use Jupyter notebooks. The `jupyter` package is installed as part of the `ogphl-dev` conda environment from the previous step. You can open a Jupyter notebook directly in VS Code, or you can open one from your terminal or command prompt.

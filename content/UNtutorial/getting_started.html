@@ -519,11 +519,11 @@ document.write(`
 <tbody>
 <tr class="row-even"><td><p>Mon.</p></td>
 <td><p>Morning</p></td>
-<td><p>Organizer introductions <br> Setup Python, Git, GitHub, and OG-PHL</p></td>
+<td><p>Organizer introductions <br> <a class="reference external" href="https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#install-python">Setup Python</a>, <a class="reference external" href="https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#installing-git-and-github">Git, GitHub</a>, and <a class="reference external" href="https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#fork-and-clone-og-phl-repository">OG-PHL</a></p></td>
 </tr>
 <tr class="row-odd"><td></td>
 <td><p>Afternoon</p></td>
-<td><p>Theory: “Simple” 3-period-lived agent model</p></td>
+<td><p>Theory: <a class="reference external" href="https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html">“Simple” 3-period-lived agent model</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Tue.</p></td>
 <td><p>Morning</p></td>
@@ -688,6 +688,15 @@ document.write(`
 </section>
 <section id="create-the-ogphl-dev-conda-environment">
 <h2>Create the ogphl-dev conda environment<a class="headerlink" href="#create-the-ogphl-dev-conda-environment" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">Conda environments</a> are a functionality that comes with the Anaconda distribution of Python. Conda environments allow the users across operating system platforms and different hardware configurations to run Python code in an environment that has the same packages, functionality, and results. A Conda environment is similar to a Docker image.</p>
+<p>If you have installed the Anaconda distribution of Python and you have cloned your OG-PHL fork of the repository to your local machine, you can create the <code class="docutils literal notranslate"><span class="pre">ogphl-dev</span></code> conda environment by doing the following steps:</p>
+<ul class="simple">
+<li><p>Open your terminal or command prompt and navigate to the OG-PHL repository folder on your hard drive.</p></li>
+<li><p>Type the following command: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">environment.yml</span></code></p></li>
+<li><p>Once the environment has been created, you must activate it: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">ogphl-dev</span></code></p></li>
+<li><p>In the activated <code class="docutils literal notranslate"><span class="pre">ogphl-dev</span></code> conda environment, install the <code class="docutils literal notranslate"><span class="pre">ogphl</span></code> Python package directly from your repository by typing: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
+</ul>
+<p>Now you have the <code class="docutils literal notranslate"><span class="pre">ogphl</span></code> Python package installed in your <code class="docutils literal notranslate"><span class="pre">ogphl-dev</span></code> conda environment. Now you will be able to run the modules of the OG-PHL model from scripts and from Jupyter notebooks.</p>
 </section>
 <section id="using-jupyter-notebooks">
 <h2>Using Jupyter notebooks<a class="headerlink" href="#using-jupyter-notebooks" title="Link to this heading">#</a></h2>
