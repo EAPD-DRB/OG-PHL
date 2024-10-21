@@ -732,9 +732,9 @@ These equations characterize the equilibrium and constitute a system of nonlinea
 <p>Let <code class="docutils literal notranslate"><span class="pre">ss_time</span></code> be the number of seconds it takes to run your steady-state program. You can time your program by importing the <code class="docutils literal notranslate"><span class="pre">time</span></code> library.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="o">...</span>
-<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>  <span class="c1"># Place at beginning of get_SS()</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c1"># Place at beginning of get_SS()</span>
 <span class="o">...</span>
-<span class="n">ss_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>  <span class="c1"># Place at end of get_SS()</span>
+<span class="n">ss_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>  <span class="c1"># Place at end of get_SS()</span>
 </pre></div>
 </div>
 <p>And let the object <code class="docutils literal notranslate"><span class="pre">EulErr_ss</span></code> be a length-2 vector of the two Euler errors from the resulting steady-state solution given in difference form <span class="math notranslate nohighlight">\(\beta(1+\bar{r})u'(\bar{c}_{s+1}) - u'(\bar{c}_s)\)</span>. The object <code class="docutils literal notranslate"><span class="pre">RCerr_ss</span></code> is a resource constraint error which should be close to zero. It is given by <span class="math notranslate nohighlight">\(\bar{Y}-\bar{C} - \delta\bar{K}\)</span>.</p>
