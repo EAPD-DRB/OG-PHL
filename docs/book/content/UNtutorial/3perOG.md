@@ -375,9 +375,9 @@ kernelspec:
   ```{code} python
   import time
   ...
-  start_time = time.clock()  # Place at beginning of get_SS()
+  start_time = time.time()  # Place at beginning of get_SS()
   ...
-  ss_time = time.clock() - start_time  # Place at end of get_SS()
+  ss_time = time.time() - start_time  # Place at end of get_SS()
   ```
   And let the object `EulErr_ss` be a length-2 vector of the two Euler errors from the resulting steady-state solution given in difference form $\beta(1+\bar{r})u'(\bar{c}_{s+1}) - u'(\bar{c}_s)$. The object `RCerr_ss` is a resource constraint error which should be close to zero. It is given by $\bar{Y}-\bar{C} - \delta\bar{K}$.
   1. Solve numerically for the steady-state equilibrium values of $\{\bar{c}_s\}_{s=1}^3$, $\{\bar{b}_s\}_{s=2}^3$, $\bar{w}$, $\bar{r}$, $\bar{K}$, $\bar{Y}$, $\bar{C}$, the two Euler errors and the resource constraint error. List those values. Time your function. How long did it take to compute the steady-state?
