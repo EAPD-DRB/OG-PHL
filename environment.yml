@@ -29,6 +29,7 @@ dependencies:
 - linearmodels
 - black
 - jupyter
+- ipykernel
 - ipython
 - pip
 - pip:
