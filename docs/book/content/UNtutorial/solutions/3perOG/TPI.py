@@ -1,4 +1,4 @@
-'''
+"""
 ------------------------------------------------------------------------
 This module contains the functions used to solve the time path iteration
 non-steady-state equilibrium for the model with 3-period lived agents
@@ -25,7 +25,8 @@ This Python module calls the following function(s):
     get_b_errors()
     get_SS()
 ------------------------------------------------------------------------
-'''
+"""
+
 # Import Packages
 import time
 import numpy as np
@@ -38,15 +39,15 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 import os
 
-'''
+"""
 ------------------------------------------------------------------------
     Functions
 ------------------------------------------------------------------------
-'''
+"""
 
 
 def get_path(x1, xT, T, spec):
-    '''
+    """
     --------------------------------------------------------------------
     This function generates a path from point x1 to point xT such that
     that the path x is a linear or quadratic function of time t.
@@ -78,7 +79,7 @@ def get_path(x1, xT, T, spec):
 
     RETURNS: xpath
     --------------------------------------------------------------------
-    '''
+    """
     if spec == "linear":
         xpath = np.linspace(x1, xT, T)
     elif spec == "quadratic":
@@ -91,7 +92,7 @@ def get_path(x1, xT, T, spec):
 
 
 def get_cvec_lf(rpath, wpath, nvec, bvec):
-    '''
+    """
     --------------------------------------------------------------------
     Generates vector of remaining lifetime consumptions from individual
     savings, and the time path of interest rates and the real wages,
@@ -117,19 +118,21 @@ def get_cvec_lf(rpath, wpath, nvec, bvec):
 
     RETURNS: cvec, c_cnstr
     --------------------------------------------------------------------
-    '''
+    """
     b_s = bvec
     b_sp1 = np.append(bvec[1:], [0])
     cvec = (1 + rpath) * b_s + wpath * nvec - b_sp1
     if cvec.min() <= 0:
-        print('get_cvec_lf() warning: distribution of savings and/or ' +
-              'parameters created c<=0 for some agent(s)')
+        print(
+            "get_cvec_lf() warning: distribution of savings and/or "
+            + "parameters created c<=0 for some agent(s)"
+        )
     c_cnstr = cvec <= 0
     return cvec, c_cnstr
 
 
 def LfEulerSys(bvec, *args):
-    '''
+    """
     --------------------------------------------------------------------
     Generates vector of all Euler errors for a given bvec, which errors
     characterize all optimal lifetime decisions, where p is an integer
@@ -165,19 +168,19 @@ def LfEulerSys(bvec, *args):
 
     RETURNS: b_err_vec
     --------------------------------------------------------------------
-    '''
+    """
     beta, sigma, beg_wealth, nvec, rpath, wpath, EulDiff = args
     bvec2 = np.append(beg_wealth, bvec)
     cvec, c_cnstr = get_cvec_lf(rpath, wpath, nvec, bvec2)
     b_err_params = (beta, sigma)
-    b_err_vec = ss.get_b_errors(b_err_params, rpath[1:], cvec,
-                                c_cnstr, EulDiff)
+    b_err_vec = ss.get_b_errors(
+        b_err_params, rpath[1:], cvec, c_cnstr, EulDiff
+    )
     return b_err_vec
 
 
-def paths_life(params, beg_age, beg_wealth, nvec, rpath, wpath,
-               b_init):
-    '''
+def paths_life(params, beg_age, beg_wealth, nvec, rpath, wpath, b_init):
+    """
     --------------------------------------------------------------------
     Solve for the remaining lifetime savings decisions of an individual
     who enters the model at age beg_age, with corresponding initial
@@ -227,7 +230,7 @@ def paths_life(params, beg_age, beg_wealth, nvec, rpath, wpath,
 
     RETURNS: bpath, cpath, b_err_vec
     --------------------------------------------------------------------
-    '''
+    """
     S, beta, sigma, TPI_tol, EulDiff = params
     p = int(S - beg_age + 1)
     if beg_age == 1 and beg_wealth != 0:
@@ -240,18 +243,19 @@ def paths_life(params, beg_age, beg_wealth, nvec, rpath, wpath,
         sys.exit("Beginning age and length of nvec do not match.")
     b_guess = 1.01 * b_init
     eullf_objs = (beta, sigma, beg_wealth, nvec, rpath, wpath, EulDiff)
-    bpath = opt.fsolve(LfEulerSys, b_guess, args=(eullf_objs),
-                       xtol=TPI_tol)
-    cpath, c_cnstr = get_cvec_lf(rpath, wpath, nvec,
-                                 np.append(beg_wealth, bpath))
+    bpath = opt.fsolve(LfEulerSys, b_guess, args=(eullf_objs), xtol=TPI_tol)
+    cpath, c_cnstr = get_cvec_lf(
+        rpath, wpath, nvec, np.append(beg_wealth, bpath)
+    )
     b_err_params = (beta, sigma)
-    b_err_vec = ss.get_b_errors(b_err_params, rpath[1:], cpath,
-                                c_cnstr, EulDiff)
+    b_err_vec = ss.get_b_errors(
+        b_err_params, rpath[1:], cpath, c_cnstr, EulDiff
+    )
     return bpath, cpath, b_err_vec
 
 
 def get_cbepath(params, rpath, wpath):
-    '''
+    """
     --------------------------------------------------------------------
     Generates matrices for the time path of the distribution of
     individual savings, individual consumption, and the Euler errors
@@ -302,54 +306,68 @@ def get_cbepath(params, rpath, wpath):
 
     RETURNS: cpath, bpath, EulErrPath
     --------------------------------------------------------------------
-    '''
+    """
     S, T, beta, sigma, nvec, bvec1, b_ss, TPI_tol, EulDiff = params
     cpath = np.zeros((S, T + S - 2))
-    bpath = np.append(bvec1.reshape((S - 1, 1)),
-                      np.zeros((S - 1, T + S - 3)), axis=1)
+    bpath = np.append(
+        bvec1.reshape((S - 1, 1)), np.zeros((S - 1, T + S - 3)), axis=1
+    )
     EulErrPath = np.zeros((S - 1, T + S - 2))
     # Solve the incomplete remaining lifetime decisions of agents alive
     # in period t=1 but not born in period t=1
-    cpath[S - 1, 0] = ((1 + rpath[0]) * bvec1[S - 2] +
-                       wpath[0] * nvec[S - 1])
+    cpath[S - 1, 0] = (1 + rpath[0]) * bvec1[S - 2] + wpath[0] * nvec[S - 1]
     pl_params = (S, beta, sigma, TPI_tol, EulDiff)
     for p in range(2, S):
-        b_guess = np.diagonal(bpath[S - p:, :p - 1])
+        b_guess = np.diagonal(bpath[S - p :, : p - 1])
         bveclf, cveclf, b_err_veclf = paths_life(
-            pl_params, S - p + 1, bvec1[S - p - 1], nvec[-p:],
-            rpath[:p], wpath[:p], b_guess)
+            pl_params,
+            S - p + 1,
+            bvec1[S - p - 1],
+            nvec[-p:],
+            rpath[:p],
+            wpath[:p],
+            b_guess,
+        )
         # Insert the vector lifetime solutions diagonally (twist donut)
         # into the cpath, bpath, and EulErrPath matrices
         DiagMaskb = np.eye(p - 1, dtype=bool)
         DiagMaskc = np.eye(p, dtype=bool)
-        bpath[S - p:, 1:p] = DiagMaskb * bveclf + bpath[S - p:, 1:p]
-        cpath[S - p:, :p] = DiagMaskc * cveclf + cpath[S - p:, :p]
-        EulErrPath[S - p:, 1:p] = (DiagMaskb * b_err_veclf +
-                                   EulErrPath[S - p:, 1:p])
+        bpath[S - p :, 1:p] = DiagMaskb * bveclf + bpath[S - p :, 1:p]
+        cpath[S - p :, :p] = DiagMaskc * cveclf + cpath[S - p :, :p]
+        EulErrPath[S - p :, 1:p] = (
+            DiagMaskb * b_err_veclf + EulErrPath[S - p :, 1:p]
+        )
     # Solve for complete lifetime decisions of agents born in periods
     # 1 to T and insert the vector lifetime solutions diagonally (twist
     # donut) into the cpath, bpath, and EulErrPath matrices
     DiagMaskb = np.eye(S - 1, dtype=bool)
     DiagMaskc = np.eye(S, dtype=bool)
     for t in range(1, T):  # Go from periods 1 to T-1
-        b_guess = np.diagonal(bpath[:, t - 1:t + S - 2])
+        b_guess = np.diagonal(bpath[:, t - 1 : t + S - 2])
         bveclf, cveclf, b_err_veclf = paths_life(
-            pl_params, 1, 0, nvec, rpath[t - 1:t + S - 1],
-            wpath[t - 1:t + S - 1], b_guess)
+            pl_params,
+            1,
+            0,
+            nvec,
+            rpath[t - 1 : t + S - 1],
+            wpath[t - 1 : t + S - 1],
+            b_guess,
+        )
         # Insert the vector lifetime solutions diagonally (twist donut)
         # into the cpath, bpath, and EulErrPath matrices
-        bpath[:, t:t + S - 1] = (DiagMaskb * bveclf +
-                                 bpath[:, t:t + S - 1])
-        cpath[:, t - 1:t + S - 1] = (DiagMaskc * cveclf +
-                                     cpath[:, t - 1:t + S - 1])
-        EulErrPath[:, t:t + S - 1] = (DiagMaskb * b_err_veclf +
-                                      EulErrPath[:, t:t + S - 1])
+        bpath[:, t : t + S - 1] = DiagMaskb * bveclf + bpath[:, t : t + S - 1]
+        cpath[:, t - 1 : t + S - 1] = (
+            DiagMaskc * cveclf + cpath[:, t - 1 : t + S - 1]
+        )
+        EulErrPath[:, t : t + S - 1] = (
+            DiagMaskb * b_err_veclf + EulErrPath[:, t : t + S - 1]
+        )
 
     return cpath, bpath, EulErrPath
 
 
 def get_TPI(params, bvec1, graphs):
-    '''
+    """
     --------------------------------------------------------------------
     Generates steady-state time path for all endogenous objects from
     initial state (K1, Gamma1) to the steady state.
@@ -445,10 +463,27 @@ def get_TPI(params, bvec1, graphs):
 
     RETURNS: tpi_output
     --------------------------------------------------------------------
-    '''
+    """
     start_time = time.time()
-    (S, T, beta, sigma, nvec, L, A, alpha, delta, b_ss, K_ss, C_ss,
-        maxiter_TPI, mindist_TPI, xi, TPI_tol, EulDiff) = params
+    (
+        S,
+        T,
+        beta,
+        sigma,
+        nvec,
+        L,
+        A,
+        alpha,
+        delta,
+        b_ss,
+        K_ss,
+        C_ss,
+        maxiter_TPI,
+        mindist_TPI,
+        xi,
+        TPI_tol,
+        EulDiff,
+    ) = params
     K1, K1_cnstr = ss.get_K(bvec1)
 
     # Create time paths for K and L
@@ -458,12 +493,11 @@ def get_TPI(params, bvec1, graphs):
     Lpath = L * np.ones(T + S - 2)
 
     iter_TPI = int(0)
-    dist_TPI = 10.
+    dist_TPI = 10.0
     Kpath_new = Kpath_init.copy()
     r_params = (A, alpha, delta)
     w_params = (A, alpha)
-    cbe_params = (S, T, beta, sigma, nvec, bvec1, b_ss, TPI_tol,
-                  EulDiff)
+    cbe_params = (S, T, beta, sigma, nvec, bvec1, b_ss, TPI_tol, EulDiff)
 
     while (iter_TPI < maxiter_TPI) and (dist_TPI >= mindist_TPI):
         iter_TPI += 1
@@ -474,42 +508,55 @@ def get_TPI(params, bvec1, graphs):
         Kpath_new = np.zeros(T + S - 2)
         Kpath_new[:T], Kpath_cnstr = ss.get_K(bpath[:, :T])
         Kpath_new[T:] = K_ss * np.ones(S - 2)
-        Kpath_cnstr = np.append(Kpath_cnstr,
-                                np.zeros(S - 2, dtype=bool))
+        Kpath_cnstr = np.append(Kpath_cnstr, np.zeros(S - 2, dtype=bool))
         Kpath_new[Kpath_cnstr] = 0.1
         # Check the distance of Kpath_new1
         dist_TPI = ((Kpath_new[1:T] - Kpath_init[1:T]) ** 2).sum()
         # dist_TPI = np.absolute((Kpath_new[1:T] - Kpath_init[1:T]) /
         #                        Kpath_init[1:T]).max()
-        print('iter: ', iter_TPI, ', dist: ', dist_TPI,
-              ',max Eul err: ', np.absolute(EulErrPath).max())
+        print(
+            "iter: ",
+            iter_TPI,
+            ", dist: ",
+            dist_TPI,
+            ",max Eul err: ",
+            np.absolute(EulErrPath).max(),
+        )
 
     if iter_TPI == maxiter_TPI and dist_TPI > mindist_TPI:
-        print('TPI reached maxiter and did not converge.')
+        print("TPI reached maxiter and did not converge.")
     elif iter_TPI == maxiter_TPI and dist_TPI <= mindist_TPI:
-        print('TPI converged in the last iteration. ' +
-              'Should probably increase maxiter_TPI.')
+        print(
+            "TPI converged in the last iteration. "
+            + "Should probably increase maxiter_TPI."
+        )
     Kpath = Kpath_new
     Y_params = (A, alpha)
     Ypath = ss.get_Y(Y_params, Kpath, Lpath)
     Cpath = np.zeros(T + S - 2)
-    Cpath[:T - 1] = ss.get_C(cpath[:, :T - 1])
-    Cpath[T - 1:] = C_ss * np.ones(S - 1)
-    RCerrPath = (Ypath[:-1] - Cpath[:-1] - Kpath[1:] +
-                 (1 - delta) * Kpath[:-1])
+    Cpath[: T - 1] = ss.get_C(cpath[:, : T - 1])
+    Cpath[T - 1 :] = C_ss * np.ones(S - 1)
+    RCerrPath = Ypath[:-1] - Cpath[:-1] - Kpath[1:] + (1 - delta) * Kpath[:-1]
     tpi_time = time.time() - start_time
 
     tpi_output = {
-        'bpath': bpath, 'cpath': cpath, 'wpath': wpath, 'rpath': rpath,
-        'Kpath': Kpath, 'Ypath': Ypath, 'Cpath': Cpath,
-        'EulErrPath': EulErrPath, 'RCerrPath': RCerrPath,
-        'tpi_time': tpi_time}
+        "bpath": bpath,
+        "cpath": cpath,
+        "wpath": wpath,
+        "rpath": rpath,
+        "Kpath": Kpath,
+        "Ypath": Ypath,
+        "Cpath": Cpath,
+        "EulErrPath": EulErrPath,
+        "RCerrPath": RCerrPath,
+        "tpi_time": tpi_time,
+    }
 
     # Print TPI computation time
-    ss.print_time(tpi_time, 'TPI')
+    ss.print_time(tpi_time, "TPI")
 
     if graphs:
-        '''
+        """
         ----------------------------------------------------------------
         cur_path    = string, path name of current directory
         output_fldr = string, folder in current path to save files
@@ -529,7 +576,7 @@ def get_TPI(params, bvec1, graphs):
         smatc       = (3, 17) matrix, ages for all consumption decisions
                       ages (S) and time periods (T-1)
         ----------------------------------------------------------------
-        '''
+        """
         # Create directory if images directory does not already exist
         cur_path = os.path.split(os.path.abspath(__file__))[0]
         output_fldr = "images"
@@ -541,65 +588,65 @@ def get_TPI(params, bvec1, graphs):
         tvec = np.linspace(1, T + S - 2, T + S - 2)
         minorLocator = MultipleLocator(1)
         fig, ax = plt.subplots()
-        plt.plot(tvec, Kpath, marker='D')
+        plt.plot(tvec, Kpath, marker="D")
         # for the minor ticks, use no labels; default NullFormatter
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Time path for aggregate capital stock K')
-        plt.xlabel(r'Period $t$')
-        plt.ylabel(r'Aggregate capital $K_{t}$')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Time path for aggregate capital stock K")
+        plt.xlabel(r"Period $t$")
+        plt.ylabel(r"Aggregate capital $K_{t}$")
         output_path = os.path.join(output_dir, "Kpath")
         plt.savefig(output_path)
         # plt.show()
 
         # Plot time path of aggregate output (GDP)
         fig, ax = plt.subplots()
-        plt.plot(tvec, Ypath, marker='D')
+        plt.plot(tvec, Ypath, marker="D")
         # for the minor ticks, use no labels; default NullFormatter
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Time path for aggregate output (GDP) Y')
-        plt.xlabel(r'Period $t$')
-        plt.ylabel(r'Aggregate output $Y_{t}$')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Time path for aggregate output (GDP) Y")
+        plt.xlabel(r"Period $t$")
+        plt.ylabel(r"Aggregate output $Y_{t}$")
         output_path = os.path.join(output_dir, "Ypath")
         plt.savefig(output_path)
         # plt.show()
 
         # Plot time path of aggregate consumption
         fig, ax = plt.subplots()
-        plt.plot(tvec, Cpath, marker='D')
+        plt.plot(tvec, Cpath, marker="D")
         # for the minor ticks, use no labels; default NullFormatter
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Time path for aggregate consumption C')
-        plt.xlabel(r'Period $t$')
-        plt.ylabel(r'Aggregate consumption $C_{t}$')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Time path for aggregate consumption C")
+        plt.xlabel(r"Period $t$")
+        plt.ylabel(r"Aggregate consumption $C_{t}$")
         output_path = os.path.join(output_dir, "C_aggr_path")
         plt.savefig(output_path)
         # plt.show()
 
         # Plot time path of real wage
         fig, ax = plt.subplots()
-        plt.plot(tvec, wpath, marker='D')
+        plt.plot(tvec, wpath, marker="D")
         # for the minor ticks, use no labels; default NullFormatter
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Time path for real wage w')
-        plt.xlabel(r'Period $t$')
-        plt.ylabel(r'Real wage $w_{t}$')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Time path for real wage w")
+        plt.xlabel(r"Period $t$")
+        plt.ylabel(r"Real wage $w_{t}$")
         output_path = os.path.join(output_dir, "wpath")
         plt.savefig(output_path)
         # plt.show()
 
         # Plot time path of real interest rate
         fig, ax = plt.subplots()
-        plt.plot(tvec, rpath, marker='D')
+        plt.plot(tvec, rpath, marker="D")
         # for the minor ticks, use no labels; default NullFormatter
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Time path for real interest rate r')
-        plt.xlabel(r'Period $t$')
-        plt.ylabel(r'Real interest rate $r_{t}$')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Time path for real interest rate r")
+        plt.xlabel(r"Period $t$")
+        plt.ylabel(r"Real interest rate $r_{t}$")
         output_path = os.path.join(output_dir, "rpath")
         plt.savefig(output_path)
         # plt.show()
@@ -608,14 +655,20 @@ def get_TPI(params, bvec1, graphs):
         tgridT = np.linspace(1, T, T)
         sgrid2 = np.linspace(2, S, S - 1)
         tmatb, smatb = np.meshgrid(tgridT, sgrid2)
-        cmap_bp = matplotlib.cm.get_cmap('summer')
+        cmap_bp = matplotlib.cm.get_cmap("summer")
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-        ax.set_xlabel(r'period-$t$')
-        ax.set_ylabel(r'age-$s$')
-        ax.set_zlabel(r'individual savings $b_{s,t}$')
+        ax.set_xlabel(r"period-$t$")
+        ax.set_ylabel(r"age-$s$")
+        ax.set_zlabel(r"individual savings $b_{s,t}$")
         strideval = max(int(1), int(round(S / 10)))
-        ax.plot_surface(tmatb, smatb, bpath[:, :T], rstride=strideval,
-                        cstride=strideval, cmap=cmap_bp)
+        ax.plot_surface(
+            tmatb,
+            smatb,
+            bpath[:, :T],
+            rstride=strideval,
+            cstride=strideval,
+            cmap=cmap_bp,
+        )
         output_path = os.path.join(output_dir, "bpath")
         plt.savefig(output_path)
         # plt.show()
@@ -624,15 +677,20 @@ def get_TPI(params, bvec1, graphs):
         tgridTm1 = np.linspace(1, T - 1, T - 1)
         sgrid = np.linspace(1, S, S)
         tmatc, smatc = np.meshgrid(tgridTm1, sgrid)
-        cmap_cp = matplotlib.cm.get_cmap('summer')
+        cmap_cp = matplotlib.cm.get_cmap("summer")
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-        ax.set_xlabel(r'period-$t$')
-        ax.set_ylabel(r'age-$s$')
-        ax.set_zlabel(r'individual consumption $c_{s,t}$')
+        ax.set_xlabel(r"period-$t$")
+        ax.set_ylabel(r"age-$s$")
+        ax.set_zlabel(r"individual consumption $c_{s,t}$")
         strideval = max(int(1), int(round(S / 10)))
-        ax.plot_surface(tmatc, smatc, cpath[:, :T - 1],
-                        rstride=strideval, cstride=strideval,
-                        cmap=cmap_cp)
+        ax.plot_surface(
+            tmatc,
+            smatc,
+            cpath[:, : T - 1],
+            rstride=strideval,
+            cstride=strideval,
+            cmap=cmap_cp,
+        )
         output_path = os.path.join(output_dir, "cpath")
         plt.savefig(output_path)
         # plt.show()

@@ -1,4 +1,4 @@
-'''
+"""
 ------------------------------------------------------------------------
 This module contains the functions used to solve the steady state for
 the model with 3-period lived agents and exogenous labor from Chapter 5
@@ -18,7 +18,8 @@ This Python module calls the following function(s):
     get_b_errors()
     get_SS()
 ------------------------------------------------------------------------
-'''
+"""
+
 # Import packages
 import time
 import numpy as np
@@ -32,7 +33,7 @@ import os
 
 
 def print_time(seconds, type):
-    '''
+    """
     --------------------------------------------------------------------
     Takes a total amount of time in seconds and prints it in terms of
     more readable units (days, hours, minutes, seconds)
@@ -53,34 +54,58 @@ def print_time(seconds, type):
 
     RETURNS: Nothing
     --------------------------------------------------------------------
-    '''
+    """
     if seconds < 60:  # seconds
         secs = round(seconds, 4)
-        print(type + ' computation time: ' + str(secs) + ' sec')
+        print(type + " computation time: " + str(secs) + " sec")
     elif seconds >= 60 and seconds < 3600:  # minutes
         mins = int(seconds / 60)
         secs = round(((seconds / 60) - mins) * 60, 1)
-        print(type + ' computation time: ' + str(mins) + ' min, ' +
-              str(secs) + ' sec')
+        print(
+            type
+            + " computation time: "
+            + str(mins)
+            + " min, "
+            + str(secs)
+            + " sec"
+        )
     elif seconds >= 3600 and seconds < 86400:  # hours
         hrs = int(seconds / 3600)
         mins = int(((seconds / 3600) - hrs) * 60)
         secs = round(((seconds / 60) - hrs * 60 - mins) * 60, 1)
-        print(type + ' computation time: ' + str(hrs) + ' hrs, ' +
-              str(mins) + ' min, ' + str(secs) + ' sec')
+        print(
+            type
+            + " computation time: "
+            + str(hrs)
+            + " hrs, "
+            + str(mins)
+            + " min, "
+            + str(secs)
+            + " sec"
+        )
     elif seconds >= 86400:  # days
         days = int(seconds / 86400)
         hrs = int(((seconds / 86400) - days) * 24)
         mins = int(((seconds / 3600) - days * 24 - hrs) * 60)
         secs = round(
-            ((seconds / 60) - days * 24 * 60 - hrs * 60 - mins) * 60, 1)
-        print(type + ' computation time: ' + str(days) + ' days, ' +
-              str(hrs) + ' hrs, ' + str(mins) + ' min, ' +
-              str(secs) + ' sec')
+            ((seconds / 60) - days * 24 * 60 - hrs * 60 - mins) * 60, 1
+        )
+        print(
+            type
+            + " computation time: "
+            + str(days)
+            + " days, "
+            + str(hrs)
+            + " hrs, "
+            + str(mins)
+            + " min, "
+            + str(secs)
+            + " sec"
+        )
 
 
 def get_cvec(r, w, bvec, nvec):
-    '''
+    """
     --------------------------------------------------------------------
     Generates vector of lifetime steady-state consumptions given savings
     decisions, parameters, and the corresponding steady-state interest
@@ -106,20 +131,22 @@ def get_cvec(r, w, bvec, nvec):
 
     RETURNS: cvec, c_cnstr
     --------------------------------------------------------------------
-    '''
+    """
     b_s = np.append([0], bvec)
     b_sp1 = np.append(bvec, [0])
     cvec = (1 + r) * b_s + w * nvec - b_sp1
     if cvec.min() <= 0:
-        print('get_cvec() warning: distribution of savings and/or ' +
-              'parameters created c<=0 for some agent(s)')
+        print(
+            "get_cvec() warning: distribution of savings and/or "
+            + "parameters created c<=0 for some agent(s)"
+        )
     c_cnstr = cvec <= 0
 
     return cvec, c_cnstr
 
 
 def get_L(nvec):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for aggregate labor L
     --------------------------------------------------------------------
@@ -135,14 +162,14 @@ def get_L(nvec):
 
     RETURNS: L
     --------------------------------------------------------------------
-    '''
+    """
     L = nvec.sum()
 
     return L
 
 
 def get_K(barr):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for steady-state aggregate capital stock K or time path of
     aggregate capital stock K_t
@@ -162,26 +189,30 @@ def get_K(barr):
 
     RETURNS: K, K_cnstr
     --------------------------------------------------------------------
-    '''
+    """
     if barr.ndim == 1:  # This is the steady-state case
         K = barr.sum()
         K_cnstr = K <= 0
         if K_cnstr:
-            print('get_K() warning: distribution of savings and/or ' +
-                  'parameters created K<=0 for some agent(s)')
+            print(
+                "get_K() warning: distribution of savings and/or "
+                + "parameters created K<=0 for some agent(s)"
+            )
 
     elif barr.ndim == 2:  # This is the time path case
         K = barr.sum(axis=0)
         K_cnstr = K <= 0
         if K.min() <= 0:
-            print('Aggregate capital constraint is violated K<=0 for ' +
-                  'some period in time path.')
+            print(
+                "Aggregate capital constraint is violated K<=0 for "
+                + "some period in time path."
+            )
 
     return K, K_cnstr
 
 
 def get_w(params, K, L):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for steady-state wage w or time path of wages w_t
     --------------------------------------------------------------------
@@ -204,7 +235,7 @@ def get_w(params, K, L):
 
     RETURNS: w
     --------------------------------------------------------------------
-    '''
+    """
     A, alpha = params
     w = (1 - alpha) * A * ((K / L) ** alpha)
 
@@ -212,7 +243,7 @@ def get_w(params, K, L):
 
 
 def get_r(params, K, L):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for steady-state interest rate r or time path of interest
     rates r_t
@@ -237,7 +268,7 @@ def get_r(params, K, L):
 
     RETURNS: r
     --------------------------------------------------------------------
-    '''
+    """
     A, alpha, delta = params
     r = alpha * A * ((L / K) ** (1 - alpha)) - delta
 
@@ -245,7 +276,7 @@ def get_r(params, K, L):
 
 
 def get_Y(params, K, L):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for steady-state aggregate output Y or time path of aggregate
     output Y_t
@@ -270,15 +301,15 @@ def get_Y(params, K, L):
 
     RETURNS: Y
     --------------------------------------------------------------------
-    '''
+    """
     A, alpha = params
-    Y = A * (K ** alpha) * (L ** (1 - alpha))
+    Y = A * (K**alpha) * (L ** (1 - alpha))
 
     return Y
 
 
 def get_C(carr):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for steady-state aggregate consumption C or time path of
     aggregate consumption C_t
@@ -296,7 +327,7 @@ def get_C(carr):
 
     Returns: C
     --------------------------------------------------------------------
-    '''
+    """
     if carr.ndim == 1:
         C = carr.sum()
     elif carr.ndim == 2:
@@ -306,7 +337,7 @@ def get_C(carr):
 
 
 def feasible(params, bvec):
-    '''
+    """
     --------------------------------------------------------------------
     Check whether a vector of steady-state savings is feasible in that
     it satisfies the nonnegativity constraints on consumption in every
@@ -345,7 +376,7 @@ def feasible(params, bvec):
 
     RETURNS: b_cnstr, c_cnstr, K_cnstr
     --------------------------------------------------------------------
-    '''
+    """
     nvec, A, alpha, delta = params
     L = get_L(nvec)
     K, K_cnstr = get_K(bvec)
@@ -364,7 +395,7 @@ def feasible(params, bvec):
 
 
 def EulerSys(bvec, *args):
-    '''
+    """
     --------------------------------------------------------------------
     Generates vector of all Euler errors that characterize optimal
     lifetime decisions
@@ -408,11 +439,11 @@ def EulerSys(bvec, *args):
 
     RETURNS: b_errors
     --------------------------------------------------------------------
-    '''
+    """
     beta, sigma, nvec, L, A, alpha, delta, EulDiff = args
     K, K_cnstr = get_K(bvec)
     if K_cnstr:
-        b_err_vec = 1000. * np.ones(nvec.shape[0] - 1)
+        b_err_vec = 1000.0 * np.ones(nvec.shape[0] - 1)
     else:
         r_params = (A, alpha, delta)
         r = get_r(r_params, K, L)
@@ -420,14 +451,13 @@ def EulerSys(bvec, *args):
         w = get_w(w_params, K, L)
         cvec, c_cnstr = get_cvec(r, w, bvec, nvec)
         b_err_params = (beta, sigma)
-        b_err_vec = get_b_errors(b_err_params, r, cvec, c_cnstr,
-                                 EulDiff)
+        b_err_vec = get_b_errors(b_err_params, r, cvec, c_cnstr, EulDiff)
 
     return b_err_vec
 
 
 def get_b_errors(params, r, cvec, c_cnstr, diff):
-    '''
+    """
     --------------------------------------------------------------------
     Generates vector of dynamic Euler errors that characterize the
     optimal lifetime savings decision. Because this function is used for
@@ -459,26 +489,26 @@ def get_b_errors(params, r, cvec, c_cnstr, diff):
 
     RETURNS: b_errors
     --------------------------------------------------------------------
-    '''
+    """
     beta, sigma = params
     # Make each negative consumption artifically positive
-    cvec[c_cnstr] = 9999.
+    cvec[c_cnstr] = 9999.0
     mu_c = cvec[:-1] ** (-sigma)
     mu_cp1 = cvec[1:] ** (-sigma)
     if diff:
         b_errors = (beta * (1 + r) * mu_cp1) - mu_c
-        b_errors[c_cnstr[:-1]] = 9999.
-        b_errors[c_cnstr[1:]] = 9999.
+        b_errors[c_cnstr[:-1]] = 9999.0
+        b_errors[c_cnstr[1:]] = 9999.0
     else:
         b_errors = ((beta * (1 + r) * mu_cp1) / mu_c) - 1
-        b_errors[c_cnstr[:-1]] = 9999. / 100
-        b_errors[c_cnstr[1:]] = 9999. / 100
+        b_errors[c_cnstr[:-1]] = 9999.0 / 100
+        b_errors[c_cnstr[1:]] = 9999.0 / 100
 
     return b_errors
 
 
 def get_SS(params, bvec_guess, graphs):
-    '''
+    """
     --------------------------------------------------------------------
     Solve for the steady-state solution of the 3-period-lived agent OG
     model with exogenous labor supply
@@ -539,21 +569,24 @@ def get_SS(params, bvec_guess, graphs):
 
     RETURNS: ss_output
     --------------------------------------------------------------------
-    '''
+    """
     start_time = time.time()
     beta, sigma, nvec, L, A, alpha, delta, SS_tol, EulDiff = params
     f_params = (nvec, A, alpha, delta)
     b1_cnstr, c1_cnstr, K1_cnstr = feasible(f_params, bvec_guess)
     if K1_cnstr is True or c1_cnstr.max() is True:
-        err = ("Initial guess problem: " +
-               "One or more constraints not satisfied.")
+        err = (
+            "Initial guess problem: "
+            + "One or more constraints not satisfied."
+        )
         print("K1_cnstr: ", K1_cnstr)
         print("c1_cnstr: ", c1_cnstr)
         raise RuntimeError(err)
     else:
         eul_args = (beta, sigma, nvec, L, A, alpha, delta, EulDiff)
-        results_bss = opt.root(EulerSys, bvec_guess, args=(eul_args),
-                               tol=SS_tol)
+        results_bss = opt.root(
+            EulerSys, bvec_guess, args=(eul_args), tol=SS_tol
+        )
         b_ss = results_bss.x
 
     # Generate other steady-state values and Euler equations
@@ -567,27 +600,33 @@ def get_SS(params, bvec_guess, graphs):
     Y_ss = get_Y(Y_params, K_ss, L)
     C_ss = get_C(c_ss)
     b_err_params = (beta, sigma)
-    EulErr_ss = get_b_errors(
-        b_err_params, r_ss, c_ss, c_cnstr, EulDiff)
+    EulErr_ss = get_b_errors(b_err_params, r_ss, c_ss, c_cnstr, EulDiff)
     RCerr_ss = Y_ss - C_ss - delta * K_ss
 
     ss_time = time.time() - start_time
 
     ss_output = {
-        'b_ss': b_ss, 'c_ss': c_ss, 'w_ss': w_ss, 'r_ss': r_ss,
-        'K_ss': K_ss, 'Y_ss': Y_ss, 'C_ss': C_ss,
-        'EulErr_ss': EulErr_ss, 'RCerr_ss': RCerr_ss,
-        'ss_time': ss_time}
-    print('b_ss is: ', b_ss)
-    print('c_ss is: ', c_ss)
-    print('Euler errors are: ', EulErr_ss)
-    print('Resource constraint error is: ', RCerr_ss)
+        "b_ss": b_ss,
+        "c_ss": c_ss,
+        "w_ss": w_ss,
+        "r_ss": r_ss,
+        "K_ss": K_ss,
+        "Y_ss": Y_ss,
+        "C_ss": C_ss,
+        "EulErr_ss": EulErr_ss,
+        "RCerr_ss": RCerr_ss,
+        "ss_time": ss_time,
+    }
+    print("b_ss is: ", b_ss)
+    print("c_ss is: ", c_ss)
+    print("Euler errors are: ", EulErr_ss)
+    print("Resource constraint error is: ", RCerr_ss)
 
     # Print SS computation time
-    print_time(ss_time, 'SS')
+    print_time(ss_time, "SS")
 
     if graphs:
-        '''
+        """
         ----------------------------------------------------------------
         cur_path    = string, path name of current directory
         output_fldr = string, folder in current path to save files
@@ -596,7 +635,7 @@ def get_SS(params, bvec_guess, graphs):
         S           = integer >= 3, number of periods in a life
         age_pers    = (S,) vector, ages from 1 to S
         ----------------------------------------------------------------
-        '''
+        """
         # Create directory if images directory does not already exist
         cur_path = os.path.split(os.path.abspath(__file__))[0]
         output_fldr = "images"
@@ -608,19 +647,18 @@ def get_SS(params, bvec_guess, graphs):
         S = nvec.shape[0]
         age_pers = np.arange(1, S + 1)
         fig, ax = plt.subplots()
-        plt.plot(age_pers, c_ss, marker='D', label='Consumption')
-        plt.plot(age_pers, np.hstack((0, b_ss)), marker='D',
-                 label='Savings')
+        plt.plot(age_pers, c_ss, marker="D", label="Consumption")
+        plt.plot(age_pers, np.hstack((0, b_ss)), marker="D", label="Savings")
         # for the minor ticks, use no labels; default NullFormatter
         minorLocator = MultipleLocator(1)
         ax.xaxis.set_minor_locator(minorLocator)
-        plt.grid(visible=True, which='major', color='0.65', linestyle='-')
-        plt.title('Steady-state consumption and savings', fontsize=20)
-        plt.xlabel(r'Age $s$')
-        plt.ylabel(r'Units of consumption')
+        plt.grid(visible=True, which="major", color="0.65", linestyle="-")
+        plt.title("Steady-state consumption and savings", fontsize=20)
+        plt.xlabel(r"Age $s$")
+        plt.ylabel(r"Units of consumption")
         plt.xlim((0.8, S + 0.2))
         plt.ylim((-0.02, 1.15 * (c_ss.max())))
-        plt.legend(loc='center right')
+        plt.legend(loc="center right")
         output_path = os.path.join(output_dir, "SS_bc")
         plt.savefig(output_path)
         # plt.show()
