@@ -8,7 +8,7 @@ DEFAULT_START_YEAR = 2025
 
 
 VAR_LABELS = {
-    "EX": "Trade value in exports"
+    "EX": "Trade value in exports",
     "Y": "GDP ($Y_t$)",
     "C": "Consumption ($C_t$)",
     "L": "Labor ($L_t$)",
