@@ -32,7 +32,7 @@ For the October 21-25, 2024 United Nations `OG-PHL` training in Manila, we will 
   - Theory: ["Simple" 3-period-lived agent model](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html)
 * - Tue.
   - Morning
-  - Review 3-period-lived-agent exercises <br> Review OG-Core and OG-PHL modules <br> Quick Git and GitHub workflow review
+  - Review 3-period-lived-agent exercises (solutions in [this folder](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/Solutions/3perOG/)) <br> Review OG-Core and OG-PHL modules <br> Quick Git and GitHub workflow review
 * -
   - Afternoon
   - Running OG-PHL, inputs, outputs <br> Calibrating OG-PHL, current state, still to do
