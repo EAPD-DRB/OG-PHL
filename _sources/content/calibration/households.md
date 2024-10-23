@@ -14,3 +14,6 @@ The default value for the intertemporal elasticity of substitution, $\sigma$, is
 ### Rate of time preference
 
 We take our default value for the rate of time preference parameter, $\beta$ from {cite}`Carroll:2009`.  We set the value to $\beta=0.96$ (on an annual basis).
+
+### Frisch elasticity of labor supply
+We take our default value for the Frisch elasticity of labor supply as $\nu=0.25$. This value was estimated by {cite}`McNelisEtAl:2009`.
