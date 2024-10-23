@@ -51,7 +51,7 @@ kernelspec:
 | $\tilde{l}$                      | Maximum hours of labor supply                                           | 1.000                                                 |
 | $\beta$                          | Discount factor                                                         | [0.960...0.960]                                       |
 | $\sigma$                         | Coefficient of constant relative risk aversion                          | 1.500                                                 |
-| $\nu$                            | Frisch elasticity of labor supply                                       | 0.400                                                 |
+| $\nu$                            | Frisch elasticity of labor supply                                       | 0.25                                                 |
 | $b$                              | Scale parameter in utility of leisure                                   | 0.573                                                 |
 | $\upsilon$                       | Shape parameter in utility of leisure                                   | 2.856                                                 |
 | $\chi^{n}_{s}$                   | Disutility of labor level parameters                                    | Too large to report here, see default parameters JSON |
