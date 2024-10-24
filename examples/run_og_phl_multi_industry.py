@@ -52,8 +52,8 @@ def main():
     ) as file:
         defaults = json.load(file)
     p.update_specifications(defaults)
-    p.M = 2 #7
-    p.I = 2 #5
+    p.M = 2  # 7
+    p.I = 2  # 5
     # Update parameters from calibrate.py Calibration class
     # c = Calibration(p)
     # d = c.get_dict()
@@ -70,12 +70,21 @@ def main():
     informal_spec = {
         "M": 2,
         "I": 2,
-        "gamma_g": [0.02, 0.02],   # need to set production function params to for two industries
+        "gamma_g": [
+            0.02,
+            0.02,
+        ],  # need to set production function params to for two industries
         "epsilon": [1.0, 1.0],
-        "gamma": [0.30, 0.38],  # assumption (first sector is informal): informal has lower capital labor ratio
+        "gamma": [
+            0.30,
+            0.38,
+        ],  # assumption (first sector is informal): informal has lower capital labor ratio
         "cit_rate": [[0.00], [0.22]],  # no CIT for informal
         "tau_c": [[0.00], [0.12]],  # no VAT for informal
-        "alpha_c": [0.7, 0.3],  # 36\% of GDP on average https://documents1.worldbank.org/curated/en/099435011152325553/pdf/IDU025ef01630fdd504ae5085e90437dc8b1c171.pdf
+        "alpha_c": [
+            0.7,
+            0.3,
+        ],  # 36\% of GDP on average https://documents1.worldbank.org/curated/en/099435011152325553/pdf/IDU025ef01630fdd504ae5085e90437dc8b1c171.pdf
         "io_matrix": np.eye(2),
     }
     p.update_specifications(informal_spec)
@@ -100,16 +109,18 @@ def main():
 
     # Parameter change for the reform run: shock TFP for manufacturing
     updated_params_ref = {
-        "Z": [[1.0, 1.0],
-              [1.0, 1.01],
-              [1.0, 1.02],
-              [1.0, 1.03],
-              [1.0, 1.04],
-              [1.0, 1.05],
-              [1.0, 1.06],
-              [1.0, 1.07],
-              [1.0, 1.08],
-              [1.0, 1.09],],
+        "Z": [
+            [1.0, 1.0],
+            [1.0, 1.01],
+            [1.0, 1.02],
+            [1.0, 1.03],
+            [1.0, 1.04],
+            [1.0, 1.05],
+            [1.0, 1.06],
+            [1.0, 1.07],
+            [1.0, 1.08],
+            [1.0, 1.09],
+        ],
     }
     p2.update_specifications(updated_params_ref)
 
@@ -145,7 +156,9 @@ def main():
 
     # create plots of output
     op.plot_all(
-        base_dir, reform_dir, os.path.join(save_dir, "OG-PHL_MultiExample_plots")
+        base_dir,
+        reform_dir,
+        os.path.join(save_dir, "OG-PHL_MultiExample_plots"),
     )
 
     print("Percentage changes in aggregates:", ans)
