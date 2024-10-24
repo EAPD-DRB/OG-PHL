@@ -79,7 +79,7 @@ kernelspec:
 | $\alpha^{T}_{t}$                 | Transfers as a share of GDP                                             | [0.097...0.097]                                       |
 | $\eta_{j,s,t}$                   | Distribution of transfers                                               | Too large to report here, see default parameters JSON |
 | $\alpha^{G}_{t}$                 | Government spending as a share of GDP                                   | [0.215, 0.209, 0.207]                                  |
-| $\alpha^{I}_{t}                  | Government infrastructure spending as a share of GDP                    | [0.054, 0.054, 0.056]                                 |
+| $\alpha^{I}_{t}$                 | Government infrastructure spending as a share of GDP                    | [0.054, 0.054, 0.056]                                 |
 | $t_{G1}$                         | Model period in which budget closure rule starts                        | 20                                                    |
 | $t_{G2}$                         | Model period in which budget closure rule ends                          | 256                                                   |
 | $\rho_{G}$                       | Budget closure rule smoothing parameter                                 | 0.100                                                 |
