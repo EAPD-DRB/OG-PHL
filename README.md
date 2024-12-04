@@ -22,8 +22,8 @@ OG-PHL is an overlapping-generations (OG) model that allows for dynamic general 
 * Then install by `pip install -e .`
 ### Run an example of the model
 * Navigate to `./examples`
-* Run the model with an example reform from terminal/command prompt by typing `python run_og_zaf.py`
-* You can adjust the `./examples/run_og_zaf.py` by modifying model parameters specified in the dictionary passed to the `p.update_specifications()` calls.
+* Run the model with an example reform from terminal/command prompt by typing `python run_og_phl.py`
+* You can adjust the `./examples/run_og_phl.py` by modifying model parameters specified in the dictionary passed to the `p.update_specifications()` calls.
 * Model outputs will be saved in the following files:
   * `./examples/OG-PHL_example_plots`
     * This folder will contain a number of plots generated from OG-Core to help you visualize the output from your run
@@ -56,7 +56,7 @@ p.update_specifications({'initial_debt_ratio': updated_params['initial_debt_rati
 ```
 
 ## Disclaimer
-The organization of this repository will be changing rapidly, but the `OG-PHL/examples/run_og_zaf.py` script will be kept up to date to run with the master branch of this repo.
+The organization of this repository will be changing rapidly, but the `OG-PHL/examples/run_og_phl.py` script will be kept up to date to run with the master branch of this repo.
 
 ## Core Maintainers
 
