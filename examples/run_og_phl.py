@@ -25,7 +25,7 @@ def main():
     # Define parameters to use for multiprocessing
     num_workers = min(multiprocessing.cpu_count(), 7)
     client = Client(
-        n_workers=num_workers, processes=False, threads_per_worker=1
+        n_workers=num_workers, processes=True, threads_per_worker=1
     )
     print("Number of workers = ", num_workers)
 
