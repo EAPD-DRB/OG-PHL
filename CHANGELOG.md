@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Python 3.12 in GH Actions
 - Replaced miniforge and mambaforge with miniconda and "latest" in `deploy_docs.yml` and `docs_check.yml`
 - Updated Python 3.11 and 3.12 in `README.md`
+- Adds `PSL_Catalog.json`
 
 ## [0.0.7] - 2024-12-06 11:00:00
 
