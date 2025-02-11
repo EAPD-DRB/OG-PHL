@@ -1,0 +1,34 @@
+{
+    "name": "OG-PHL",
+    "img": "https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/OG-PHL_logo.png?raw=true",
+    "banner_title": "OG-PHL",
+    "banner_subtitle": "An overlapping-generations macroeconomic model for evaluating fiscal policy in the Philippines",
+    "detailed_description": "OG-PHL is an overlapping-generations (OG) model that allows for dynamic general equilibrium analysis of fiscal policy for the Philippines. OG-PHL is built on the OG-Core framework. The model output includes changes in macroeconomic aggregates (GDP, investment, consumption), wages, interest rates, and the stream of tax revenues over time. Regularly updated documentation of the model theory--its output, and solution method--and the Python API is available at https://pslmodels.github.io/OG-Core and documentation of the specific Philippine calibration of the model is available at https://eapd-drb.github.io/OG-PHL.",
+    "policy_area": "Fiscal policy, Macroeconomics, Demographics",
+    "geography": "Philippines",
+    "language": "Python",
+    "maintainers": [
+        {
+            "name": "Jason DeBacker",
+            "image": "https://github.com/jdebacker.png",
+            "link": "https://github.com/jdebacker"
+        },
+        {
+            "name": "Richard W. Evans",
+            "image": "https://github.com/rickecon.png",
+            "link": "https://github.com/rickecon"
+        },
+        {
+            "name": "Marcelo LaFleur",
+            "image": "https://avatars.githubusercontent.com/u/231228?v=4",
+            "link": "https://github.com/SeaCelo"
+        }
+    ],
+    "links": {
+      "code_repository": "https://github.com/EAPD-DRB/OG-PHL",
+      "user_documentation": "https://eapd-drb.github.io/OG-PHL",
+      "contributor_documentation": "https://eapd-drb.github.io/OG-PHL/content/contributing/contributor_guide.html",
+      "webapp": "",
+      "recent_changes": "https://github.com/EAPD-DRB/OG-PHL/blob/main/CHANGELOG.md"
+    }
+}
