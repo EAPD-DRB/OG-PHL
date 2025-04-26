@@ -21,7 +21,7 @@ setuptools.setup(
     package_data={"ogphl": ["ogphl_default_parameters.json", "data/*"]},
     include_packages=True,
     python_requires=">=3.7.7, <3.13",
-    install_requires=[s
+    install_requires=[
         "numpy",
         "psutil",
         "scipy>=1.7.1",
