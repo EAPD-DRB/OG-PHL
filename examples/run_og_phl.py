@@ -8,7 +8,6 @@ import time
 import copy
 import importlib.resources
 import matplotlib.pyplot as plt
-import ogcore
 from ogcore.parameters import Specifications
 from ogcore import output_tables as ot
 from ogcore import output_plots as op
@@ -18,7 +17,7 @@ from ogphl.calibrate import Calibration
 from ogphl.utils import is_connected
 
 # Use a custom matplotlib style file for plots
-# plt.style.use("ogcore.OGcorePlots")
+plt.style.use("ogcore.OGcorePlots")
 
 
 def main():
