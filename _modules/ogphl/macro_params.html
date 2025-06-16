@@ -502,7 +502,8 @@ document.write(`
         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
         <span class="o">+</span> <span class="s2">&quot;&amp;type=both&amp;format=.csv&quot;</span>
     <span class="p">)</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ILO data target = &quot;</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
         <span class="n">csv_content</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="n">df_temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_content</span><span class="p">)</span>
