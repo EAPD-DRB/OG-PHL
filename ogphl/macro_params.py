@@ -127,7 +127,8 @@ def get_macro_params(
         + str(data_end_date.year)
         + "&type=both&format=.csv"
     )
-    response = requests.get(target)
+    print("ILO data target = ", target)
+    response = requests.get(target, timeout=30)
     if response.status_code == 200:
         csv_content = StringIO(response.text)
         df_temp = pd.read_csv(csv_content)

@@ -5,7 +5,7 @@ with open("README.md", "r") as readme_file:
 
 setuptools.setup(
     name="ogphl",
-    version="0.0.10",
+    version="0.0.12",
     author="Marcelo LaFleur, Richard W. Evans, and Jason DeBacker",
     license="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
     description="Philippines Calibration for OG-Core",
@@ -20,7 +20,7 @@ setuptools.setup(
     packages=["ogphl"],
     package_data={"ogphl": ["ogphl_default_parameters.json", "data/*"]},
     include_packages=True,
-    python_requires=">=3.7.7, <3.13",
+    python_requires=">=3.11, <3.13",
     install_requires=[
         "numpy",
         "psutil",
@@ -29,7 +29,7 @@ setuptools.setup(
         "matplotlib",
         "dask>=2.30.0",
         "distributed>=2.30.1",
-        "paramtools>=0.15.0",
+        "paramtools>=0.20.0",
         "requests",
         "pandas-datareader",
         "xlwt",
