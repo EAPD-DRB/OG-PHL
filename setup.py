@@ -18,7 +18,12 @@ setuptools.setup(
         "Issue Tracker": "https://github.com/EAPD-DRB/OG-PHL/issues",
     },
     packages=["ogphl"],
-    package_data={"ogphl": ["ogphl_default_parameters.json", "data/*"]},
+    package_data={
+        "ogphl": [
+            "ogphl_default_parameters.json",
+            "data/*"
+        ]
+    },
     include_packages=True,
     python_requires=">=3.11, <3.13",
     install_requires=[
