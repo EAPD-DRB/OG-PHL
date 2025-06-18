@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.12] - 2025-06-17 12:00:00
+## [0.0.12] - 2025-06-18 12:00:00
 
 ### Added
 
 - Updates the `.gitignore` file to ignore output from the `run_og_phl_multi_industry.py` example script in the `/OG-PHL-MultiExample/` directory
-- Updates calibration in `ogphl_default_parameters.json` for `alpha_G`, `debt_ratio_ss`, `alpha_RM_1`, `alpha_RM_T`, and `g_RM`
-- Updates the corresponding documentation in `households.md` and `government.md`
+- Updates calibration in `ogphl_default_parameters.json` for `alpha_G`, `debt_ratio_ss`, `alpha_RM_1`, `alpha_RM_T`, `g_RM`, `gamma`, and `gamma_g`
+- Updates the corresponding documentation in `households.md`, `firms.md`, and `government.md`
 - Fixes a missing equation reference in `taxes.md` and changes it to a footnote, and adds footnote section heading in `demographics.md`
 - Updates the Python range in `environment.yml`
 - Updates the `python_requires` range in `setup.py` to between 3.11 and 3.12
