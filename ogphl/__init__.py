@@ -8,4 +8,4 @@ from ogphl.input_output import *
 from ogphl.macro_params import *
 from ogphl.utils import *
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"
