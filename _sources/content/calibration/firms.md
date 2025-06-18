@@ -11,4 +11,4 @@ The [OG-Core firm theory documentation](https://pslmodels.github.io/OG-Core/cont
 
 ### Capital's share of output
 
-Here, we use a default value of $\gamma =0.588$, which comes from national accounts data.
+Philippine national accounts data suggest that the capital share of income is 58.785%. However, we allocate 5% of that to infrastructure investment $\gamma_{g,m}=0.05$ for all $m$ and $\gamma_m=0.53785$. We are simply allocating 5% of the capital share of output to infrastructure investment. We tried a higher percentage of 10% to infrastructure investment, but the steady-state solution would not solve.

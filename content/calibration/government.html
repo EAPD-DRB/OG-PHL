@@ -419,6 +419,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-transfers-as-a-share-of-gdp">Government Transfers as a Share of GDP</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-spending-as-a-share-of-gdp">Government Spending as a Share of GDP</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-spending-on-infrastructure-as-a-share-of-gdp">Government spending on infrastructure as a share of GDP</a></li>
 </ul>
@@ -436,9 +437,13 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="calibration-of-government-parameters">
 <span id="chap-govcalib"></span><h1>Calibration of Government Parameters<a class="headerlink" href="#calibration-of-government-parameters" title="Link to this heading">#</a></h1>
+<section id="government-transfers-as-a-share-of-gdp">
+<h2>Government Transfers as a Share of GDP<a class="headerlink" href="#government-transfers-as-a-share-of-gdp" title="Link to this heading">#</a></h2>
+<p>We have calibrated Philippine government spending on transfer programs as a percent of GDP as <span class="math notranslate nohighlight">\(\alpha_T=[0.0971]\)</span>. [TODO: Include citation.]</p>
+</section>
 <section id="government-spending-as-a-share-of-gdp">
 <h2>Government Spending as a Share of GDP<a class="headerlink" href="#government-spending-as-a-share-of-gdp" title="Link to this heading">#</a></h2>
-<p>We’ve calibrated the vector <span class="math notranslate nohighlight">\(\alpha_G=[0.215, 0.209, 0.207]\)</span>. These values are forecasts for 2025, 2026 and 2027. This came from the 2025 Budget of Expenditures and Sources of Financing Table A2 <a class="reference external" href="https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025">https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025</a> .</p>
+<p>The 2025 Budget of Expenditures and Sources of Financing Table A2 <a class="reference external" href="https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025">https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025</a> forecasts total federal spending as a percent of GDP in 2025, 2026, and 2027 as 21.5%, 20.9%, and 20.7%, respectively. To get the portion that is net of transfers, we subtract off the calibrated percentage of spending on transfers as a percent of GDP <span class="math notranslate nohighlight">\(\alpha_T=[0.0971]\)</span>. This gives our calibration for government spending net of transfers as a percent of GDP for 2025, 2026, and 2027 as <span class="math notranslate nohighlight">\(\alpha_G=[0.1179, 0.1119, 0.1099]\)</span>.</p>
 <section id="government-spending-on-infrastructure-as-a-share-of-gdp">
 <h3>Government spending on infrastructure as a share of GDP<a class="headerlink" href="#government-spending-on-infrastructure-as-a-share-of-gdp" title="Link to this heading">#</a></h3>
 <p>We’ve calibrated the vector <span class="math notranslate nohighlight">\(\alpha_I=[0.054, 0.054, 0.056]\)</span>. These values are forecasts for 2025, 2026 and 2027. This came from the 2025 Budget of Expenditures and Sources of Financing Table A2 <a class="reference external" href="https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025">https://www.dbm.gov.ph/index.php/2025/budget-of-expenditures-and-sources-of-financing-fy-2025</a></p>
@@ -510,6 +515,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-transfers-as-a-share-of-gdp">Government Transfers as a Share of GDP</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-spending-as-a-share-of-gdp">Government Spending as a Share of GDP</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-spending-on-infrastructure-as-a-share-of-gdp">Government spending on infrastructure as a share of GDP</a></li>
 </ul>
