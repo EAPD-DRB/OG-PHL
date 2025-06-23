@@ -800,8 +800,8 @@
         0.054,
         0.056
     ],
-    "alpha_RM_1": 0.00,
-    "alpha_RM_T": 0.00,
+    "alpha_RM_1": 0.083,
+    "alpha_RM_T": 0.083,
     "g_RM": [0.03],
     "rho_G": 0.1,
     "debt_ratio_ss": 0.8,
