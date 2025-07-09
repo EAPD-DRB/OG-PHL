@@ -800,8 +800,8 @@
         0.054,
         0.056
     ],
-    "alpha_RM_1": 0.00,
-    "alpha_RM_T": 0.00,
+    "alpha_RM_1": 0.083,
+    "alpha_RM_T": 0.083,
     "g_RM": [0.03],
     "rho_G": 0.1,
     "debt_ratio_ss": 0.8,
@@ -2453,10 +2453,10 @@
     "RC_SS": 1e-09,
     "RC_TPI": 0.001,
     "reform_use_baseline_solution": true,
-    "initial_guess_r_SS": 0.04,
-    "initial_guess_w_SS": 1.1617041226785383,
-    "initial_guess_TR_SS": 0.042,
-    "initial_guess_factor_SS": 71707.0,
+    "initial_guess_r_SS": 0.049,
+    "initial_guess_w_SS": 4.159,
+    "initial_guess_TR_SS": 0.438,
+    "initial_guess_factor_SS": 127276.0,
     "omega": [
         [
             0.030058439655327094,
