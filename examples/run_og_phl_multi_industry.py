@@ -83,6 +83,9 @@ def main():
             0.3,
         ],  # 36\% of GDP on average https://documents1.worldbank.org/curated/en/099435011152325553/pdf/IDU025ef01630fdd504ae5085e90437dc8b1c171.pdf
         "io_matrix": np.eye(2),
+        "initial_guess_r_SS": 0.044,
+        "initial_guess_TR_SS": 0.123,
+        "initial_guess_factor_SS": 337283.0,
     }
     p.update_specifications(informal_spec)
 
