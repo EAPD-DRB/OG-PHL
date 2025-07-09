@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Updates the remittances default calibration values in `ogphl_default_parameters.json`
-- Updates the `ogcore` package requirement in `environment.yml` and `setup.py` to `ogcore>=0.14.4`
+- Updates the initial values `initial_guess_r_SS`, `initial_guess_w_SS` (not used), `initial_guess_TR_SS`, and `initial_guess_factor_SS` in `ogphl_default_parameters.json` in order to make the steady-state in the baseline solve faster.
+- Updates the `ogcore` package requirement in `environment.yml` and `setup.py` to `ogcore>=0.14.5`
 
 ## [0.0.12] - 2025-06-18 12:00:00
 
