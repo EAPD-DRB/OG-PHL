@@ -39,7 +39,7 @@ setuptools.setup(
         "wheel",
         "black",
         "linecheck",
-        "ogcore>=0.14.4",
+        "ogcore>=0.14.5",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

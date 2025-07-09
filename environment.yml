@@ -36,6 +36,6 @@ dependencies:
   - openpyxl>=3.1.2
   - pandas-datareader
   - linecheck
-  - ogcore>=0.14.4
+  - ogcore>=0.14.5
   - sphinx-exercise
   - sphinx-proof
