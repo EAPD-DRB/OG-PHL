@@ -5,13 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.13] - 2025-07-08 12:00:00
+## [0.0.14] - 2026-01-04 12:00:00
 
 ### Added
 
 - Updates the remittances default calibration values in `ogphl_default_parameters.json`
-- Updates the initial values `initial_guess_r_SS`, `initial_guess_w_SS` (not used), `initial_guess_TR_SS`, and `initial_guess_factor_SS` in `ogphl_default_parameters.json` in order to make the steady-state in the baseline solve faster.
+- Updates the initial values `initial_guess_r_SS`, `initial_guess_TR_SS`, and `initial_guess_factor_SS` in `ogphl_default_parameters.json` in order to make the steady-state in the baseline solve faster.
 - Updates the `ogcore` package requirement in `environment.yml` and `setup.py` to `ogcore>=0.14.5`
+
+## [0.0.13] - 2025-08-15 21:00:00
+
+### Added
+
+- Updates for Python 3.13 compatibility
+- Removes the deprecated `initial_guess_w_SS` parameter from the default parameters file
 
 ## [0.0.12] - 2025-06-18 12:00:00
 
@@ -93,6 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This version is a pre-release alpha. The example run script `OG-PHL/examples/run_og_phl.py` runs, but the model is not currently calibrated to represent the Philippines economy and population.
 
 
+[0.0.14]: https://github.com/EAPD-DRB/OG-PHL/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/EAPD-DRB/OG-PHL/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/EAPD-DRB/OG-PHL/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/EAPD-DRB/OG-PHL/compare/v0.0.10...v0.0.11

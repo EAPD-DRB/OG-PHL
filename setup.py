@@ -20,7 +20,7 @@ setuptools.setup(
     packages=["ogphl"],
     package_data={"ogphl": ["ogphl_default_parameters.json", "data/*"]},
     include_packages=True,
-    python_requires=">=3.11, <3.13",
+    python_requires=">3.11, <3.14",
     install_requires=[
         "numpy",
         "psutil",
@@ -48,8 +48,8 @@ setuptools.setup(
         "License :: OSI Approved :: Common Public License",
         "Operating System :: POSIX",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
