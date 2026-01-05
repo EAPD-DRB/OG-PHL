@@ -5,7 +5,7 @@ with open("README.md", "r") as readme_file:
 
 setuptools.setup(
     name="ogphl",
-    version="0.0.13",
+    version="0.0.14",
     author="Marcelo LaFleur, Richard W. Evans, and Jason DeBacker",
     license="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
     description="Philippines Calibration for OG-Core",
@@ -39,7 +39,7 @@ setuptools.setup(
         "wheel",
         "black",
         "linecheck",
-        "ogcore",
+        "ogcore>=0.14.5",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

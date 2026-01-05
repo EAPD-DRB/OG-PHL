@@ -800,11 +800,11 @@
         0.054,
         0.056
     ],
-    "alpha_RM_1": 0.00,
-    "alpha_RM_T": 0.00,
+    "alpha_RM_1": 0.083,
+    "alpha_RM_T": 0.083,
     "g_RM": [0.03],
     "rho_G": 0.1,
-    "debt_ratio_ss": 0.8,
+    "debt_ratio_ss": 1.10,
     "initial_debt_ratio": 0.6,
     "initial_Kg_ratio": 0.2,
     "r_gov_scale": [
@@ -2448,11 +2448,11 @@
     "mindist_SS": 1e-09,
     "mindist_TPI": 1e-05,
     "RC_SS": 1e-09,
-    "RC_TPI": 0.001,
+    "RC_TPI": 0.01,
     "reform_use_baseline_solution": true,
-    "initial_guess_r_SS": 0.04,
-    "initial_guess_TR_SS": 0.042,
-    "initial_guess_factor_SS": 71707.0,
+    "initial_guess_r_SS": 0.049,
+    "initial_guess_TR_SS": 0.438,
+    "initial_guess_factor_SS": 127276.0,
     "omega": [
         [
             0.030058439655327094,

@@ -51,19 +51,7 @@ def main():
     p.update_specifications(defaults)
     p.M = 2  # 7
     p.I = 2  # 5
-    # Update parameters from calibrate.py Calibration class
-    # c = Calibration(p)
-    # d = c.get_dict()
-    # updated_params = {
-    #     "gamma_g": [0.0] * p.M,
-    #     "epsilon": [1.0] * p.M,
-    #     "gamma": [0.588] * p.M,  #TODO: see if can find diff by industry
-    #      "cit_rate": [[0.25], [0.25]], #[[0.25], [0.25], [0.25], [0.25], [0.25], [0.25], [0.25]],  # TODO: see if can find diff by industry
-    #     "tau_c": [[0.11], [0.11]], #[[0.11], [0.11], [0.11], [0.11], [0.11]],  # TODO: see if can find diff by cons good
-    #     "alpha_c": [0.7, 0.3], #d["alpha_c"],
-    #     "io_matrix": np.eye(2) #d["io_matrix"],
-    # }
-    # p.update_specifications(updated_params)
+    # Update parameters for two-industry model
     informal_spec = {
         "M": 2,
         "I": 2,
@@ -83,6 +71,11 @@ def main():
             0.3,
         ],  # 36\% of GDP on average https://documents1.worldbank.org/curated/en/099435011152325553/pdf/IDU025ef01630fdd504ae5085e90437dc8b1c171.pdf
         "io_matrix": np.eye(2),
+        "initial_guess_r_SS": 0.044,
+        # I don't know why multiplying initial_guess_TR_SS by 0.2 makes the
+        # steady-state solve more easily, but it does.
+        "initial_guess_TR_SS": 0.123 * 0.2,
+        "initial_guess_factor_SS": 337283.0,
     }
     p.update_specifications(informal_spec)
 
