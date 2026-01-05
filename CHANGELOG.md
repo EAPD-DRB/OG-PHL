@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.14] - 2026-01-04 12:00:00
+## [0.0.14] - 2026-01-05 12:00:00
 
 ### Added
 
 - Updates the remittances default calibration values in `ogphl_default_parameters.json`
 - Updates the initial values `initial_guess_r_SS`, `initial_guess_TR_SS`, and `initial_guess_factor_SS` in `ogphl_default_parameters.json` in order to make the steady-state in the baseline solve faster.
 - Updates the `ogcore` package requirement in `environment.yml` and `setup.py` to `ogcore>=0.14.5`
+- Updates the `RC_TPI=0.01` temporarily.
 
 ## [0.0.13] - 2025-08-15 21:00:00
 
