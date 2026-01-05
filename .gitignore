@@ -1,6 +1,7 @@
 *.pyc
 MANIFEST
 build/*
+_build*
 dist/*
 *.cache/
 .coverage
