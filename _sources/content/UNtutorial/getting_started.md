@@ -24,36 +24,47 @@ For the October 21-25, 2024 United Nations `OG-PHL` training in Manila, we will 
 * - Day
   - Session
   - Topic
+  - Materials
 * - Mon.
   - Morning
   - Organizer introductions <br> [Setup Python](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#install-python), [Git, GitHub](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#installing-git-and-github), and [OG-PHL](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html#fork-and-clone-og-phl-repository)
+  - [Intro slides 1](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/materials/OG-Core-GeneralDescription1.pdf)
 * -
   - Afternoon
   - Theory: ["Simple" 3-period-lived agent model](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html)
+  - (See [doc chapter](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html))
 * - Tue.
   - Morning
   - Review 3-period-lived-agent exercises (solutions in [this folder](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/solutions/3perOG/)) <br> Review OG-Core and OG-PHL modules <br> Quick Git and GitHub workflow review
+  -
 * -
   - Afternoon
   - Running OG-PHL, inputs, outputs <br> Calibrating OG-PHL, current state, still to do
+  - [Input/output slides](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/materials/OG-Core-GeneralDescription2.pdf)
 * - Wed.
   - Morning
   - Running OG-PHL: Revisit some reforms from 2-day visit <br> Talk about new reforms, create project teams
+  -
 * -
   - Afternoon
   - OG-PHL output: Tools to visualize/tabulate output <br> OG-PHL built-in calibration helps
+  -
 * - Thu.
   - Morning
   - Calibrating OG-PHL: Issues and hot spots
+  - [Calibration and data slides](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/materials/OG-PHL-CurrentState.pdf)
 * -
   - Afternoon
   - Calibrating OG-PHL: Issues and hot spots
+  -
 * - Fri.
   - Morning
   - Open work, project hackathon, office hours <br> Advanced topics: Adding trade, connecting to other models
+  - [Open source workflow slides](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/materials/WorkingOpenSource.pdf)
 * -
   - Afternoon
   - Presentation of projects <br> Future work, research, collaboration, final topics <br> Closing remarks
+  -
 ```
 
 (Sec_UNtutor_python)=
