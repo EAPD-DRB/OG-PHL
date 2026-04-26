@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import requests
 
-
 GDP_GROWTH_START_YEAR = 2000
 GDP_GROWTH_END_YEAR = 2019
 EXTERNAL_DEBT_REPORTING_LAG_YEARS = 2
