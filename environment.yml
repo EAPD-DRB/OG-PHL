@@ -34,7 +34,6 @@ dependencies:
 - pip
 - pip:
   - openpyxl>=3.1.2
-  - pandas-datareader
   - linecheck
   - ogcore>=0.14.5
   - sphinx-exercise
