@@ -778,9 +778,9 @@
     "world_int_rate_annual": [
         0.04
     ],
-    "initial_foreign_debt_ratio": 0.14631026987442952,
+    "initial_foreign_debt_ratio": 0.2,
     "zeta_D": [
-        0.14631026987442952
+        0.2
     ],
     "zeta_K": [
         0.9
@@ -788,20 +788,20 @@
     "tG1": 20,
     "tG2": 256,
     "alpha_T": [
-        0.0971
+        0.0448
     ],
     "alpha_G": [
-        0.1179,
-        0.1119,
-        0.1099
+        0.1702,
+        0.1632,
+        0.1612
     ],
     "alpha_I": [
-        0.054,
-        0.054,
-        0.056
+        0.051,
+        0.051,
+        0.052
     ],
-    "alpha_RM_1": 0.083,
-    "alpha_RM_T": 0.083,
+    "alpha_RM_1": 0.072,
+    "alpha_RM_T": 0.072,
     "g_RM": [0.03],
     "rho_G": 0.1,
     "debt_ratio_ss": 1.10,
@@ -847,7 +847,7 @@
         0.0
     ],
     "tau_bq": [
-        0.2
+        0.06
     ],
     "tau_payroll": [
         0.14
@@ -2417,7 +2417,7 @@
     "PIA_minpayment": 0.0,
     "budget_balance": false,
     "baseline_spending": false,
-    "start_year": 2025,
+    "start_year": 2026,
     "tax_func_type": "linear",
     "labor_income_tax_noncompliance_rate": [
         [
@@ -101429,25 +101429,25 @@
     "etr_params": [
         [
             [
-                0.25
+                0.20
             ]
         ]
     ],
     "mtrx_params": [
         [
             [
-                0.18
+                0.20
             ]
         ]
     ],
     "mtry_params": [
         [
             [
-                0.18
+                0.06
             ]
         ]
     ],
-    "mean_income_data": 307195.71,
+    "mean_income_data": 353230,
     "frac_tax_payroll": [
         0.0
     ]
