@@ -15,39 +15,42 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/exercise.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -64,6 +67,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -79,19 +83,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -99,7 +92,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -107,8 +99,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -126,7 +118,8 @@
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -156,21 +149,17 @@
     
     
     <img src="../../_static/OG-PHL_logo.png" class="logo__image only-light" alt="OG-PHL - Home"/>
-    <script>document.write(`<img src="../../_static/OG-PHL_logo.png" class="logo__image only-dark" alt="OG-PHL - Home"/>`);</script>
+    <img src="../../_static/OG-PHL_logo.png" class="logo__image only-dark pst-js-only" alt="OG-PHL - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -229,9 +218,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -313,7 +307,7 @@
 
 
 <button onclick="toggleFullScreen()"
-  class="btn btn-sm btn-fullscreen-button"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
   title="Fullscreen mode"
   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
@@ -327,24 +321,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 
 </div></div>
       
@@ -372,19 +358,287 @@ document.write(`
                   
   <h1>Source code for ogphl.macro_params</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module uses data from World Bank WDI, World Bank Quarterly Public</span>
-<span class="sd">Sector Debt (QPSD) database, the IMF, and UN ILO to find values for</span>
-<span class="sd">parameters for the OG-PHL model that rely on macro data for calibration.</span>
+<span class="sd">This module uses data from World Bank WDI, the IMF, and UN ILO to find</span>
+<span class="sd">values for parameters for the OG-PHL model that rely on macro data for</span>
+<span class="sd">calibration.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader</span><span class="w"> </span><span class="kn">import</span> <span class="n">wb</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">GDP_GROWTH_START_YEAR</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">GDP_GROWTH_END_YEAR</span> <span class="o">=</span> <span class="mi">2019</span>
+<span class="n">EXTERNAL_DEBT_REPORTING_LAG_YEARS</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">ILOSTAT_HEADERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) &quot;</span>
+        <span class="s2">&quot;AppleWebKit/537.36 (KHTML, like Gecko) &quot;</span>
+        <span class="s2">&quot;Chrome/91.0.4472.124 Safari/537.36&quot;</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fetch_wb_data</span><span class="p">(</span><span class="n">indicators</span><span class="p">,</span> <span class="n">country_iso</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch a set of World Bank indicators and return a single DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        indicators (dict): mapping of human-readable labels to indicator codes</span>
+<span class="sd">        country_iso (str): ISO country code</span>
+<span class="sd">        start_year (int): first year to request</span>
+<span class="sd">        end_year (int): last year to request</span>
+<span class="sd">        source (int): World Bank source ID</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: DataFrame indexed by year/quarter label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">date_range</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_year</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">end_year</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="n">source</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="n">date_range</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_year</span><span class="si">}</span><span class="s2">Q1:</span><span class="si">{</span><span class="n">end_year</span><span class="si">}</span><span class="s2">Q4&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported World Bank source: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">data_frames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">indicator_code</span> <span class="ow">in</span> <span class="n">indicators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;https://api.worldbank.org/v2/country/&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country_iso</span><span class="si">}</span><span class="s2">/indicator/</span><span class="si">{</span><span class="n">indicator_code</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">),</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date_range</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_page&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Malformed World Bank response for </span><span class="si">{</span><span class="n">indicator_code</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Empty or malformed World Bank response for </span><span class="si">{</span><span class="n">indicator_code</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">series_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">series_data</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">series_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No dated observations in World Bank response for </span><span class="si">{</span><span class="n">indicator_code</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+        <span class="n">data_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;year&quot;</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_annual_index</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a World Bank annual response index to integer years.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">annual_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">annual_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">annual_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+    <span class="n">annual_data</span> <span class="o">=</span> <span class="n">annual_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">annual_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span>
+    <span class="n">annual_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">annual_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">annual_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_latest_at_or_before</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">target_year</span><span class="p">,</span> <span class="n">source_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the value for target_year or the latest nonmissing prior year.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">valid</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">valid</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No complete </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2"> data available up to </span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">selected_year</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span> <span class="ow">in</span> <span class="n">valid</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">valid</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">selected_year</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Warning: No </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2"> data for </span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Using last available year: </span><span class="si">{</span><span class="n">selected_year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">valid</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">selected_year</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_imf_macro_params</span><span class="p">(</span><span class="n">country_iso</span><span class="p">,</span> <span class="n">target_year</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch IMF GFS data and compute alpha_T and alpha_G.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        country_iso (str): ISO alpha-3 country code</span>
+<span class="sd">        target_year (int): preferred calibration year</span>
+<span class="sd">        data_path (str | Path | None): optional path to save IMF CSV data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: IMF-derived macro parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">required_indicators</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;G2_T&quot;</span><span class="p">,</span> <span class="s2">&quot;G24_T&quot;</span><span class="p">,</span> <span class="s2">&quot;G27_T&quot;</span><span class="p">,</span> <span class="s2">&quot;G271_T&quot;</span><span class="p">}</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;https://api.imf.org/external/sdmx/3.0/data/dataflow/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;IMF.STA/GFS_SOO/12.0.0/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country_iso</span><span class="si">}</span><span class="s2">.S1311.G2M.*.POGDP_PT.A&quot;</span>
+        <span class="p">),</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;structures&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data_set</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dataSets&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">series_dimensions</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="s2">&quot;dimensions&quot;</span><span class="p">][</span><span class="s2">&quot;series&quot;</span><span class="p">]</span>
+        <span class="n">observation_years</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">[</span><span class="s2">&quot;dimensions&quot;</span><span class="p">][</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;values&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Empty or malformed IMF response for GFS_SOO&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">data_set</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dimension_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">series_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">dim</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span> <span class="n">dim</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">series_dimensions</span><span class="p">,</span> <span class="n">dimension_indexes</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;INDICATOR&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">indicator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">required_indicators</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">observation_key</span><span class="p">,</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">series</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;observations&quot;</span><span class="p">,</span> <span class="p">{}</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">observation_years</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">observation_key</span><span class="p">)],</span>
+                    <span class="s2">&quot;indicator&quot;</span><span class="p">:</span> <span class="n">indicator</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+                    <span class="s2">&quot;country_iso&quot;</span><span class="p">:</span> <span class="n">country_iso</span><span class="p">,</span>
+                    <span class="s2">&quot;sector&quot;</span><span class="p">:</span> <span class="s2">&quot;S1311&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;IMF.STA:GFS_SOO(12.0.0)&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+    <span class="n">imf_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">imf_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty or malformed IMF response for GFS_SOO&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">imf_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;indicator&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+            <span class="n">data_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IMF data saved to </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">imf_data</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">imf_data</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+    <span class="n">imf_data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">imf_data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+    <span class="n">imf_data</span> <span class="o">=</span> <span class="n">imf_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+    <span class="n">available</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">imf_data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="s2">&quot;year&quot;</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;indicator&quot;</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">required_indicators</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">available</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">available</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No complete IMF data available for </span><span class="si">{</span><span class="n">country_iso</span><span class="si">}</span><span class="s2"> up to </span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">selected_year</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">available</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">selected_year</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_year</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Warning: No IMF data for </span><span class="si">{</span><span class="n">target_year</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Using last available year: </span><span class="si">{</span><span class="n">selected_year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">selected_year</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;alpha_T&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;G27_T&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;G271_T&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">100</span><span class="p">],</span>
+        <span class="s2">&quot;alpha_G&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;G2_T&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;G24_T&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;G27_T&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">100</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_ilo_gamma</span><span class="p">(</span><span class="n">country_iso</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">target_year</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch ILO labor-share data and compute capital&#39;s share of income.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;https://rplumber.ilo.org/data/indicator/&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;?id=LAP_2GDP_NOC_RT_A&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&amp;ref_area=&quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">country_iso</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;&amp;timefrom=&quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_year</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;&amp;type=both&amp;format=.csv&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ILO data target = &quot;</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">ILOSTAT_HEADERS</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">ilo_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;obs_value&quot;</span><span class="p">]]</span>
+    <span class="n">ilo_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">ilo_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+    <span class="n">ilo_data</span><span class="p">[</span><span class="s2">&quot;obs_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span>
+        <span class="n">ilo_data</span><span class="p">[</span><span class="s2">&quot;obs_value&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span>
+    <span class="p">)</span>
+    <span class="n">ilo_data</span> <span class="o">=</span> <span class="n">ilo_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;obs_value&quot;</span><span class="p">])</span>
+    <span class="n">labor_share</span> <span class="o">=</span> <span class="n">_latest_at_or_before</span><span class="p">(</span>
+        <span class="n">ilo_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)[</span><span class="s2">&quot;obs_value&quot;</span><span class="p">],</span>
+        <span class="n">target_year</span><span class="p">,</span>
+        <span class="s2">&quot;ILOSTAT&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">labor_share</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)]</span>
 
 
 <div class="viewcode-block" id="get_macro_params">
@@ -393,26 +647,24 @@ document.write(`
     <span class="n">data_start_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1947</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">data_end_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">country_iso</span><span class="o">=</span><span class="s2">&quot;PHL&quot;</span><span class="p">,</span>
+    <span class="n">update_from_api</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">imf_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute values of parameters that are derived from macro data</span>
+<span class="sd">    Compute values of parameters that are derived from macro data.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_start_date (datetime): start date for data</span>
 <span class="sd">        data_end_date (datetime): end date for data</span>
 <span class="sd">        country_iso (str): ISO code for country</span>
+<span class="sd">        update_from_api (bool): Set True to pull updated macro data</span>
+<span class="sd">        imf_data_path (str | Path | None): optional path to save IMF CSV data</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        macro_parameters (dict): dictionary of parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># initialize a dictionary of parameters</span>
     <span class="n">macro_parameters</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retrieve data from the World Bank World Development Indicators.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Dictionaries of variables and their corresponding World Bank codes</span>
-    <span class="c1"># Annual data</span>
     <span class="n">wb_a_variable_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;GDP per capita (constant 2015 US$)&quot;</span><span class="p">:</span> <span class="s2">&quot;NY.GDP.PCAP.KD&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Real GDP (constant 2015 US$)&quot;</span><span class="p">:</span> <span class="s2">&quot;NY.GDP.MKTP.KD&quot;</span><span class="p">,</span>
@@ -421,33 +673,23 @@ document.write(`
         <span class="s2">&quot;External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)&quot;</span><span class="p">:</span> <span class="s2">&quot;DT.DOD.DPPG.CD&quot;</span><span class="p">,</span>
         <span class="s2">&quot;External debt stocks, total (DOD, current US$)&quot;</span><span class="p">:</span> <span class="s2">&quot;DT.DOD.DECT.CD&quot;</span><span class="p">,</span>
         <span class="sa">r</span><span class="s2">&quot;External debt stocks (</span><span class="si">% o</span><span class="s2">f GNI)&quot;</span><span class="p">:</span> <span class="s2">&quot;DT.DOD.DECT.GN.ZS&quot;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s2">&quot;Central government debt, total (</span><span class="si">% o</span><span class="s2">f GDP)&quot;</span><span class="p">:</span> <span class="s2">&quot;GC.DOD.TOTL.GD.ZS&quot;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s2">&quot;General government final consumption expenditure (</span><span class="si">% o</span><span class="s2">f GDP)&quot;</span><span class="p">:</span> <span class="s2">&quot;NE.CON.GOVT.ZS&quot;</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># pull series of interest from the WB using pandas_datareader</span>
-        <span class="c1"># Annual data</span>
-        <span class="n">wb_data_a</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">WorldBankReader</span><span class="p">(</span>
-            <span class="n">symbols</span><span class="o">=</span><span class="n">wb_a_variable_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
-            <span class="n">countries</span><span class="o">=</span><span class="n">country_iso</span><span class="p">,</span>
-            <span class="n">start</span><span class="o">=</span><span class="n">data_start_date</span><span class="p">,</span>
-            <span class="n">end</span><span class="o">=</span><span class="n">data_end_date</span><span class="p">,</span>
-            <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">wb_data_a</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-            <span class="n">columns</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">wb_a_variable_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
-            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># Remove the hierarchical index (country and year) of</span>
-        <span class="c1"># wb_data_a and create a single row index using year</span>
-        <span class="n">wb_data_a</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">wb_data_a</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wb_data_a</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">wb_data_a</span> <span class="o">=</span> <span class="n">wb_data_a</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
-        <span class="c1"># Compute macro parameters from WB data</span>
-        <span class="c1"># Latest from WB WDI data is 2014, so use: https://www.treasury.gov.ph/?p=64737</span>
-        <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_debt_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.60</span>
-        <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_foreign_debt_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+
+    <span class="k">if</span> <span class="n">update_from_api</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">wb_data_a</span> <span class="o">=</span> <span class="n">_annual_index</span><span class="p">(</span>
+                <span class="n">_fetch_wb_data</span><span class="p">(</span>
+                    <span class="n">wb_a_variable_dict</span><span class="p">,</span>
+                    <span class="n">country_iso</span><span class="p">,</span>
+                    <span class="n">data_start_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+                    <span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+                    <span class="n">source</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># Gross national government debt as a share of GDP. This is a</span>
+            <span class="c1"># documented baseline source value, not computed from the WDI pull.</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_debt_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.60</span>
+            <span class="n">foreign_debt_ratio</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">wb_data_a</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;External debt stocks (</span><span class="si">% o</span><span class="s2">f GNI)&quot;</span><span class="p">]</span>
                 <span class="o">*</span> <span class="p">(</span>
                     <span class="n">wb_data_a</span><span class="p">[</span>
@@ -457,110 +699,120 @@ document.write(`
                         <span class="s2">&quot;External debt stocks, total (DOD, current US$)&quot;</span>
                     <span class="p">]</span>
                 <span class="p">)</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span>
-            <span class="o">/</span> <span class="mi">100</span>
-        <span class="p">)</span>
-        <span class="c1"># zeta_D = share of new debt issues from government that are</span>
-        <span class="c1"># purchased by foreigners</span>
-        <span class="c1"># set to initial ratio without better info</span>
-        <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;zeta_D&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_foreign_debt_ratio&quot;</span><span class="p">]</span>
-        <span class="p">]</span>
-        <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;g_y_annual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">wb_data_a</span><span class="p">[</span><span class="s2">&quot;GDP per capita (constant 2015 US$)&quot;</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2000</span><span class="p">:</span><span class="mi">2019</span><span class="p">]</span>  <span class="c1"># stop pre-COVID</span>
-            <span class="o">.</span><span class="n">pct_change</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;alpha_G&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">wb_data_a</span><span class="p">[</span>
-                    <span class="sa">r</span><span class="s2">&quot;General government final consumption expenditure (</span><span class="si">% o</span><span class="s2">f GDP)&quot;</span>
-                <span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">]</span>
                 <span class="o">/</span> <span class="mi">100</span>
             <span class="p">)</span>
-        <span class="p">]</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve data from World Bank&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Will not update the following parameters:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;[initial_debt_ratio, initial_foreign_debt_ratio, zeta_D, g_y, alpha_G]&quot;</span>
-        <span class="p">)</span>
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retrieve labour share data from the United Nations ILOSTAT Data API</span>
-<span class="sd">    (see https://rshiny.ilo.org/dataexplorer9/?lang=en)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;https://rplumber.ilo.org/data/indicator/&quot;</span>
-        <span class="o">+</span> <span class="s2">&quot;?id=LAP_2GDP_NOC_RT_A&quot;</span>
-        <span class="o">+</span> <span class="s2">&quot;&amp;ref_area=&quot;</span>
-        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">country_iso</span><span class="p">)</span>
-        <span class="o">+</span> <span class="s2">&quot;&amp;timefrom=&quot;</span>
-        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_start_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
-        <span class="o">+</span> <span class="s2">&quot;&amp;timeto=&quot;</span>
-        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
-        <span class="o">+</span> <span class="s2">&quot;&amp;type=both&amp;format=.csv&quot;</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ILO data target = &quot;</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-        <span class="n">csv_content</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">df_temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_content</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Failed to retrieve data. HTTP status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="n">ilo_data</span> <span class="o">=</span> <span class="n">df_temp</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;obs_value&quot;</span><span class="p">]]</span>
-    <span class="c1"># find gamma, capital&#39;s share of income</span>
-    <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="mi">1</span>
-        <span class="o">-</span> <span class="p">(</span>
-            <span class="p">(</span>
-                <span class="n">ilo_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="n">ilo_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="mi">2021</span><span class="p">),</span>
-                    <span class="s2">&quot;obs_value&quot;</span><span class="p">,</span>  <span class="c1"># 2021 is latest year of data</span>
-                <span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_foreign_debt_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">_latest_at_or_before</span><span class="p">(</span>
+                    <span class="n">foreign_debt_ratio</span><span class="p">,</span>
+                    <span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="n">EXTERNAL_DEBT_REPORTING_LAG_YEARS</span><span class="p">,</span>
+                    <span class="s2">&quot;World Bank external debt&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-            <span class="o">/</span> <span class="mi">100</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;zeta_D&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;initial_foreign_debt_ratio&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;g_y_annual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">wb_data_a</span><span class="p">[</span><span class="s2">&quot;GDP per capita (constant 2015 US$)&quot;</span><span class="p">]</span>
+                <span class="c1"># Use the pre-pandemic growth window to avoid COVID-era</span>
+                <span class="c1"># volatility driving the steady-state productivity target.</span>
+                <span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">GDP_GROWTH_START_YEAR</span><span class="p">:</span><span class="n">GDP_GROWTH_END_YEAR</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">pct_change</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;initial_debt_ratio set from documented source: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;initial_debt_ratio&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;initial_foreign_debt_ratio updated from World Bank API: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;initial_foreign_debt_ratio&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;zeta_D updated from World Bank API: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;zeta_D&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;g_y_annual updated from World Bank API: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;g_y_annual&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve data from World Bank&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Will not update the following parameters:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;[initial_debt_ratio, initial_foreign_debt_ratio, zeta_D, g_y]&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not updating from World Bank API&quot;</span><span class="p">)</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calibrate parameters from IMF data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># alpha_T, non-social security benefits as a fraction of GDP</span>
-    <span class="c1"># can&#39;t find this specifically, so use primary expenditures minus</span>
-    <span class="c1"># final consumption expenditures</span>
-    <span class="c1"># source: https://www.imf.org/external/datamapper/profile/PHL</span>
-    <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;alpha_T&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2391</span> <span class="o">-</span> <span class="mf">0.142</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">update_from_api</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_ilo_gamma</span><span class="p">(</span>
+                <span class="n">country_iso</span><span class="p">,</span>
+                <span class="n">data_start_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+                <span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;gamma updated from ILOSTAT API: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve data from ILOSTAT&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Will not update gamma&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not updating from ILOSTAT API&quot;</span><span class="p">)</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
-<span class="sd">    Esimate the discount on sovereign yields relative to private debt</span>
-<span class="sd">    Follow the methodology in Li, Magud, Werner, Witte (2021)</span>
-<span class="sd">    available at:</span>
-<span class="sd">    https://www.imf.org/en/Publications/WP/Issues/2021/06/04/The-Long-Run-Impact-of-Sovereign-Yields-on-Corporate-Yields-in-Emerging-Markets-50224</span>
+    <span class="k">if</span> <span class="n">update_from_api</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">macro_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">_get_imf_macro_params</span><span class="p">(</span>
+                    <span class="n">country_iso</span><span class="p">,</span>
+                    <span class="n">data_end_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+                    <span class="n">data_path</span><span class="o">=</span><span class="n">imf_data_path</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;alpha_T updated from IMF data: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;alpha_T&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;alpha_G updated from IMF data: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;alpha_G&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve data from IMF&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Will not update alpha_T, alpha_G&quot;</span><span class="p">)</span>
 
-<span class="sd">    Steps:</span>
-<span class="sd">    1) Generate modelled corporate yields (corp_yhat) for a range of</span>
-<span class="sd">    sovereign yields (sov_y)  using the estimated equation in col 2 of</span>
-<span class="sd">    table 8 (and figure 3). 2) Estimate the OLS using sovereign yields</span>
-<span class="sd">    as the dependent variable</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">        Esimate the discount on sovereign yields relative to private debt</span>
+<span class="sd">        Follow the methodology in Li, Magud, Werner, Witte (2021)</span>
+<span class="sd">        available at:</span>
+<span class="sd">        https://www.imf.org/en/Publications/WP/Issues/2021/06/04/The-Long-Run-Impact-of-Sovereign-Yields-on-Corporate-Yields-in-Emerging-Markets-50224</span>
 
-    <span class="c1"># # estimate r_gov_shift and r_gov_scale</span>
-    <span class="n">sov_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
-    <span class="n">corp_yhat</span> <span class="o">=</span> <span class="mf">8.199</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.975</span> <span class="o">*</span> <span class="n">sov_y</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.478</span> <span class="o">*</span> <span class="n">sov_y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">corp_yhat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">corp_yhat</span><span class="p">)</span>
-    <span class="n">mod</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span>
-        <span class="n">sov_y</span><span class="p">,</span>
-        <span class="n">corp_yhat</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-    <span class="c1"># First term is the constant and needs to be divided by 100 to have</span>
-    <span class="c1"># the correct unit. Second term is the coefficient</span>
-    <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;r_gov_shift&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">]</span>
-    <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;r_gov_scale&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="sd">        Steps:</span>
+<span class="sd">        1) Generate modelled corporate yields (corp_yhat) for a range of</span>
+<span class="sd">        sovereign yields (sov_y)  using the estimated equation in col 2 of</span>
+<span class="sd">        table 8 (and figure 3). 2) Estimate the OLS using sovereign yields</span>
+<span class="sd">        as the dependent variable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+            <span class="n">sov_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
+            <span class="n">corp_yhat</span> <span class="o">=</span> <span class="mf">8.199</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.975</span> <span class="o">*</span> <span class="n">sov_y</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.478</span> <span class="o">*</span> <span class="n">sov_y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">corp_yhat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">corp_yhat</span><span class="p">)</span>
+            <span class="n">mod</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span>
+                <span class="n">sov_y</span><span class="p">,</span>
+                <span class="n">corp_yhat</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="c1"># First term is the constant and needs to be divided by 100 to</span>
+            <span class="c1"># have the correct unit. Second term is the coefficient.</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;r_gov_shift&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">]</span>
+            <span class="n">macro_parameters</span><span class="p">[</span><span class="s2">&quot;r_gov_scale&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;r_gov_shift updated from IMF data: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;r_gov_shift&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;r_gov_scale updated from IMF data: </span><span class="si">{</span><span class="n">macro_parameters</span><span class="p">[</span><span class="s1">&#39;r_gov_scale&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to compute r_gov_shift, r_gov_scale&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Will not update r_gov_shift, r_gov_scale&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not updating alpha_T, alpha_G, r_gov_shift, r_gov_scale&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">macro_parameters</span></div>
 
@@ -626,8 +878,8 @@ By Marcelo LaFleur, Richard W. Evans, and Jason DeBacker
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
