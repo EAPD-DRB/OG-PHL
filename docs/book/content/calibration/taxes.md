@@ -14,7 +14,11 @@ The government sector influences households through two terms in the household b
   &\quad\forall j,t\quad\text{and}\quad s\geq E+1 \quad\text{where}\quad b_{j,E+1,t}=0\quad\forall j,t
 ```
 
-The total tax function, $T_{s,t}$, is a function of personal income taxes, taxes on bequests, and wealth taxes.  In the default calibration, wealth and bequest taxes are set to zero in `OG-PHL`. Personal income taxes are modeled as linear taxes and set to average effective and marginal tax rates. The [OG-Core documentation](https://pslmodels.github.io/OG-Core/content/theory/government.html#taxes) details more detailed ways to match the progressivity of the tax system.  But given limited data for Philippines, we start with simple linear tax rates of 12% for effective tax rates on personal income, a 18% marginal tax rate on capital income, and a 18\% marginal tax rate on labor income.
+The total tax function, $T_{s,t}$, is a function of personal income taxes, taxes on bequests, and wealth taxes. In the default calibration, wealth taxes are set to zero in `OG-PHL`. The bequest tax $\tau_{bq}$ is set to 6%, matching the statutory estate tax rate established by the TRAIN Law (Republic Act No. 10963), as published by the Bureau of Internal Revenue ([source](https://www.bir.gov.ph/estate-tax)).
+
+Personal income taxes are modeled as linear taxes and set to average effective and marginal tax rates. The [OG-Core documentation](https://pslmodels.github.io/OG-Core/content/theory/government.html#taxes) details more sophisticated ways to match the progressivity of the tax system. But given limited data for the Philippines, we start with simple linear tax rates: a 20% effective tax rate on personal income (`etr_params`, calibrated to equal the marginal tax rate on labor income), a 20% marginal tax rate on labor income (`mtrx_params`, calibrated using Department of Finance data), and a 6% marginal tax rate on capital income (`mtry_params`, set to the flat capital gains rate established by the TRAIN Law per the Bureau of Internal Revenue).
+
+The `mean_income_data` parameter, used in tax function estimation, is set to ₱353,230 — the mean family income from the Philippine Statistics Authority's Family Income and Expenditure Survey for 2023 ([source](https://psa.gov.ph/statistics/income-expenditure/fies/index)).
 
 ## Corporate income taxes
 
