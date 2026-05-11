@@ -4,8 +4,8 @@ Tests of input_output.py module
 
 import pandas as pd
 import pytest
+from unittest.mock import patch
 from ogphl import input_output as io
-
 
 sam_dict = {
     # "index": ["Beer", "Chocolate", "Car", "House"],
@@ -73,3 +73,21 @@ def test_get_io_matrix(sam_df, cons_dict, prod_dict):
     assert list(test_df.index).sort() == ["Food", "Non-food"].sort()
     assert test_df.loc["Food", "Primary"] == 2 / 3
     assert test_df.loc["Food", "Secondary"] == 1 / 3
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_alpha_c_raises_on_none_sam(mock_read_sam):
+    """
+    get_alpha_c() raises RuntimeError when SAM data is unavailable.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute alpha_c"):
+        io.get_alpha_c()
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_io_matrix_raises_on_none_sam(mock_read_sam):
+    """
+    get_io_matrix() raises RuntimeError when SAM data is unavailable.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute io_matrix"):
+        io.get_io_matrix()

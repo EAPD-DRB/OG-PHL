@@ -14,7 +14,6 @@ from ogcore import parameter_plots as pp
 from ogcore import demographics as demog
 import ogphl
 
-
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 UN_COUNTRY_CODE = "608"
 plot_path = os.path.join(CUR_DIR, "book", "content", "calibration", "images")
