@@ -37,7 +37,7 @@ kernelspec:
 
 | Symbol                           | Description                                                             | Value                                                 |
 |:---------------------------------|:------------------------------------------------------------------------|:------------------------------------------------------|
-| $\texttt{start_year}$            | Initial year                                                            | 2023                                                  |
+| $\texttt{start_year}$            | Initial year                                                            | 2026                                                  |
 | $\omega_{s,t}$                   | Population by age over time                                             | Too large to report here, see default parameters JSON |
 | $i_{s,t}$                        | Immigration rates by age                                                | Too large to report here, see default parameters JSON |
 | $\rho_{s,t}$                    | Mortality rates by age                                                  | Too large to report here, see default parameters JSON |
@@ -67,7 +67,7 @@ kernelspec:
 | $\texttt{analytical_mtrs}$      | Whether use analytical MTRs or estimate MTRs                            | 0.00E+00                                              |
 | $\texttt{age_specific}$         | Whether use age-specific tax functions                                  | 1.000                                                 |
 | $\tau^{p}_{t}$                   | Payroll tax rate                                                        | [0.140...0.140]                                       |
-| $\tau^{BQ}_{t}$                  | Bequest (estate) tax rate                                               | [0.200...0.200]                                       |
+| $\tau^{BQ}_{t}$                  | Bequest (estate) tax rate                                               | [0.060...0.060]                                       |
 | $\tau^{b}_{t}$                   | Entity-level business income tax rate                                   | Too large to report here, see default parameters JSON |
 | $\delta^{\tau}_{t}$              | Rate of depreciation for tax purposes                                   | Too large to report here, see default parameters JSON |
 | $\tau^{c}_{t,s,j}$               | Consumption tax rates                                                   | Too large to report here, see default parameters JSON |
@@ -76,10 +76,10 @@ kernelspec:
 | $P$                              | Coefficient on level term in wealth tax function                        | [0.000...0.000]                                       |
 | $\texttt{budget_balance}$       | Whether have a balanced budget in each period                           | 0.00E+00                                              |
 | $\texttt{baseline_spending}$    | Whether level of spending constant between the baseline and reform runs | 0.00E+00                                              |
-| $\alpha^{T}_{t}$                 | Transfers as a share of GDP                                             | [0.097...0.097]                                       |
+| $\alpha^{T}_{t}$                 | Transfers as a share of GDP                                             | [0.0448...0.0448]                                     |
 | $\eta_{j,s,t}$                   | Distribution of transfers                                               | Too large to report here, see default parameters JSON |
-| $\alpha^{G}_{t}$                 | Government spending as a share of GDP                                   | [0.215, 0.209, 0.207]                                  |
-| $\alpha^{I}_{t}$                 | Government infrastructure spending as a share of GDP                    | [0.054, 0.054, 0.056]                                 |
+| $\alpha^{G}_{t}$                 | Government spending as a share of GDP                                   | [0.1702, 0.1632, 0.1612]                              |
+| $\alpha^{I}_{t}$                 | Government infrastructure spending as a share of GDP                    | [0.051, 0.051, 0.052]                                 |
 | $t_{G1}$                         | Model period in which budget closure rule starts                        | 20                                                    |
 | $t_{G2}$                         | Model period in which budget closure rule ends                          | 256                                                   |
 | $\rho_{G}$                       | Budget closure rule smoothing parameter                                 | 0.100                                                 |
@@ -97,8 +97,8 @@ kernelspec:
 | $\texttt{PIA_minpayment}$       | Minimum PIA payment                                                     | 0.00E+00                                              |
 | $\theta_{adj,t}$                 | Adjustment to replacement rate                                          | [1.000...1.000]                                       |
 | $r^{*}_{t}$                      | World interest rate                                                     | [0.040...0.040]                                       |
-| $D_{f,0}$                        | Share of government debt held by foreigners in initial period           | 0.146                                                 |
-| $\zeta_{D, t}$                   | Share of new debt issues purchased by foreigners                        | [0.146...0.146]                                       |
+| $D_{f,0}$                        | Share of government debt held by foreigners in initial period           | 0.200                                                 |
+| $\zeta_{D, t}$                   | Share of new debt issues purchased by foreigners                        | [0.200...0.200]                                       |
 | $\zeta_{K, t}$                   | Share of excess capital demand satisfied by foreigners                  | [0.900...0.900]                                       |
 | $\xi$                            | Dampening parameter for TPI                                             | 0.400                                                 |
 | $\texttt{maxiter}$               | Maximum number of iterations for TPI                                    | 250                                                   |

@@ -410,12 +410,14 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-holding-of-government-debt-in-the-initial-period">Foreign holding of government debt in the initial period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-purchases-of-newly-issued-debt">Foreign purchases of newly issued debt</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-holdings-of-excess-capital">Foreign holdings of excess capital</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remittances-as-a-share-of-gdp">Remittances as a share of GDP</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-debt-spending-and-transfers">Government Debt, Spending and Transfers</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-debt">Government Debt</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aggregate-transfers">Aggregate transfers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-expenditures">Government expenditures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-interest-rate-wedge">Government interest rate wedge</a></li>
 </ul>
 </li>
 </ul>
@@ -433,21 +435,25 @@
 <span id="chap-macrocalib"></span><h1>Calibration of Macroeconomic Parameters<a class="headerlink" href="#calibration-of-macroeconomic-parameters" title="Link to this heading">#</a></h1>
 <section id="economic-assumptions">
 <h2>Economic Assumptions<a class="headerlink" href="#economic-assumptions" title="Link to this heading">#</a></h2>
-<p>As the default rate of labor augmenting technological change, <span class="math notranslate nohighlight">\(g_y\)</span>, we use a value of 3.6%.  The average annual growth rate in GDP per capita in the Philippines between 2000 and 2019 is 3.6% per year.</p>
+<p>As the default rate of labor augmenting technological change, <span class="math notranslate nohighlight">\(g_y\)</span>, we use a value of 3.6%. The average annual growth rate in GDP per capita in the Philippines between 2000 and 2019 is 3.6% per year. The pre-pandemic window is used deliberately to avoid COVID-era volatility distorting the steady-state productivity target.</p>
 </section>
 <section id="open-economy-parameters">
 <h2>Open Economy Parameters<a class="headerlink" href="#open-economy-parameters" title="Link to this heading">#</a></h2>
 <section id="foreign-holding-of-government-debt-in-the-initial-period">
 <h3>Foreign holding of government debt in the initial period<a class="headerlink" href="#foreign-holding-of-government-debt-in-the-initial-period" title="Link to this heading">#</a></h3>
-<p>The path of foreign holding of domestic debt is endogenous, but the initial period stock of debt held by foreign investors is exogenous.  We set this parameter, <code class="docutils literal notranslate"><span class="pre">initial_foreign_debt_ratio</span></code> to 0.142, as determined from data from the World Bank’s World Development Indicators.</p>
+<p>The path of foreign holding of domestic debt is endogenous, but the initial period stock of debt held by foreign investors is exogenous. We set this parameter, <code class="docutils literal notranslate"><span class="pre">initial_foreign_debt_ratio</span></code>, to 0.2, based on the Bureau of the Treasury (BTr) Debt Indicator report for Q4 2025 (<a class="reference external" href="https://www.treasury.gov.ph/wp-content/uploads/2026/02/Debt-Indicator-December-2025.pdf">source</a>).</p>
 </section>
 <section id="foreign-purchases-of-newly-issued-debt">
 <h3>Foreign purchases of newly issued debt<a class="headerlink" href="#foreign-purchases-of-newly-issued-debt" title="Link to this heading">#</a></h3>
-<p>We set <span class="math notranslate nohighlight">\(\zeta_D = 0.142\)</span>.  This was not directly observed in the data, so the value was set to the current share of foreign holdings of government debt.</p>
+<p>We set <span class="math notranslate nohighlight">\(\zeta_D = 0.2\)</span>. This is calibrated to equal <code class="docutils literal notranslate"><span class="pre">initial_foreign_debt_ratio</span></code> above, on the assumption that the foreign share of newly issued debt matches the foreign share of the existing stock.</p>
 </section>
 <section id="foreign-holdings-of-excess-capital">
 <h3>Foreign holdings of excess capital<a class="headerlink" href="#foreign-holdings-of-excess-capital" title="Link to this heading">#</a></h3>
-<p>We set <span class="math notranslate nohighlight">\(\zeta_K = 0.9\)</span>. Note, this parameter is harder to pin down from the data as foreign purchases on “excess” capital demand is not typically directly measured or reported.  A value of 0.9 implies a high degree of openness to international capital flows.</p>
+<p>We set <span class="math notranslate nohighlight">\(\zeta_K = 0.9\)</span>. Note, this parameter is harder to pin down from the data as foreign purchases on “excess” capital demand is not typically directly measured or reported. A value of 0.9 implies a high degree of openness to international capital flows.</p>
+</section>
+<section id="remittances-as-a-share-of-gdp">
+<h3>Remittances as a share of GDP<a class="headerlink" href="#remittances-as-a-share-of-gdp" title="Link to this heading">#</a></h3>
+<p>Personal remittance inflows to the Philippines are a substantial component of household income. The ratio of aggregate remittances to GDP is governed by two parameters: <span class="math notranslate nohighlight">\(\alpha_{RM,1}\)</span> for the model’s start period and <span class="math notranslate nohighlight">\(\alpha_{RM,T}\)</span> for the long run / steady state. Both are set to 0.072 (7.2%), based on Bangko Sentral ng Pilipinas (BSP) data for 2025 (<a class="reference external" href="https://www.bsp.gov.ph/SitePages/MediaAndResearch/MediaDisp.aspx?ItemId=7821&amp;amp;MType=MediaReleases">source</a>). The long-run value is calibrated to equal the current-period value.</p>
 </section>
 </section>
 <section id="government-debt-spending-and-transfers">
@@ -458,13 +464,20 @@
 </section>
 <section id="aggregate-transfers">
 <h3>Aggregate transfers<a class="headerlink" href="#aggregate-transfers" title="Link to this heading">#</a></h3>
-<p>Aggregate (non-Social Security) transfers to households are set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_T\)</span>. We exclude Social Security from transfers since it is modeled specifically. With this definition, the share of transfers to GDP in 2023 is found to be 9.7% using <a class="reference external" href="https://www.imf.org/external/datamapper/profile/PHL">IMF data</a>.  The value found by differencing out government consumption expenditures (described below) from total government spending as report in the IMF data.</p>
+<p>Aggregate (non-Social Security) transfers to households are set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_T\)</span>. We exclude Social Security from transfers since it is modeled specifically. We set <span class="math notranslate nohighlight">\(\alpha_T = [0.0448]\)</span> (4.48%) using World Bank World Development Indicators data for 2023. The value is computed as the product of total government expense as a share of GDP (WDI series <code class="docutils literal notranslate"><span class="pre">GC.XPN.TOTL.GD.ZS</span></code>) and the share of that expense classified as subsidies and other transfers.</p>
 </section>
 <section id="government-expenditures">
 <h3>Government expenditures<a class="headerlink" href="#government-expenditures" title="Link to this heading">#</a></h3>
-<p>Government spending on goods and services are also set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_G\)</span>. We define government spending as:
+<p>Government spending on goods and services is set as a share of GDP with the parameter <span class="math notranslate nohighlight">\(\alpha_G\)</span>. We define government spending as:
 <center>Government Spending = Total Outlays - Transfers - Net Interest on Debt - Social Security</center>
-With this definition, the share of government expenditure to GDP is 14.2% based on the World Bank World Development Indicators.</p>
+We set <span class="math notranslate nohighlight">\(\alpha_G = [0.1702, 0.1632, 0.1612]\)</span> for years 2026, 2027, and 2028, derived from the Department of Budget and Management (DBM), Budget of Expenditures and Sources of Financing (BESF) for FY 2026, Table A2 (<a class="reference external" href="https://www.dbm.gov.ph/wp-content/uploads/BESF/BESF2026/A2.pdf">source</a>). Specifically, total disbursements as a percent of GDP are 21.5%, 20.8%, and 20.6% for those years; subtracting <span class="math notranslate nohighlight">\(\alpha_T = 0.0448\)</span> from each gives the values above.</p>
+</section>
+<section id="government-interest-rate-wedge">
+<h3>Government interest rate wedge<a class="headerlink" href="#government-interest-rate-wedge" title="Link to this heading">#</a></h3>
+<p>The interest rate the government pays on its debt, <span class="math notranslate nohighlight">\(r_{gov,t}\)</span>, generally differs from the household interest rate <span class="math notranslate nohighlight">\(r_t\)</span> — sovereigns often borrow at lower rates than the private market because they are seen as safer borrowers. OG-Core models this gap as:</p>
+<div class="math notranslate nohighlight">
+\[r_{gov,t} = \max(r_{gov,scale} \cdot r_t - r_{gov,shift},\; 0)\]</div>
+<p>For the Philippines, the two parameters are <span class="math notranslate nohighlight">\(r_{gov,scale} = 0.245\)</span> and <span class="math notranslate nohighlight">\(r_{gov,shift} = -0.034\)</span>. They are calibrated from Philippine sovereign-vs-corporate yield data sourced from the IMF, following the methodology in Li, Magud, Werner, and Witte (2021), <a class="reference external" href="https://www.imf.org/en/Publications/WP/Issues/2021/06/04/The-Long-Run-Impact-of-Sovereign-Yields-on-Corporate-Yields-in-Emerging-Markets-50224">The Long-Run Impact of Sovereign Yields on Corporate Yields in Emerging Markets</a> (IMF Working Paper No. WP/21/155).</p>
 </section>
 </section>
 </section>
@@ -540,12 +553,14 @@ With this definition, the share of government expenditure to GDP is 14.2% based 
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-holding-of-government-debt-in-the-initial-period">Foreign holding of government debt in the initial period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-purchases-of-newly-issued-debt">Foreign purchases of newly issued debt</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#foreign-holdings-of-excess-capital">Foreign holdings of excess capital</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remittances-as-a-share-of-gdp">Remittances as a share of GDP</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#government-debt-spending-and-transfers">Government Debt, Spending and Transfers</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-debt">Government Debt</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aggregate-transfers">Aggregate transfers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-expenditures">Government expenditures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#government-interest-rate-wedge">Government interest rate wedge</a></li>
 </ul>
 </li>
 </ul>
