@@ -9,24 +9,27 @@ OG-PHL is a Philippines country calibration of the OG-Core overlapping-generatio
 
 ## Environment
 
-- Conda environment: `ogphl-dev`
-- Run all Python, `pip`, and `pytest` commands inside `ogphl-dev` (either `conda activate ogphl-dev` for a session, or `conda run -n ogphl-dev <cmd>` per-command). This keeps the Python version and dependency set aligned with CI.
+- Package manager: [`uv`](https://docs.astral.sh/uv/). Install via your package manager (e.g. `brew install uv`) or `pip install uv`.
+- Local virtualenv: `.venv` at the repo root, created by `uv sync --extra dev`.
+- Run Python/pytest/etc. via `uv run <cmd>` (preferred — uses the project venv without activation) or activate first with `source .venv/bin/activate`.
+- For docs/Jupyter Book work, also pass `--extra docs`: `uv sync --extra dev --extra docs`.
 
-## Python formatting
+## Python formatting and linting
 
-- Sequence: edit → black → test → stage → commit → push.
-- Format command (matches CI's black version): `conda run -n ogphl-dev python -m black <files>`
-- Run only on `.py` files; black fails on non-Python files.
-- Re-run tests after formatting — black can change line breaks that affect string literals and assertions.
-- CI lints all `.py` files in the repo. If `main` has formatting drift, format the drifted files too and include them in the same commit.
+- Sequence: edit → format → test → stage → commit → push.
+- Format + auto-fix: `make format` (runs `uv run ruff format .` + `uv run ruff check . --fix` + `uv run linecheck . --fix`).
+- CI check (no changes): `make lint` (runs `uv run ruff format --check .` + `uv run ruff check .`).
+- Ruff config lives in `pyproject.toml` under `[tool.ruff]`; matches OG-Core.
+- Re-run tests after formatting — ruff can change line breaks that affect string literals and assertions.
 
 ## Testing
 
-- Default suite (matches CI, skips the long example run): `conda run -n ogphl-dev python -m pytest -m 'not local' -q`
-- Targeted (fast): `conda run -n ogphl-dev python -m pytest tests/test_income.py tests/test_input_output.py tests/test_macro_params.py -q`
-- Full example run (slow, ~35 min – 2 hr): `conda run -n ogphl-dev python examples/run_og_phl.py`
+- Default suite (matches CI, skips the long example run): `uv run python -m pytest -m 'not local' -q` (or `make test`).
+- Targeted (fast): `uv run python -m pytest tests/test_macro_params.py tests/test_income.py tests/test_input_output.py tests/test_calibrate.py -q`.
+- Full example run (slow, ~35 min – 2 hr): `uv run python examples/run_og_phl.py`.
 
 ## Repo conventions
 
+- `pyproject.toml` is the source of truth for dependencies. `uv.lock` pins exact versions across machines and is checked in.
 - The packaged JSON default parameters are the standard baseline input for offline/default runs.
 - Calibration or data-source changes (macro parameters, demographics, earnings, industry I/O) should be validated with targeted tests and, where feasible, the relevant example flow.

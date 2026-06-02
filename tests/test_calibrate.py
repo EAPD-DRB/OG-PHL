@@ -10,7 +10,7 @@ import numpy as np
 from ogphl.calibrate import Calibration
 
 
-def _make_mock_p(I=1, M=1):
+def _make_mock_p(I=1, M=1):  # noqa: E741
     """Create a minimal mock Specifications object."""
     p = MagicMock()
     p.I = I
