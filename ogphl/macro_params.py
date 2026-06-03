@@ -88,7 +88,8 @@ def _fetch_wb_data(indicators, country_iso, start_year, end_year, source):
 
         if not series_data:
             raise ValueError(
-                f"No dated observations in World Bank response for {indicator_code}"
+                f"No dated observations in World Bank response for "
+                f"{indicator_code}"
             )
 
         series = pd.Series(series_data, name=label)
@@ -229,7 +230,8 @@ def _get_imf_macro_params(country_iso, target_year, data_path=None):
 
     if available.empty:
         raise ValueError(
-            f"No complete IMF data available for {country_iso} up to {target_year}"
+            f"No complete IMF data available for {country_iso} "
+            f"up to {target_year}"
         )
 
     selected_year = (
@@ -308,8 +310,10 @@ def get_macro_params(
         "GDP per capita (constant 2015 US$)": "NY.GDP.PCAP.KD",
         "Real GDP (constant 2015 US$)": "NY.GDP.MKTP.KD",
         "Nominal GDP (current US$)": "NY.GDP.MKTP.CD",
-        "General government final consumption expenditure (current US$)": "NE.CON.GOVT.CD",
-        "External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)": "DT.DOD.DPPG.CD",
+        "General government final consumption expenditure (current "
+        "US$)": "NE.CON.GOVT.CD",
+        "External debt stocks, public and publicly guaranteed (PPG) "
+        "(DOD, current US$)": "DT.DOD.DPPG.CD",
         "External debt stocks, total (DOD, current US$)": "DT.DOD.DECT.CD",
         r"External debt stocks (% of GNI)": "DT.DOD.DECT.GN.ZS",
     }
@@ -332,7 +336,8 @@ def get_macro_params(
                 wb_data_a[r"External debt stocks (% of GNI)"]
                 * (
                     wb_data_a[
-                        "External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)"
+                        "External debt stocks, public and publicly "
+                        "guaranteed (PPG) (DOD, current US$)"
                     ]
                     / wb_data_a[
                         "External debt stocks, total (DOD, current US$)"
@@ -359,16 +364,20 @@ def get_macro_params(
                 .mean()
             )
             print(
-                f"initial_debt_ratio set from documented source: {macro_parameters['initial_debt_ratio']}"
+                f"initial_debt_ratio set from documented source: "
+                f"{macro_parameters['initial_debt_ratio']}"
             )
             print(
-                f"initial_foreign_debt_ratio updated from World Bank API: {macro_parameters['initial_foreign_debt_ratio']}"
+                f"initial_foreign_debt_ratio updated from World Bank "
+                f"API: {macro_parameters['initial_foreign_debt_ratio']}"
             )
             print(
-                f"zeta_D updated from World Bank API: {macro_parameters['zeta_D']}"
+                f"zeta_D updated from World Bank API: "
+                f"{macro_parameters['zeta_D']}"
             )
             print(
-                f"g_y_annual updated from World Bank API: {macro_parameters['g_y_annual']}"
+                f"g_y_annual updated from World Bank API: "
+                f"{macro_parameters['g_y_annual']}"
             )
         except Exception:
             print("Failed to retrieve data from World Bank")
@@ -442,10 +451,12 @@ def get_macro_params(
             macro_parameters["r_gov_shift"] = [-res.params[0] / 100]
             macro_parameters["r_gov_scale"] = [res.params[1]]
             print(
-                f"r_gov_shift updated from IMF data: {macro_parameters['r_gov_shift']}"
+                f"r_gov_shift updated from IMF data: "
+                f"{macro_parameters['r_gov_shift']}"
             )
             print(
-                f"r_gov_scale updated from IMF data: {macro_parameters['r_gov_scale']}"
+                f"r_gov_scale updated from IMF data: "
+                f"{macro_parameters['r_gov_scale']}"
             )
         except Exception:
             print("Failed to compute r_gov_shift, r_gov_scale")

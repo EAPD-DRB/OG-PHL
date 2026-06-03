@@ -154,8 +154,8 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
             1 - usa_params.lambdas[-1]
         ):
             err = (
-                "One or more entries in abilities vector (lambdas) is outside the "
-                + "allowable bounds for interpolation."
+                "One or more entries in abilities vector (lambdas) is "
+                + "outside the allowable bounds for interpolation."
             )
             raise RuntimeError(err)
         usa_step = 80 / usa_params.S

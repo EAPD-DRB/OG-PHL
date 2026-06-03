@@ -60,10 +60,12 @@ def main():
             0.02,
         ],  # need to set production function params to for two industries
         "epsilon": [1.0, 1.0],
+        # assumption (first sector is informal): informal has lower
+        # capital-labor ratio
         "gamma": [
             0.30,
             0.38,
-        ],  # assumption (first sector is informal): informal has lower capital labor ratio
+        ],
         "cit_rate": [[0.00], [0.22]],  # no CIT for informal
         "tau_c": [[0.00], [0.12]],  # no VAT for informal
         "alpha_c": [

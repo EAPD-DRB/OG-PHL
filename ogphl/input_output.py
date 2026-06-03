@@ -15,7 +15,8 @@ def read_SAM():
     Read in the packaged Social Accounting Matrix (SAM) file.
 
     Returns:
-        SAM (pd.DataFrame | None): Social Accounting Matrix, or None if unavailable
+        SAM (pd.DataFrame | None): Social Accounting Matrix, or None
+            if unavailable
     """
     try:
         sam = pd.read_csv(sam_path, index_col=1, thousands=",")
