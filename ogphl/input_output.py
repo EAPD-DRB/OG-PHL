@@ -109,3 +109,77 @@ def get_io_matrix(sam=None, cons_dict=CONS_DICT, prod_dict=PROD_DICT):
     io_df = io_df.div(io_df.sum(axis=1), axis=0)
 
     return io_df
+
+
+# SAM factor accounts: labor (by education tier), land, and capital.
+# Land income is grouped with capital because OG-Core has only two private
+# factors (capital and labor); land's return is non-labor income.
+LABOR_ACCOUNTS = ["flab-n", "flab-p", "flab-s"]
+CAPITAL_ACCOUNTS = ["fcap", "flnd"]
+
+
+def get_gamma(sam=None, prod_dict=PROD_DICT, target_avg=None):
+    """
+    Calibrate gamma, the capital share of value added for each production
+    industry, from the factor-payment rows of the SAM.
+
+    For each industry, value added is the sum of payments to labor, capital,
+    and land (the factor rows) across the industry's activity columns. The
+    capital share is
+
+        gamma_m = (capital + land) / (labor + capital + land).
+
+    This is the private capital share entering OG-Core's CES production
+    function; the labor share is its complement (1 - gamma_m) when public
+    capital's share (gamma_g) is zero.
+
+    The raw SAM capital shares are biased upward by the mixed income of the
+    self-employed (large in Philippine agriculture and trade), which the SAM
+    books as a return to capital rather than labor. ``target_avg`` corrects
+    this: the shares are rescaled multiplicatively so their value-added
+    weighted average equals ``target_avg`` (e.g. the economy-wide capital
+    share used elsewhere in the calibration), preserving the cross-industry
+    pattern while fixing the level. With ``target_avg=None`` the raw,
+    unadjusted shares are returned.
+
+    Args:
+        sam (pd.DataFrame): SAM file
+        prod_dict (dict): Dictionary of production categories
+        target_avg (float | None): if given, rescale so the value-added
+            weighted mean capital share equals this value
+
+    Returns:
+        gamma (dict): Dictionary of capital shares, keyed by industry
+    """
+    if sam is None:
+        sam = read_SAM()
+    if sam is None:
+        raise RuntimeError("SAM data is unavailable. Cannot compute gamma.")
+    gamma = {}
+    value_added = {}
+    for key, value in prod_dict.items():
+        labor = (
+            sam.loc[sam.index.isin(LABOR_ACCOUNTS), value]
+            .values.astype(float)
+            .sum()
+        )
+        capital = (
+            sam.loc[sam.index.isin(CAPITAL_ACCOUNTS), value]
+            .values.astype(float)
+            .sum()
+        )
+        value_added[key] = labor + capital
+        gamma[key] = (
+            capital / value_added[key] if value_added[key] > 0 else 0.0
+        )
+
+    if target_avg is not None:
+        weights = np.array(list(value_added.values()))
+        shares = np.array(list(gamma.values()))
+        if weights.sum() > 0:
+            current_avg = np.average(shares, weights=weights)
+            if current_avg > 0:
+                scale = target_avg / current_avg
+                gamma = {key: share * scale for key, share in gamma.items()}
+
+    return gamma

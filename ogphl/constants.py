@@ -356,7 +356,6 @@ PROD_DICT = {
         "avege",
         "asugr",
         "atoba",
-        "acoff",
         "afrui",
         "acoff",
         "aocrp",
@@ -369,7 +368,11 @@ PROD_DICT = {
     "Mining": [
         "amine",
     ],
-    "Utilities": ["aelec", "awatr"],
+    # Utilities split into Electricity and Water so electricity is its own
+    # industry. Order matters: the LAST industry is the OG-Core numeraire and
+    # sole producer of investment goods, so Manufacturing is kept last.
+    "Electricity": ["aelec"],
+    "Water": ["awatr"],
     "Construction": ["acons"],
     "Trade and Transport": [
         "atrad",

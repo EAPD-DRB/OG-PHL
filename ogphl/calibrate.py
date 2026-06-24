@@ -48,6 +48,9 @@ class Calibration:
         self.e = None
         self.alpha_c = np.array([1.0]) if p.I == 1 else None
         self.io_matrix = np.array([[1.0]]) if p.M == 1 else None
+        # gamma (capital share by industry) is only overlaid for the
+        # multi-industry model; for M == 1 the packaged baseline value is kept.
+        self.gamma = None
 
         if not update_from_api:
             return
@@ -79,6 +82,13 @@ class Calibration:
                 self.io_matrix = io_df.values
             except Exception as exc:
                 warnings.warn(f"io_matrix update failed: {exc}", stacklevel=2)
+            try:
+                gamma_dict = io.get_gamma()
+                # check that model dimensions are consistent with gamma
+                assert p.M == len(list(gamma_dict.keys()))
+                self.gamma = np.array(list(gamma_dict.values()))
+            except Exception as exc:
+                warnings.warn(f"gamma update failed: {exc}", stacklevel=2)
 
         # Demographics and income are atomic because e depends on demography.
         try:
@@ -136,5 +146,7 @@ class Calibration:
             d["alpha_c"] = self.alpha_c
         if self.io_matrix is not None:
             d["io_matrix"] = self.io_matrix
+        if self.gamma is not None:
+            d["gamma"] = self.gamma
 
         return d

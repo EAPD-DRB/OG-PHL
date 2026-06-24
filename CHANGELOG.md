@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- SAM-derived per-industry capital share via `input_output.get_gamma()`, with an optional `target_avg` that rescales the shares (value-added weighted) to an economy-wide level, correcting the upward bias from self-employed mixed income in the raw SAM. The `Calibration` class now overlays `gamma` for multi-industry (`M > 1`) runs.
+- Eight-industry production split: `constants.PROD_DICT` separates the former Utilities sector into Electricity and Water (Manufacturing stays last as the OG-Core numeraire / investment-good producer).
+- `examples/run_og_phl_multi_industry_calibrated.py`: a SAM-calibrated multi-industry (M=8, I=5) example that solves the steady state by gamma continuation (homotopy) and prints a validation report.
+
+### Fixed
+
+- Removed a duplicate `acoff` activity from the Agriculture & Fishing group in `constants.PROD_DICT` (it was double-counted when aggregating SAM activities).
+
 ## [0.1.0] - 2026-06-02 12:00:00
 
 ### Changed
