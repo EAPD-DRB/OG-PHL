@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - SAM-derived per-industry capital share via `input_output.get_gamma()`, with an optional `target_avg` that rescales the shares (value-added weighted) to an economy-wide level, correcting the upward bias from self-employed mixed income in the raw SAM. The `Calibration` class now overlays `gamma` for multi-industry (`M > 1`) runs.
 - Eight-industry production split: `constants.PROD_DICT` separates the former Utilities sector into Electricity and Water (Manufacturing stays last as the OG-Core numeraire / investment-good producer).
+- `input_output.get_io_matrix_value_added()`: builds the `io_matrix` as the domestic value-added content of each consumption good by industry (input-output / Leontief inverse), with imported content netted out and rows renormalized. This traces the full domestic supply chain and is the construction the `Calibration` class and the example now use; the previous direct intermediate-use `get_io_matrix` is retained as a comparison baseline. It correctly attributes consumption to producing industries — e.g. household energy spending is ~74% electricity rather than ~54% manufacturing.
 - `examples/run_og_phl_multi_industry_calibrated.py`: a SAM-calibrated multi-industry (M=8, I=5) example that solves the steady state by gamma continuation (homotopy) and prints a validation report.
 
 ### Fixed

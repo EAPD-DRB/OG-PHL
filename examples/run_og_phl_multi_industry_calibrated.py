@@ -6,7 +6,9 @@ demo), this example builds the multi-industry parameters from the packaged 2018
 IFPRI Social Accounting Matrix:
 
   * ``alpha_c``   - household consumption shares across the 5 consumption goods
-  * ``io_matrix`` - 5x8 map from production industries to consumption goods
+  * ``io_matrix`` - 5x8 domestic value-added content of each consumption good
+                    by industry (input-output / Leontief; see
+                    input_output.get_io_matrix_value_added)
   * ``gamma``     - per-industry capital share of value added (from SAM factor
                     rows), the one production parameter the SAM identifies
 
@@ -101,7 +103,7 @@ def get_sam_calibration():
     values when called without ``target_avg``.
     """
     alpha_c = np.array(list(io.get_alpha_c().values()))
-    io_matrix = io.get_io_matrix().values
+    io_matrix = io.get_io_matrix_value_added().values
     gamma = np.array(
         list(io.get_gamma(target_avg=ECONOMY_WIDE_GAMMA).values())
     )

@@ -76,7 +76,10 @@ class Calibration:
                 warnings.warn(f"alpha_c update failed: {exc}", stacklevel=2)
         if p.M > 1:
             try:
-                io_df = io.get_io_matrix()
+                # value-added content of consumption by industry (see
+                # input_output.get_io_matrix_value_added); the legacy
+                # get_io_matrix is retained only as a comparison baseline
+                io_df = io.get_io_matrix_value_added()
                 # check that model dimensions are consistent with io_matrix
                 assert p.M == len(list(io_df.keys()))
                 self.io_matrix = io_df.values

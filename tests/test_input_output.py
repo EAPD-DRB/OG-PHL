@@ -180,3 +180,89 @@ def test_get_gamma_packaged_sam():
     assert list(gamma.keys()) == list(PROD_DICT.keys())
     assert len(gamma) == 8
     assert all(0.0 < g < 1.0 for g in gamma.values())
+
+
+def _io_va_mock_sam(import_cA=0.0):
+    """A 2-sector mock SAM (Ag, Mfg) for the value-added io_matrix test.
+
+    Ag (activity aA -> commodity cA): output 100, value added 100, no inputs.
+    Mfg (activity aM -> commodity cM): output 100, value added 50, uses 50 of
+    cA as an intermediate input. So a peso of the manufactured good cM embodies
+    half Ag value added and half Mfg value added.
+    """
+    accounts = ["cA", "cM", "aA", "aM", "flab-n", "fcap", "row"] + io.HH_COLS
+    sam = pd.DataFrame(0.0, index=accounts, columns=accounts)
+    sam.loc["aA", "cA"] = 100.0  # make matrix (diagonal)
+    sam.loc["aM", "cM"] = 100.0
+    sam.loc["cA", "aM"] = 50.0  # Mfg uses 50 of the Ag commodity
+    sam.loc["flab-n", "aA"] = 60.0  # Ag value added = 100
+    sam.loc["fcap", "aA"] = 40.0
+    sam.loc["flab-n", "aM"] = 30.0  # Mfg value added = 50
+    sam.loc["fcap", "aM"] = 20.0
+    sam.loc["cA", "hhd-r1"] = 100.0  # household final consumption
+    sam.loc["cM", "hhd-r1"] = 100.0
+    sam.loc["row", "cA"] = import_cA  # imports of the Ag commodity
+    return sam
+
+
+io_va_cons_dict = {"Food": ["cA"], "Goods": ["cM"]}
+io_va_prod_dict = {"Ag": ["aA"], "Mfg": ["aM"]}
+
+
+def test_get_io_matrix_value_added_indirect():
+    """
+    A manufactured good embodies the value added of its upstream inputs.
+
+    With no imports, half of a peso of the 'Goods' consumption good (cM) is Ag
+    value added (the cA input) and half is Mfg value added.
+    """
+    df = io.get_io_matrix_value_added(
+        sam=_io_va_mock_sam(),
+        cons_dict=io_va_cons_dict,
+        prod_dict=io_va_prod_dict,
+    )
+    assert df.loc["Food", "Ag"] == pytest.approx(1.0)
+    assert df.loc["Food", "Mfg"] == pytest.approx(0.0)
+    assert df.loc["Goods", "Ag"] == pytest.approx(0.5)
+    assert df.loc["Goods", "Mfg"] == pytest.approx(0.5)
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0, 1.0])
+
+
+def test_get_io_matrix_value_added_imports():
+    """
+    Imported intermediates are netted out before the row is renormalized.
+
+    With half of cA's supply imported, the Ag value added embodied in 'Goods'
+    falls from 1/2 to 1/3 (the imported half carries no domestic value added).
+    """
+    df = io.get_io_matrix_value_added(
+        sam=_io_va_mock_sam(import_cA=100.0),
+        cons_dict=io_va_cons_dict,
+        prod_dict=io_va_prod_dict,
+    )
+    assert df.loc["Goods", "Ag"] == pytest.approx(1.0 / 3.0)
+    assert df.loc["Goods", "Mfg"] == pytest.approx(2.0 / 3.0)
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0, 1.0])
+
+
+def test_get_io_matrix_value_added_packaged_sam():
+    """
+    Integration test: the packaged SAM yields a valid 5x8 io_matrix whose rows
+    sum to one, with electricity dominating the energy & water good.
+    """
+    from ogphl.constants import CONS_DICT, PROD_DICT
+
+    df = io.get_io_matrix_value_added()
+    assert df.shape == (len(CONS_DICT), len(PROD_DICT))
+    assert df.values.min() >= -1e-12
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0] * len(CONS_DICT))
+    assert df.loc["Energy and water", "Electricity"] > 0.5
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_io_matrix_value_added_raises_on_none_sam(mock_read_sam):
+    """
+    get_io_matrix_value_added() raises RuntimeError when the SAM is missing.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute io_matrix"):
+        io.get_io_matrix_value_added()
