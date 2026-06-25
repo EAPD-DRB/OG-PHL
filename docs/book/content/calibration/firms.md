@@ -113,7 +113,7 @@ At $t=1$ the blended parameters are the calibrated parameters, so the converged 
 
 Because the calibrated steady state cannot be re-solved from a cold start, the example's baseline transition path *reuses* this converged steady state (it places the converged steady state and runs only the time path), rather than re-solving it; the reform scenario re-solves its own steady state warm-started off the baseline, which converges because it is only a small policy perturbation.
 
-The transition path needs heavier damping than the OG-Core default: with the default $\nu=0.4$ the price update sits on the marginal-stability boundary and locks into a constant-amplitude oscillation, so the multi-industry calibration sets $\nu=0.2$. The data-anchored $\zeta_K=0.4$ also matters here — it gives domestic capital the buffer the path needs to clear (see {ref}`Chap_MacroCalib`).
+The transition path needs heavier damping than the OG-Core default. Of the values we tested, $\nu=0.4$ (the default) locks into a constant-amplitude oscillation; $\nu=0.3$ converges but with little stability margin and is barely faster overall (runtime is dominated by the continuation anchor's cold steady-state solve, which $\nu$ does not affect); $\nu=0.2$ converges robustly, so the calibration uses it. The data-anchored $\zeta_K=0.4$ also matters here — it gives domestic capital the buffer the path needs to clear (see {ref}`Chap_MacroCalib`).
 
 ## Interpreting the Multi-Industry Steady State
 
