@@ -26,10 +26,14 @@ Values written (an overlay on top of ``ogphl_default_parameters.json``):
   * ``c_min``      - 0.0 (no subsistence floor)
   * ``cit_rate``   - 0.25 (CREATE Act statutory corporate income tax)
   * ``tau_c``      - 0.12 (standard VAT)
-  * ``zeta_K``     - 0.4 capital openness (Chinn-Ito), down from the 0.9
-                     placeholder; also what makes the transition path converge
-  * ``debt_ratio_ss`` - 0.6 SS debt-to-GDP (PH ratio), not the 1.1 US default
   * ``nu``         - 0.2 TPI dampening (0.4 is marginally unstable here)
+
+The economy-wide open-economy values (``zeta_K`` = 0.4,
+``world_int_rate_annual`` = 0.05, ``debt_ratio_ss`` = 0.6) are not in this
+overlay -- they live in the base ``ogphl_default_parameters.json`` and are
+documented in the macro calibration chapter, because they describe the
+Philippine economy regardless of the industry split. The multi-industry run
+inherits them from the base.
 """
 
 import json
@@ -52,19 +56,6 @@ ECONOMY_WIDE_GAMMA = 0.53785
 
 # Public capital's output share, kept at the single-industry OG-PHL value.
 PUBLIC_CAPITAL_SHARE = 0.05
-
-# Open-economy capital openness. The single-industry default (0.9) implies ~96%
-# foreign-owned capital -- far above the ~20% implied by the BSP International
-# Investment Position. We anchor to the normalized Chinn-Ito openness index for
-# the Philippines (~0.4), consistent with Feldstein-Horioka-implied mobility.
-# This is also what lets the multi-industry steady state's transition path
-# converge: at 0.9 domestic capital is a razor-thin ~4% of K and the K_d>=0
-# constraint binds along the path; at 0.4 it has a comfortable buffer.
-ZETA_K = 0.4
-
-# Steady-state public-debt-to-GDP target. The Philippine ratio is ~60% (and is
-# the model's initial_debt_ratio); 1.1 is the inherited US-style placeholder.
-DEBT_RATIO_SS = 0.6
 
 # TPI dampening. The default 0.4 sits on the marginal-stability boundary
 # for this calibration (the price update locks into a constant-amplitude
@@ -95,8 +86,6 @@ def build_multisector_params():
         "Z": [[float(v) for v in Z.values()]],
         "cit_rate": [[0.25]],
         "tau_c": [[0.12]],
-        "zeta_K": [ZETA_K],
-        "debt_ratio_ss": DEBT_RATIO_SS,
         "nu": TPI_NU,
     }
 

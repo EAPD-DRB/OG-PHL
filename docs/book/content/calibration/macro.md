@@ -17,7 +17,13 @@ We set $\zeta_D = 0.2$. This is calibrated to equal `initial_foreign_debt_ratio`
 
 ### Foreign holdings of excess capital
 
-We set $\zeta_K = 0.9$. Note, this parameter is harder to pin down from the data as foreign purchases on "excess" capital demand is not typically directly measured or reported. A value of 0.9 implies a high degree of openness to international capital flows.
+We set $\zeta_K = 0.4$. This parameter governs the share of the gap between domestically-supplied capital and the capital demanded at the world interest rate that foreign investors fill, so it is effectively the degree of openness of the capital account. It is harder to pin down from the data than the debt parameters, because purchases of "excess" capital demand are not directly measured. We anchor the value to the normalized Chinn-Ito capital-account openness index for the Philippines, which sits at roughly 0.4 ([Chinn-Ito index](https://web.pdx.edu/~ito/Chinn-Ito_website.htm)). This is also consistent with the imperfect international capital mobility implied by Feldstein-Horioka-style saving-investment correlations, and with the Bangko Sentral ng Pilipinas International Investment Position, which shows foreign-owned capital at roughly 20% of the stock — far below the ~96% that the earlier placeholder of 0.9 implied.
+
+The choice also matters for solving the model. At $\zeta_K = 0.9$ domestically-held capital, $K_d = B - D_d$, is a razor-thin ~4% of the total stock; along the transition path the $K_d \geq 0$ constraint binds, the solver clamps it, and the aggregate resource constraint fails to close. At $\zeta_K = 0.4$ domestic capital keeps a comfortable buffer and the (multi-industry) transition path converges to a true equilibrium.
+
+### World interest rate
+
+The small-open-economy block prices foreign capital and foreign debt at an exogenous world interest rate, `world_int_rate_annual`. We set this to 5% (annual). We read it as a global risk-free rate of about 4% plus a Philippine country-risk premium of roughly 100 basis points — the Philippines is an investment-grade (BBB) sovereign, so foreign investors require modest compensation over the risk-free rate to hold Philippine claims. The 4% placeholder used previously omits this premium and so understates the supply price of foreign capital. Raising the world rate from 4% to 5% lowers the equilibrium foreign capital share (foreigners supply less when their required return is higher), pulls the domestic return toward an emerging-market-realistic level near 9%, and raises the household consumption share of output. A larger premium (e.g. an equity-style 200 basis points, a 6% world rate) moves these margins further in the same direction; 5% is the conservative sovereign-spread anchor.
 
 ### Remittances as a share of GDP
 
@@ -28,6 +34,8 @@ Personal remittance inflows to the Philippines are a substantial component of ho
 ### Government Debt
 
 The path of government debt is endogenous.  But the initial value is exogenous.  To avoid converting between model units and dollars, we calibrate the initial debt to GDP ratio, rather than the dollar value of the debt.  This is the model parameter $\alpha_D$.  We compute this from the ratio of publicly held debt outstanding to GDP.  Based on [a 2024Q1 report from Treasury](https://www.treasury.gov.ph/?p=64737) the value is 0.60.
+
+We also set the long-run (steady-state) debt-to-GDP target, `debt_ratio_ss`, to 0.60, matching the initial ratio rather than the 1.10 US-style placeholder inherited from OG-Core. This keeps the fiscal closure consistent with the Philippine debt position at both ends of the transition.
 
 ### Aggregate transfers
 
