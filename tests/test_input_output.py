@@ -266,3 +266,152 @@ def test_get_io_matrix_value_added_raises_on_none_sam(mock_read_sam):
     """
     with pytest.raises(RuntimeError, match="Cannot compute io_matrix"):
         io.get_io_matrix_value_added()
+
+
+def test_get_employment(tmp_path):
+    """
+    get_employment() aggregates PSIC sections into industries for the
+    requested year (e.g. Trade G + Transport H -> Trade and Transport) and
+    ignores other years.
+    """
+    csv = tmp_path / "emp.csv"
+    csv.write_text(
+        "year,psic_section,employed_thousands\n"
+        "2018,A,1000\n"
+        "2018,G,300\n"
+        "2018,H,200\n"
+        "2018,C,500\n"
+        "2017,A,999\n"
+    )
+    emp = io.get_employment(
+        prod_dict={
+            "Agriculture and Fishing": [],
+            "Trade and Transport": [],
+            "Manufacturing": [],
+        },
+        year=2018,
+        path=str(csv),
+    )
+    assert emp["Agriculture and Fishing"] == 1000.0
+    assert emp["Trade and Transport"] == 500.0  # G + H combined
+    assert emp["Manufacturing"] == 500.0
+
+
+def test_get_employment_packaged():
+    """
+    Integration test: the packaged Labor Force Survey series yields positive
+    2018 employment for all 8 industries, summing to the published total
+    (~41.2 million).
+    """
+    from ogphl.constants import PROD_DICT
+
+    emp = io.get_employment(year=2018)
+    assert list(emp.keys()) == list(PROD_DICT.keys())
+    assert all(v > 0 for v in emp.values())
+    assert sum(emp.values()) == pytest.approx(41156.5, abs=5.0)
+
+
+# Mock SAM for get_Z: aA value added 100 (cap 60), aM value added 100 (cap 50).
+# gamma_raw = 0.6 (Ag), 0.5 (Mfg). With capital_output_ratio = 2.0 the national
+# capital is 400, split 218.18/181.82 by capital-income share; with employment
+# 200 / 100 the Solow residuals are 0.4746 / 0.7416, so normalized Z is
+# 0.640 / 1.000 (Mfg is the numeraire, last in prod_dict).
+z_sam_df = pd.DataFrame(
+    {
+        "aA": {"flab-n": 40, "flab-p": 0, "flab-s": 0, "fcap": 60, "flnd": 0},
+        "aM": {"flab-n": 50, "flab-p": 0, "flab-s": 0, "fcap": 50, "flnd": 0},
+    }
+)
+z_prod_dict = {"Ag": ["aA"], "Mfg": ["aM"]}
+
+
+def test_get_Z():
+    """
+    get_Z() returns the normalized Solow-residual TFP, with the numeraire (last
+    industry) at 1.0.
+    """
+    Z = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    assert isinstance(Z, dict)
+    assert list(Z.keys()) == ["Ag", "Mfg"]
+    assert Z["Mfg"] == pytest.approx(1.0)
+    assert Z["Ag"] == pytest.approx(0.6400, abs=2e-3)
+    assert Z["Ag"] < Z["Mfg"]
+
+
+def test_get_Z_gamma_array():
+    """
+    get_Z() accepts gamma as an array-like ordered by prod_dict, not only a
+    dict.
+    """
+    Z_dict = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma={"Ag": 0.6, "Mfg": 0.5},
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    Z_arr = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma=[0.6, 0.5],
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    assert Z_arr["Ag"] == pytest.approx(Z_dict["Ag"])
+
+
+def test_get_Z_public_capital():
+    """
+    A positive gamma_g lowers the labor exponent to (1 - gamma - gamma_g), so
+    the OG-Core production function (with public capital K_g) is what gets
+    inverted. The common K_g term cancels under the numeraire normalization, so
+    the only effect on normalized Z is the factor (L_m / L_numeraire)**gamma_g.
+    With gamma_g=0 Agriculture is 0.640; with gamma_g=0.1 it is 0.640 * 2**0.1.
+    """
+    emp = {"Ag": 200.0, "Mfg": 100.0}
+    Z0 = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        employment=emp,
+        capital_output_ratio=2.0,
+    )
+    Zg = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma_g=0.1,
+        employment=emp,
+        capital_output_ratio=2.0,
+    )
+    assert Zg["Mfg"] == pytest.approx(1.0)
+    assert Zg["Ag"] == pytest.approx(0.6859, abs=2e-3)
+    assert Zg["Ag"] == pytest.approx(Z0["Ag"] * 2**0.1, abs=2e-3)
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_Z_raises_on_none_sam(mock_read_sam):
+    """
+    get_Z() raises RuntimeError when SAM data is unavailable.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute Z"):
+        io.get_Z()
+
+
+def test_get_Z_packaged_sam():
+    """
+    Integration test: the packaged SAM and Labor Force Survey yield a TFP for
+    every industry, with Manufacturing (numeraire) at 1.0, all positive, and
+    Agriculture the least productive sector.
+    """
+    from ogphl.constants import PROD_DICT
+
+    Z = io.get_Z()
+    assert list(Z.keys()) == list(PROD_DICT.keys())
+    assert len(Z) == 8
+    assert all(v > 0 for v in Z.values())
+    assert Z["Manufacturing"] == pytest.approx(1.0)
+    assert Z["Agriculture and Fishing"] == min(Z.values())

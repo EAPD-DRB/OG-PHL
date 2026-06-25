@@ -323,3 +323,213 @@ def get_io_matrix_value_added(
             io_df.loc[good] = io_df.loc[good] / total
 
     return io_df
+
+
+# Packaged PSA Labor Force Survey series (annual employment by PSIC 2009
+# section, thousands of persons, 2012-2024; OpenSTAT table 0101B3GEMP2).
+employment_path = os.path.join(
+    CUR_DIR, "data", "employment_by_psic_section.csv"
+)
+
+# PSA Labor Force Survey PSIC 2009 section -> OG-PHL production industry.
+# Electricity (D) and Water/waste (E) are separate sections, matching the
+# model's split; Trade (G) and Transport (H) combine into Trade & Transport;
+# all remaining service sections fold into Services. Public administration (O)
+# carries no establishment-survey capital but its employment is counted in
+# Services.
+EMP_SECTION_TO_INDUSTRY = {
+    "A": "Agriculture and Fishing",
+    "B": "Mining",
+    "C": "Manufacturing",
+    "D": "Electricity",
+    "E": "Water",
+    "F": "Construction",
+    "G": "Trade and Transport",
+    "H": "Trade and Transport",
+    "I": "Services",
+    "J": "Services",
+    "K": "Services",
+    "L": "Services",
+    "M": "Services",
+    "N": "Services",
+    "O": "Services",
+    "P": "Services",
+    "Q": "Services",
+    "R": "Services",
+    "S": "Services",
+    "T": "Services",
+    "U": "Services",
+}
+
+
+def get_employment(
+    prod_dict=PROD_DICT,
+    year=2018,
+    section_map=EMP_SECTION_TO_INDUSTRY,
+    path=employment_path,
+):
+    """
+    Employment (thousands of persons) by production industry.
+
+    Reads the packaged PSA Labor Force Survey series (annual, by PSIC 2009
+    section) and aggregates the sections into the model's industries for the
+    requested ``year`` using ``section_map``.
+
+    Args:
+        prod_dict (dict): Dictionary of production categories
+        year (int): survey year to use
+        section_map (dict): PSIC section -> industry concordance
+        path (str): path to the packaged employment CSV
+
+    Returns:
+        employment (dict): employment in thousands, keyed by industry
+    """
+    try:
+        df = pd.read_csv(path)
+    except Exception as exc:
+        raise RuntimeError(
+            f"Employment data is unavailable. Cannot compute employment: {exc}"
+        )
+    df = df[df["year"] == year]
+    if df.empty:
+        raise RuntimeError(f"No employment data for year {year}.")
+    employment = {ind: 0.0 for ind in prod_dict}
+    for section, value in zip(df["psic_section"], df["employed_thousands"]):
+        industry = section_map.get(section)
+        if industry in employment:
+            employment[industry] += float(value)
+    return employment
+
+
+def get_Z(
+    sam=None,
+    prod_dict=PROD_DICT,
+    gamma=None,
+    gamma_g=0.0,
+    employment=None,
+    capital_output_ratio=2.91,
+    year=2018,
+):
+    """
+    Construct sector total factor productivity ``Z_m`` (levels), base 2018.
+
+    ``Z_m`` is the Solow residual of OG-Core's per-industry production function
+    (Cobb-Douglas, with public capital ``K_g``),
+
+        Z_m = Y_m / (K_m**gamma_m * K_g**gamma_g * L_m**(1-gamma_m-gamma_g)),
+
+    normalized so the numeraire industry (the last in ``prod_dict``,
+    Manufacturing) has ``Z = 1``. Public capital ``K_g`` is one aggregate stock
+    shared by every industry, so the ``K_g**gamma_g`` term is common across
+    industries and cancels under the Manufacturing normalization; only
+    ``gamma_g``'s effect on the labor exponent ``(1 - gamma_m - gamma_g)``
+    survives, so ``K_g`` itself is never needed. With ``gamma_g = 0`` this
+    reduces to the plain private-factor Solow residual. Pass the same
+    ``gamma_g`` the model uses (OG-PHL: 0.05) so ``Z_m`` inverts the technology
+    the solver actually runs. Inputs:
+
+      * ``Y_m`` - industry value added (SAM factor rows; the same totals that
+        define ``gamma_m``), in 2018 prices.
+      * ``L_m`` - industry employment (packaged PSA Labor Force Survey). It is
+        the one input measured independently of the SAM, which is what keeps
+        ``Z_m`` from collapsing into a mechanical function of factor shares.
+      * ``K_m`` - industry capital stock, allocated from the national capital
+        stock by each industry's share of capital income (operating surplus).
+        OG-Core's capital is mobile across industries at a common return, so
+        the equilibrium capital distribution is proportional to capital income;
+        this also gives full-economy coverage (informal and imputed capital),
+        unlike establishment-survey investment data. The national level is
+        ``K = capital_output_ratio * sum(Y_m)``; the default 2.91 is the Penn
+        World Table 10.01 Philippine 2018 capital-output ratio.
+
+    The literal PIDS/Cororaton perpetual-inventory route (distributing
+    national investment by ASPBI/CPBI Gross-Additions-to-Fixed-Assets shares)
+    was evaluated and rejected as primary: those establishment surveys omit
+    informal capital, which inverts the ranking (Construction and Agriculture
+    would look most productive). The capital-income allocation used here is
+    bracketed by the GAFA variants and is consistent with the model's
+    common-return equilibrium. The ranking is robust to the depreciation
+    assumption and to ``capital_output_ratio`` over the 2.9-5.3 range (only
+    magnitudes shift); see the calibration docs for the comparison.
+
+    Args:
+        sam (pd.DataFrame): SAM file
+        prod_dict (dict): production industries (order sets the numeraire last)
+        gamma (dict | array-like | None): capital share by industry; if None
+            the raw SAM shares are used, but callers should pass the same
+            (rescaled) gamma the model uses so ``Z_m`` is consistent with it
+        gamma_g (float | dict | array-like): public-capital output share by
+            industry (enters only the labor exponent here); default 0.0
+        employment (dict | None): employment by industry; if None it is read
+            from the packaged Labor Force Survey series for ``year``
+        capital_output_ratio (float): national K/Y anchoring the capital level
+        year (int): base year for employment
+
+    Returns:
+        Z (dict): TFP by industry (numeraire = 1.0), keyed by ``prod_dict``
+    """
+    if sam is None:
+        sam = read_SAM()
+    if sam is None:
+        raise RuntimeError("SAM data is unavailable. Cannot compute Z.")
+
+    industries = list(prod_dict.keys())
+    value_added = {}
+    capital_income = {}
+    for industry, cols in prod_dict.items():
+        labor = (
+            sam.loc[sam.index.isin(LABOR_ACCOUNTS), cols]
+            .values.astype(float)
+            .sum()
+        )
+        capital = (
+            sam.loc[sam.index.isin(CAPITAL_ACCOUNTS), cols]
+            .values.astype(float)
+            .sum()
+        )
+        value_added[industry] = labor + capital
+        capital_income[industry] = capital
+
+    if gamma is None:
+        gamma = get_gamma(sam=sam, prod_dict=prod_dict)
+    elif not isinstance(gamma, dict):
+        gamma = dict(zip(industries, [float(g) for g in gamma]))
+
+    if isinstance(gamma_g, dict):
+        gg = {m: float(gamma_g.get(m, 0.0)) for m in industries}
+    elif np.ndim(gamma_g) == 0:
+        gg = {m: float(gamma_g) for m in industries}
+    else:
+        gg = dict(zip(industries, [float(g) for g in gamma_g]))
+
+    if employment is None:
+        employment = get_employment(prod_dict=prod_dict, year=year)
+
+    total_capital_income = sum(capital_income.values())
+    national_capital = capital_output_ratio * sum(value_added.values())
+
+    Z = {}
+    for industry in industries:
+        if total_capital_income > 0:
+            k = (
+                national_capital
+                * capital_income[industry]
+                / total_capital_income
+            )
+        else:
+            k = 0.0
+        labor_input = employment.get(industry, 0.0)
+        if k > 0 and labor_input > 0:
+            Z[industry] = value_added[industry] / (
+                k ** gamma[industry]
+                * labor_input ** (1.0 - gamma[industry] - gg[industry])
+            )
+        else:
+            Z[industry] = 0.0
+
+    # normalize so the numeraire (last industry) has Z = 1
+    numeraire = industries[-1]
+    if Z[numeraire] > 0:
+        Z = {industry: Z[industry] / Z[numeraire] for industry in industries}
+
+    return Z
