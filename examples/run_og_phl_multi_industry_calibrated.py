@@ -5,7 +5,9 @@ Unlike ``run_og_phl_multi_industry.py`` (a hand-coded 2-sector informal/formal
 demo), this example loads the packaged multi-industry calibration overlay
 ``ogphl_multisector_default_parameters.json`` -- generated (rarely) by
 ``ogphl.create_multisector_calibration`` from the 2018 IFPRI SAM and the PSA
-Labor Force Survey -- and solves its steady state. The overlay contains:
+Labor Force Survey -- and runs a full baseline plus a trivial reform scenario
+(a corporate-income-tax cut), comparing them as the other examples do. The
+overlay contains:
 
   * ``alpha_c``   - household consumption shares across the 5 consumption goods
   * ``io_matrix`` - 5x8 domestic value-added content of each consumption good
@@ -63,13 +65,19 @@ built-in guess sweep only varies r and TR (never p_m). We therefore solve by
 correct), then morph gamma toward the SAM values in steps, each step reusing
 the previous step's solution as its starting guess.
 
-Run steady state only (fast validation):
+The calibrated steady state cannot be re-solved from a cold start, so the
+baseline transition path reuses the continuation's converged SS (see
+run_baseline_tpi); the reform re-solves its SS warm-started off the baseline,
+which converges because it is only a small policy perturbation.
+
+Run the full baseline + reform comparison (default; SS continuation, then both
+transition paths -- slow, tens of minutes):
 
     uv run python examples/run_og_phl_multi_industry_calibrated.py
 
-Run the full transition path off the converged steady state (slow):
+Quick steady-state-only check (continuation + validation, no transition path):
 
-    uv run python examples/run_og_phl_multi_industry_calibrated.py --tpi
+    uv run python examples/run_og_phl_multi_industry_calibrated.py --ss-only
 """
 
 import os
@@ -77,15 +85,26 @@ import sys
 import json
 import time
 import shutil
+import pickle
 import importlib.resources
 import multiprocessing
+
+import cloudpickle
 import numpy as np
+import matplotlib.pyplot as plt
+from distributed import Client
 
 from ogcore.parameters import Specifications
 from ogcore.execute import runner
+from ogcore import TPI
+from ogcore import output_tables as ot
+from ogcore import output_plots as op
 from ogcore.utils import safe_read_pickle
 
 from ogphl.constants import PROD_DICT
+
+# Use a custom matplotlib style file for plots (matches the other examples)
+plt.style.use("ogcore.OGcorePlots")
 
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -277,34 +296,109 @@ def validate_ss(p, ss):
     return all_ok
 
 
-def main(time_path=False):
+# Trivial reform scenario: cut the corporate income tax from 25% to 20%.
+REFORM_PARAMS = {"cit_rate": [[0.20]]}
+
+
+def run_baseline_tpi(p_base, ss_source_dir, client):
+    """Run the baseline transition path, reusing the continuation's SS.
+
+    The calibrated steady state cannot be re-solved from a cold start (OG-Core
+    seeds industry prices at p_m = 1 and only the continuation warm-starts
+    them), so rather than call ``runner`` -- which would re-solve the SS and
+    diverge -- we place the continuation's converged SS as the baseline SS and
+    run only the TPI off it. This mirrors what ``runner`` writes to disk.
+    """
+    ss_dir = os.path.join(p_base.output_base, "SS")
+    os.makedirs(ss_dir, exist_ok=True)
+    shutil.copyfile(
+        os.path.join(ss_source_dir, "SS", "SS_vars.pkl"),
+        os.path.join(ss_dir, "SS_vars.pkl"),
+    )
+    with open(os.path.join(p_base.output_base, "model_params.pkl"), "wb") as f:
+        cloudpickle.dump(p_base, f)
+    tpi_output = TPI.run_TPI(p_base, client=client)
+    tpi_dir = os.path.join(p_base.output_base, "TPI")
+    os.makedirs(tpi_dir, exist_ok=True)
+    with open(os.path.join(tpi_dir, "TPI_vars.pkl"), "wb") as f:
+        pickle.dump(tpi_output, f)
+
+
+def main(time_path=True):
     save_dir = os.path.join(CUR_DIR, "OG-PHL-MultiIndustry")
     work_dir = os.path.join(save_dir, "continuation")
+    base_dir = os.path.join(save_dir, "OUTPUT_BASELINE")
+    reform_dir = os.path.join(save_dir, "OUTPUT_REFORM")
 
     ms = _load_multisector()
+    gamma = np.array(ms["gamma"])
+    Z = np.array(ms["Z"][0])
     print(f"M = {ms['M']} industries, I = {ms['I']} consumption goods")
-    print(f"calibrated gamma (capital share) = {np.round(ms['gamma'], 4)}")
-    print(f"calibrated sector TFP Z_m (Mfg=1) = {np.round(ms['Z'][0], 4)}")
+    print(f"calibrated gamma (capital share) = {np.round(gamma, 4)}")
+    print(f"calibrated sector TFP Z_m (Mfg=1) = {np.round(Z, 4)}")
 
+    # Solve the calibrated baseline SS by continuation; then validate.
     start = time.time()
-    ss, p, final_dir = solve_ss_by_continuation(work_dir)
+    ss, _, good_dir = solve_ss_by_continuation(work_dir)
     print(f"\nTotal SS continuation time = {time.time() - start:.1f}s")
-    ok = validate_ss(p, ss)
+    p_base = build_specifications(
+        gamma, Z, baseline=True, output_base=base_dir
+    )
+    ok = validate_ss(p_base, ss)
 
-    if time_path:
-        # Solve the transition path off the converged multi-industry SS.
-        from distributed import Client
-
-        num_workers = min(multiprocessing.cpu_count(), 7)
-        client = Client(n_workers=num_workers, threads_per_worker=1)
-        start = time.time()
-        runner(p, time_path=True, client=client)
-        print(f"SS + TPI run time = {time.time() - start:.1f}s")
-        client.close()
-
+    # --ss-only stops here (fast check of the calibrated steady state).
     if not time_path:
         sys.exit(0 if ok else 1)
 
+    num_workers = min(multiprocessing.cpu_count(), 7)
+    client = Client(n_workers=num_workers, threads_per_worker=1)
+    try:
+        # Baseline: reuse the converged SS, solve its transition path.
+        start = time.time()
+        run_baseline_tpi(p_base, good_dir, client)
+        print(f"Baseline TPI run time = {time.time() - start:.1f}s")
+
+        # Reform (trivial scenario): a small CIT cut, warm-started off the
+        # baseline SS, so its SS re-solve converges without continuation.
+        p_reform = build_specifications(
+            gamma,
+            Z,
+            baseline=False,
+            output_base=reform_dir,
+            baseline_dir=base_dir,
+        )
+        p_reform.update_specifications(REFORM_PARAMS)
+        start = time.time()
+        runner(p_reform, time_path=True, client=client)
+        print(f"Reform SS+TPI run time = {time.time() - start:.1f}s")
+    finally:
+        client.close()
+
+    # Compare the baseline and reform transition paths (as in the other
+    # examples), then plot and save.
+    base_tpi = safe_read_pickle(os.path.join(base_dir, "TPI", "TPI_vars.pkl"))
+    base_params = safe_read_pickle(os.path.join(base_dir, "model_params.pkl"))
+    reform_tpi = safe_read_pickle(
+        os.path.join(reform_dir, "TPI", "TPI_vars.pkl")
+    )
+    reform_params = safe_read_pickle(
+        os.path.join(reform_dir, "model_params.pkl")
+    )
+    ans = ot.macro_table(
+        base_tpi,
+        base_params,
+        reform_tpi=reform_tpi,
+        reform_params=reform_params,
+        var_list=["Y", "C", "K", "L", "r", "w"],
+        output_type="pct_diff",
+        num_years=10,
+        start_year=base_params.start_year,
+    )
+    op.plot_all(base_dir, reform_dir, os.path.join(save_dir, "plots"))
+    print("\nPercentage changes, reform vs baseline (first 10 years):")
+    print(ans)
+    ans.to_csv(os.path.join(save_dir, "OG-PHL_MultiIndustry_output.csv"))
+
 
 if __name__ == "__main__":
-    main(time_path="--tpi" in sys.argv)
+    main(time_path="--ss-only" not in sys.argv)
