@@ -6,6 +6,20 @@ BASELINE_DIR = "OUTPUT_BASELINE"
 # Default year for model runs
 DEFAULT_START_YEAR = 2025
 
+# Economy-wide capital share of value added (private + public), from the
+# ILOSTAT labor share. The SAM has only one capital row, so its raw industry
+# shares are *total* capital shares (biased upward by self-employed mixed
+# income booked as capital). The multi-industry calibration rescales them to
+# this de-biased total, then subtracts PUBLIC_CAPITAL_SHARE to leave the
+# private capital share. Defined here -- not in either caller -- so the
+# calibration builder (create_multisector_calibration) and the live
+# Calibration class (calibrate) share one source and cannot drift.
+TOTAL_CAPITAL_SHARE = 0.58785
+
+# Public (infrastructure) capital's output share, gamma_g, the single-industry
+# OG-PHL value. It is carved out of TOTAL_CAPITAL_SHARE, not out of labor.
+PUBLIC_CAPITAL_SHARE = 0.05
+
 
 VAR_LABELS = {
     "Y": "GDP ($Y_t$)",

@@ -18,8 +18,9 @@ Values written (an overlay on top of ``ogphl_default_parameters.json``):
   * ``M``, ``I``   - 8 production industries, 5 consumption goods
   * ``alpha_c``    - household consumption shares (SAM)
   * ``io_matrix``  - 5x8 domestic value-added content (SAM, Leontief)
-  * ``gamma``      - per-industry capital share (SAM), rescaled to the
-                     value-added weighted mean ECONOMY_WIDE_GAMMA
+  * ``gamma``      - per-industry private capital share: the SAM's total
+                     capital shares rescaled to TOTAL_CAPITAL_SHARE, then
+                     PUBLIC_CAPITAL_SHARE carved out (from capital, not labor)
   * ``Z``          - per-industry TFP, the Solow residual (see get_Z)
   * ``epsilon``    - 1.0 (Cobb-Douglas; OG-Core default)
   * ``gamma_g``    - PUBLIC_CAPITAL_SHARE for every industry
@@ -42,20 +43,12 @@ import os
 import numpy as np
 
 from ogphl import input_output as io
+from ogphl.constants import PUBLIC_CAPITAL_SHARE, TOTAL_CAPITAL_SHARE
 
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 MULTISECTOR_PARAMS_PATH = os.path.join(
     CUR_DIR, "ogphl_multisector_default_parameters.json"
 )
-
-# Economy-wide capital share (the single-industry OG-PHL value, from the
-# ILOSTAT labor share). The SAM's industry capital shares are rescaled to this
-# value-added weighted mean; the raw average (~0.62) is biased upward by
-# self-employed mixed income booked as capital.
-ECONOMY_WIDE_GAMMA = 0.53785
-
-# Public capital's output share, kept at the single-industry OG-PHL value.
-PUBLIC_CAPITAL_SHARE = 0.05
 
 # TPI dampening. The default 0.4 sits on the marginal-stability boundary
 # for this calibration (the price update locks into a constant-amplitude
@@ -72,7 +65,11 @@ def build_multisector_params():
     alpha_c = [float(v) for v in io.get_alpha_c().values()]
     io_df = io.get_io_matrix_value_added()
     n_cons, n_ind = io_df.shape
-    gamma = io.get_gamma(target_avg=ECONOMY_WIDE_GAMMA)
+    # Per-industry capital shares: rescale the SAM's total shares to the
+    # economy-wide total, then subtract public capital's share to leave the
+    # private capital share gamma_m used in the production function.
+    gamma_total = io.get_gamma(target_avg=TOTAL_CAPITAL_SHARE)
+    gamma = {k: v - PUBLIC_CAPITAL_SHARE for k, v in gamma_total.items()}
     Z = io.get_Z(gamma=gamma, gamma_g=PUBLIC_CAPITAL_SHARE)
     return {
         "M": int(n_ind),

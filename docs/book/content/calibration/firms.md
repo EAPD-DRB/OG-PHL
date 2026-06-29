@@ -57,7 +57,7 @@ The per-industry capital shares $\gamma_m$ are computed from the factor-payment 
 
 $$\gamma_m = \frac{\text{capital income}_m}{\text{labor income}_m + \text{capital income}_m},$$
 
-where capital income is the sum of payments to capital and land (OG-Core has only two private factors, so land's return is grouped with capital). The raw SAM shares come out too high because the SAM records the earnings of self-employed owner-operators -- large in Philippine agriculture and trade -- as a return to capital rather than splitting out their labor income. We therefore scale every industry's share by a common factor so that, weighted by industry size, they average to the economy-wide capital share $\gamma=0.53785$ above (itself taken from the labor share, an independent source) -- fixing the *level* while keeping the cross-industry *pattern* (Mining and Electricity capital-intensive, Services and Agriculture labor-intensive). This is implemented in `ogphl.input_output.get_gamma` with a `target_avg` argument. The resulting shares are shown in the table below.
+where capital income is the sum of payments to capital and land (OG-Core has only two private factors, so land's return is grouped with capital). These raw shares are *total* capital shares -- the SAM has no separate public-capital row -- and they come out too high because it records the earnings of self-employed owner-operators (large in Philippine agriculture and trade) as a return to capital rather than splitting out their labor income. We therefore rescale every industry's total capital share by a common factor so that, weighted by industry size, they average to the economy-wide capital share of 0.588 (from the ILOSTAT labor share, an independent source), then subtract public capital's share $\gamma_g=0.05$ to leave the private capital share $\gamma_m$. Carving $\gamma_g$ out of capital rather than labor keeps the economy-wide labor share at 0.412, matching the national accounts; the rescaling fixes the *level* while preserving the cross-industry *pattern* (Mining and Electricity capital-intensive, Services and Agriculture labor-intensive). This is implemented in `ogphl.input_output.get_gamma` (the rescale) and `ogphl.create_multisector_calibration` (the $\gamma_g$ split). The resulting shares are in the table below.
 
 Public capital's share is held at $\gamma_{g,m}=0.05$ for every industry, the single-industry value (the model carries a positive public capital stock, `initial_Kg_ratio=0.2`, so the same infrastructure role applies to every industry).
 
@@ -88,14 +88,14 @@ The resulting capital shares and sector productivities are:
 
 | Industry | $\gamma_m$ | $Z_m$ |
 | --- | --- | --- |
-| Agriculture & Fishing | 0.470 | 0.558 |
-| Mining | 0.764 | 0.587 |
-| Electricity | 0.761 | 0.902 |
-| Water | 0.671 | 0.921 |
-| Construction | 0.582 | 0.721 |
-| Trade & Transport | 0.548 | 0.776 |
-| Services | 0.478 | 1.071 |
-| Manufacturing | 0.617 | 1.000 |
+| Agriculture & Fishing | 0.464 | 0.559 |
+| Mining | 0.785 | 0.579 |
+| Electricity | 0.782 | 0.854 |
+| Water | 0.684 | 0.907 |
+| Construction | 0.586 | 0.727 |
+| Trade & Transport | 0.549 | 0.783 |
+| Services | 0.473 | 1.081 |
+| Manufacturing | 0.624 | 1.000 |
 
 Agriculture is the least productive industry and Services and the utilities the most -- consistent with the structure of the Philippine economy (low-productivity smallholder agriculture; a large, relatively productive services sector; capital-intensive, high-value-added utilities).
 

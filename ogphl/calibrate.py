@@ -1,5 +1,6 @@
 from ogphl import macro_params, income
 from ogphl import input_output as io
+from ogphl.constants import PUBLIC_CAPITAL_SHARE, TOTAL_CAPITAL_SHARE
 import os
 import warnings
 import numpy as np
@@ -86,7 +87,14 @@ class Calibration:
             except Exception as exc:
                 warnings.warn(f"io_matrix update failed: {exc}", stacklevel=2)
             try:
-                gamma_dict = io.get_gamma()
+                # private capital share by industry, the same construction as
+                # create_multisector_calibration: rescale the SAM's total
+                # capital shares to the economy-wide total, then carve out
+                # public capital, so the live and packaged calibrations agree.
+                gamma_total = io.get_gamma(target_avg=TOTAL_CAPITAL_SHARE)
+                gamma_dict = {
+                    k: v - PUBLIC_CAPITAL_SHARE for k, v in gamma_total.items()
+                }
                 # check that model dimensions are consistent with gamma
                 assert p.M == len(list(gamma_dict.keys()))
                 self.gamma = np.array(list(gamma_dict.values()))
