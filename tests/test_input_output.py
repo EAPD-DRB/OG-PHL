@@ -91,3 +91,327 @@ def test_get_io_matrix_raises_on_none_sam(mock_read_sam):
     """
     with pytest.raises(RuntimeError, match="Cannot compute io_matrix"):
         io.get_io_matrix()
+
+
+# Mock SAM with factor-payment rows for the gamma calibration.
+# Primary (Ag):   labor = 10 + 10 + 0 = 20, capital + land = 20 + 10 = 30
+#                 -> gamma = 30 / 50 = 0.6
+# Secondary (Mfg): labor = 40, capital + land = 10 + 0 = 10
+#                 -> gamma = 10 / 50 = 0.2
+gamma_sam_df = pd.DataFrame(
+    {
+        "Ag": {
+            "flab-n": 10,
+            "flab-p": 10,
+            "flab-s": 0,
+            "fcap": 20,
+            "flnd": 10,
+        },
+        "Mfg": {"flab-n": 40, "flab-p": 0, "flab-s": 0, "fcap": 10, "flnd": 0},
+        # a non-factor row that must be ignored by get_gamma
+        "other": {"flab-n": 5, "flab-p": 5, "flab-s": 5, "fcap": 5, "flnd": 5},
+    }
+)
+gamma_prod_dict = {"Primary": ["Ag"], "Secondary": ["Mfg"]}
+
+
+def test_get_gamma():
+    """
+    Test of get_gamma() function
+    """
+    test_dict = io.get_gamma(sam=gamma_sam_df, prod_dict=gamma_prod_dict)
+
+    assert isinstance(test_dict, dict)
+    assert list(test_dict.keys()) == ["Primary", "Secondary"]
+    assert test_dict["Primary"] == 30 / 50
+    assert test_dict["Secondary"] == 10 / 50
+
+
+def test_get_gamma_rescaled():
+    """
+    get_gamma() with target_avg rescales so the value-added weighted mean
+    capital share equals the target while preserving the ratio across
+    industries.
+
+    Raw: Primary VA = 50, gamma = 0.6; Secondary VA = 50, gamma = 0.2.
+    Weighted mean = 0.4. Scaling to 0.5 multiplies both by 1.25.
+    """
+    test_dict = io.get_gamma(
+        sam=gamma_sam_df, prod_dict=gamma_prod_dict, target_avg=0.5
+    )
+    assert test_dict["Primary"] == pytest.approx(0.75)
+    assert test_dict["Secondary"] == pytest.approx(0.25)
+    # ratio between industries is preserved by the rescaling
+    raw = io.get_gamma(sam=gamma_sam_df, prod_dict=gamma_prod_dict)
+    assert test_dict["Primary"] / test_dict["Secondary"] == pytest.approx(
+        raw["Primary"] / raw["Secondary"]
+    )
+
+
+def test_get_gamma_zero_value_added():
+    """
+    get_gamma() returns 0.0 for an industry with no factor payments
+    rather than dividing by zero.
+    """
+    empty_sam = pd.DataFrame(
+        {"Ag": {"flab-n": 0, "flab-p": 0, "flab-s": 0, "fcap": 0, "flnd": 0}}
+    )
+    test_dict = io.get_gamma(sam=empty_sam, prod_dict={"Primary": ["Ag"]})
+    assert test_dict["Primary"] == 0.0
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_gamma_raises_on_none_sam(mock_read_sam):
+    """
+    get_gamma() raises RuntimeError when SAM data is unavailable.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute gamma"):
+        io.get_gamma()
+
+
+def test_get_gamma_packaged_sam():
+    """
+    Integration test: the packaged SAM and the 8-industry PROD_DICT yield a
+    capital share in (0, 1) for every industry, keyed consistently.
+    """
+    from ogphl.constants import PROD_DICT
+
+    gamma = io.get_gamma()
+    assert list(gamma.keys()) == list(PROD_DICT.keys())
+    assert len(gamma) == 8
+    assert all(0.0 < g < 1.0 for g in gamma.values())
+
+
+def _io_va_mock_sam(import_cA=0.0):
+    """A 2-sector mock SAM (Ag, Mfg) for the value-added io_matrix test.
+
+    Ag (activity aA -> commodity cA): output 100, value added 100, no inputs.
+    Mfg (activity aM -> commodity cM): output 100, value added 50, uses 50 of
+    cA as an intermediate input. So a peso of the manufactured good cM embodies
+    half Ag value added and half Mfg value added.
+    """
+    accounts = ["cA", "cM", "aA", "aM", "flab-n", "fcap", "row"] + io.HH_COLS
+    sam = pd.DataFrame(0.0, index=accounts, columns=accounts)
+    sam.loc["aA", "cA"] = 100.0  # make matrix (diagonal)
+    sam.loc["aM", "cM"] = 100.0
+    sam.loc["cA", "aM"] = 50.0  # Mfg uses 50 of the Ag commodity
+    sam.loc["flab-n", "aA"] = 60.0  # Ag value added = 100
+    sam.loc["fcap", "aA"] = 40.0
+    sam.loc["flab-n", "aM"] = 30.0  # Mfg value added = 50
+    sam.loc["fcap", "aM"] = 20.0
+    sam.loc["cA", "hhd-r1"] = 100.0  # household final consumption
+    sam.loc["cM", "hhd-r1"] = 100.0
+    sam.loc["row", "cA"] = import_cA  # imports of the Ag commodity
+    return sam
+
+
+io_va_cons_dict = {"Food": ["cA"], "Goods": ["cM"]}
+io_va_prod_dict = {"Ag": ["aA"], "Mfg": ["aM"]}
+
+
+def test_get_io_matrix_value_added_indirect():
+    """
+    A manufactured good embodies the value added of its upstream inputs.
+
+    With no imports, half of a peso of the 'Goods' consumption good (cM) is Ag
+    value added (the cA input) and half is Mfg value added.
+    """
+    df = io.get_io_matrix_value_added(
+        sam=_io_va_mock_sam(),
+        cons_dict=io_va_cons_dict,
+        prod_dict=io_va_prod_dict,
+    )
+    assert df.loc["Food", "Ag"] == pytest.approx(1.0)
+    assert df.loc["Food", "Mfg"] == pytest.approx(0.0)
+    assert df.loc["Goods", "Ag"] == pytest.approx(0.5)
+    assert df.loc["Goods", "Mfg"] == pytest.approx(0.5)
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0, 1.0])
+
+
+def test_get_io_matrix_value_added_imports():
+    """
+    Imported intermediates are netted out before the row is renormalized.
+
+    With half of cA's supply imported, the Ag value added embodied in 'Goods'
+    falls from 1/2 to 1/3 (the imported half carries no domestic value added).
+    """
+    df = io.get_io_matrix_value_added(
+        sam=_io_va_mock_sam(import_cA=100.0),
+        cons_dict=io_va_cons_dict,
+        prod_dict=io_va_prod_dict,
+    )
+    assert df.loc["Goods", "Ag"] == pytest.approx(1.0 / 3.0)
+    assert df.loc["Goods", "Mfg"] == pytest.approx(2.0 / 3.0)
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0, 1.0])
+
+
+def test_get_io_matrix_value_added_packaged_sam():
+    """
+    Integration test: the packaged SAM yields a valid 5x8 io_matrix whose rows
+    sum to one, with electricity dominating the energy & water good.
+    """
+    from ogphl.constants import CONS_DICT, PROD_DICT
+
+    df = io.get_io_matrix_value_added()
+    assert df.shape == (len(CONS_DICT), len(PROD_DICT))
+    assert df.values.min() >= -1e-12
+    assert df.sum(axis=1).tolist() == pytest.approx([1.0] * len(CONS_DICT))
+    assert df.loc["Energy and water", "Electricity"] > 0.5
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_io_matrix_value_added_raises_on_none_sam(mock_read_sam):
+    """
+    get_io_matrix_value_added() raises RuntimeError when the SAM is missing.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute io_matrix"):
+        io.get_io_matrix_value_added()
+
+
+def test_get_employment(tmp_path):
+    """
+    get_employment() aggregates PSIC sections into industries for the
+    requested year (e.g. Trade G + Transport H -> Trade and Transport) and
+    ignores other years.
+    """
+    csv = tmp_path / "emp.csv"
+    csv.write_text(
+        "year,psic_section,employed_thousands\n"
+        "2018,A,1000\n"
+        "2018,G,300\n"
+        "2018,H,200\n"
+        "2018,C,500\n"
+        "2017,A,999\n"
+    )
+    emp = io.get_employment(
+        prod_dict={
+            "Agriculture and Fishing": [],
+            "Trade and Transport": [],
+            "Manufacturing": [],
+        },
+        year=2018,
+        path=str(csv),
+    )
+    assert emp["Agriculture and Fishing"] == 1000.0
+    assert emp["Trade and Transport"] == 500.0  # G + H combined
+    assert emp["Manufacturing"] == 500.0
+
+
+def test_get_employment_packaged():
+    """
+    Integration test: the packaged Labor Force Survey series yields positive
+    2018 employment for all 8 industries, summing to the published total
+    (~41.2 million).
+    """
+    from ogphl.constants import PROD_DICT
+
+    emp = io.get_employment(year=2018)
+    assert list(emp.keys()) == list(PROD_DICT.keys())
+    assert all(v > 0 for v in emp.values())
+    assert sum(emp.values()) == pytest.approx(41156.5, abs=5.0)
+
+
+# Mock SAM for get_Z: aA value added 100 (cap 60), aM value added 100 (cap 50).
+# gamma_raw = 0.6 (Ag), 0.5 (Mfg). With capital_output_ratio = 2.0 the national
+# capital is 400, split 218.18/181.82 by capital-income share; with employment
+# 200 / 100 the Solow residuals are 0.4746 / 0.7416, so normalized Z is
+# 0.640 / 1.000 (Mfg is the numeraire, last in prod_dict).
+z_sam_df = pd.DataFrame(
+    {
+        "aA": {"flab-n": 40, "flab-p": 0, "flab-s": 0, "fcap": 60, "flnd": 0},
+        "aM": {"flab-n": 50, "flab-p": 0, "flab-s": 0, "fcap": 50, "flnd": 0},
+    }
+)
+z_prod_dict = {"Ag": ["aA"], "Mfg": ["aM"]}
+
+
+def test_get_Z():
+    """
+    get_Z() returns the normalized Solow-residual TFP, with the numeraire (last
+    industry) at 1.0.
+    """
+    Z = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    assert isinstance(Z, dict)
+    assert list(Z.keys()) == ["Ag", "Mfg"]
+    assert Z["Mfg"] == pytest.approx(1.0)
+    assert Z["Ag"] == pytest.approx(0.6400, abs=2e-3)
+    assert Z["Ag"] < Z["Mfg"]
+
+
+def test_get_Z_gamma_array():
+    """
+    get_Z() accepts gamma as an array-like ordered by prod_dict, not only a
+    dict.
+    """
+    Z_dict = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma={"Ag": 0.6, "Mfg": 0.5},
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    Z_arr = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma=[0.6, 0.5],
+        employment={"Ag": 200.0, "Mfg": 100.0},
+        capital_output_ratio=2.0,
+    )
+    assert Z_arr["Ag"] == pytest.approx(Z_dict["Ag"])
+
+
+def test_get_Z_public_capital():
+    """
+    A positive gamma_g lowers the labor exponent to (1 - gamma - gamma_g), so
+    the OG-Core production function (with public capital K_g) is what gets
+    inverted. The common K_g term cancels under the numeraire normalization, so
+    the only effect on normalized Z is the factor (L_m / L_numeraire)**gamma_g.
+    With gamma_g=0 Agriculture is 0.640; with gamma_g=0.1 it is 0.640 * 2**0.1.
+    """
+    emp = {"Ag": 200.0, "Mfg": 100.0}
+    Z0 = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        employment=emp,
+        capital_output_ratio=2.0,
+    )
+    Zg = io.get_Z(
+        sam=z_sam_df,
+        prod_dict=z_prod_dict,
+        gamma_g=0.1,
+        employment=emp,
+        capital_output_ratio=2.0,
+    )
+    assert Zg["Mfg"] == pytest.approx(1.0)
+    assert Zg["Ag"] == pytest.approx(0.6859, abs=2e-3)
+    assert Zg["Ag"] == pytest.approx(Z0["Ag"] * 2**0.1, abs=2e-3)
+
+
+@patch("ogphl.input_output.read_SAM", return_value=None)
+def test_get_Z_raises_on_none_sam(mock_read_sam):
+    """
+    get_Z() raises RuntimeError when SAM data is unavailable.
+    """
+    with pytest.raises(RuntimeError, match="Cannot compute Z"):
+        io.get_Z()
+
+
+def test_get_Z_packaged_sam():
+    """
+    Integration test: the packaged SAM and Labor Force Survey yield a TFP for
+    every industry, with Manufacturing (numeraire) at 1.0, all positive, and
+    Agriculture the least productive sector.
+    """
+    from ogphl.constants import PROD_DICT
+
+    Z = io.get_Z()
+    assert list(Z.keys()) == list(PROD_DICT.keys())
+    assert len(Z) == 8
+    assert all(v > 0 for v in Z.values())
+    assert Z["Manufacturing"] == pytest.approx(1.0)
+    assert Z["Agriculture and Fishing"] == min(Z.values())
