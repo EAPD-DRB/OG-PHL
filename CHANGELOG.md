@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Require `ogcore>=0.16.3` and Python 3.12+ (ogcore 0.16.3 supports Python 3.12-3.13). The floor keeps the packaged parameters and the installed ogcore from drifting apart: the demographic seed parameters below do not exist in older ogcore schemas.
+- Regenerated the packaged baseline demographics under ogcore 0.16.3, whose demographics rework (PSLmodels/OG-Core#1073) realigns the transition arrays by one period and adds the period-0 seeds `g_n_preTP`, `imm_rates_preTP`, and `rho_preTP` that the aggregation code now uses. Macro and industry parameters are unchanged.
 - Recalibrated the open-economy block to Philippine data, in `ogphl_default_parameters.json`. Capital openness `zeta_K` 0.9 → 0.4 (normalized Chinn-Ito index; the old value implied a ~96% foreign-owned capital stock vs. the ~20% in the BSP International Investment Position, and also kept domestic capital so thin that the transition path failed the resource constraint). World interest rate `world_int_rate_annual` 0.04 → 0.05, adding a ~100 bp Philippine sovereign country-risk premium to the global risk-free rate. Steady-state debt target `debt_ratio_ss` 1.10 → 0.60, matching the Philippine debt-to-GDP ratio (and the model's initial ratio) instead of the US-style placeholder. These are economy-wide values, so they live in the base JSON and the single- and multi-industry models both inherit them; the macro calibration chapter documents the anchors. The multi-industry overlay now only carries the TPI dampening `nu` = 0.2 it needs on top of the base.
 
 ### Fixed
