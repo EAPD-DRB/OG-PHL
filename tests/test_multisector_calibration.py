@@ -26,6 +26,8 @@ def test_build_multisector_params():
         "Z",
         "cit_rate",
         "tau_c",
+        "chi_b",
+        "chi_n",
     ):
         assert key in p
     assert len(p["gamma"]) == 8
@@ -60,3 +62,31 @@ def test_packaged_multisector_json_in_sync():
         rtol=1e-9,
     )
     np.testing.assert_allclose(shipped["alpha_c"], built["alpha_c"], rtol=1e-9)
+    np.testing.assert_allclose(shipped["chi_b"], built["chi_b"], rtol=1e-9)
+    np.testing.assert_allclose(shipped["chi_n"], built["chi_n"], rtol=1e-9)
+
+
+def test_chi_units_conversion():
+    """
+    chi_b and chi_n in the overlay are the base weights scaled by
+    k**(sigma-1), the exact FOC-preserving conversion for the multi-good
+    composite-consumption units (k is the constant OG-Core's unnormalized
+    price index picks up).
+    """
+    with (
+        importlib.resources.files("ogphl")
+        .joinpath("ogphl_default_parameters.json")
+        .open() as f
+    ):
+        base = json.load(f)
+    built = build_multisector_params()
+    alpha = np.array(built["alpha_c"])
+    k = float(np.prod(alpha**-alpha))
+    scale = k ** (base["sigma"] - 1.0)
+    assert scale > 1.0  # I>1 shrinks composite units, so weights scale up
+    np.testing.assert_allclose(
+        built["chi_b"], np.array(base["chi_b"]) * scale, rtol=1e-12
+    )
+    np.testing.assert_allclose(
+        built["chi_n"], np.array(base["chi_n"]) * scale, rtol=1e-12
+    )

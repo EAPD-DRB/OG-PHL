@@ -40,6 +40,16 @@ The remaining production parameters are set to defensible, documented values
   * ``cit_rate = .25``- CREATE Act statutory corporate income tax, applied
                         uniformly (sector-effective rates are not published).
   * ``tau_c = .12``   - standard VAT, applied uniformly across goods.
+  * ``chi_b``/``chi_n`` - the base utility weights converted for the
+                        multi-good composite-consumption units. OG-Core's
+                        composite price index is unnormalized, so I=5 shrinks
+                        composite-consumption units by
+                        k = prod(alpha_c**-alpha_c) ~ 2.97 while the weights
+                        are fixed numbers set in single-industry units;
+                        scaling both by k**(sigma-1) ~ 1.72 is the exact
+                        FOC-preserving conversion and keeps household saving
+                        and labor supply aligned with the single-industry
+                        baseline (see create_multisector_calibration).
 
 The 8 industries (Manufacturing kept last as the OG-Core numeraire / sole
 investment-good producer) are: Agriculture & Fishing, Mining, Electricity,
@@ -47,15 +57,17 @@ Water, Construction, Trade & Transport, Services, Manufacturing.
 
 Interpreting the steady state (these are structural OG-Core open-economy
 features, not Z artifacts -- a Z=1 control reproduces them):
-  * Manufacturing's NOMINAL output share (~72%) is mechanically inflated:
+  * Manufacturing's NOMINAL output share (~65%) is mechanically inflated:
     OG-Core routes all non-consumption final demand (investment, government,
     net capital outflows) through the single numeraire industry. It is not
     comparable to its ~19% value-added share in the data; the value-added /
     consumption composition is the data-comparable object.
-  * The foreign-owned capital share (K_f/K ~0.96) follows from the
-    open-economy parameters (zeta_K=0.9, world_int_rate < domestic r), a
-    modeling choice separate from the TFP calibration.
-  * C/Y is reported at purchaser prices (p_tilde * C / Y, ~0.37).
+  * The foreign-owned capital share (K_f/K ~0.34, vs 0.26 in the
+    single-industry baseline) follows from the open-economy parameters
+    (zeta_K=0.4, world_int_rate < domestic r) plus a residual composition
+    effect of the multi-good consumption basket, a modeling structure
+    separate from the TFP calibration.
+  * C/Y is reported at purchaser prices (p_tilde * C / Y, ~0.50).
 
 Solving the steady state directly fails to converge: OG-Core seeds the
 industry-price guess at p_m = 1 for every industry, but with heterogeneous
@@ -257,8 +269,8 @@ def validate_ss(p, ss):
     )
     print(f"K_f/K (foreign-owned capital share) = {s(ss['K_f']) / K:.3f}")
     print(
-        "(single-industry baseline reference: K/Y 5.33, C/Y 0.35, "
-        "r 0.048, K_f/K 0.81)"
+        "(single-industry baseline reference: K/Y 4.29, C/Y 0.51, "
+        "r 0.0708, K_f/K 0.26)"
     )
     print("\nPer-industry steady state:")
     print(

@@ -27,6 +27,11 @@ Values written (an overlay on top of ``ogphl_default_parameters.json``):
   * ``c_min``      - 0.0 (no subsistence floor)
   * ``cit_rate``   - 0.25 (CREATE Act statutory corporate income tax)
   * ``tau_c``      - 0.12 (standard VAT)
+  * ``chi_b``, ``chi_n`` - the base utility weights converted for the
+                     multi-good composite-consumption units: scaled by
+                     k**(sigma-1) with k = prod(alpha_c**-alpha_c), the units
+                     constant OG-Core's unnormalized composite price index
+                     picks up when I > 1 (see build_multisector_params)
   * ``nu``         - 0.2 TPI dampening (0.4 is marginally unstable here)
 
 The economy-wide open-economy values (``zeta_K`` = 0.4,
@@ -71,6 +76,24 @@ def build_multisector_params():
     gamma_total = io.get_gamma(target_avg=TOTAL_CAPITAL_SHARE)
     gamma = {k: v - PUBLIC_CAPITAL_SHARE for k, v in gamma_total.items()}
     Z = io.get_Z(gamma=gamma, gamma_g=PUBLIC_CAPITAL_SHARE)
+    # OG-Core's composite-consumption price index is unnormalized
+    # (p_tilde = prod(((1+tau_c) p_i / alpha_i)**alpha_i) in
+    # aggregates.get_ptilde), so I=1 -> I=5 shrinks composite-consumption
+    # units by
+    # k = prod(alpha_i**-alpha_i) while chi_n and chi_b stay fixed numbers set
+    # in the single-industry units. Every consumption term in the household
+    # FOCs enters as MU(c)/p_tilde and scales by k**(sigma-1) under that units
+    # change; the chi_b bequest term (assets, numeraire units) and the chi_n
+    # disutility term do not. Scaling both weights by k**(sigma-1) restores
+    # the FOCs at the same real allocation, keeping multi-industry households
+    # behaviorally identical to the single-industry baseline.
+    alpha_arr = np.array(alpha_c)
+    k_units = float(np.prod(alpha_arr**-alpha_arr))
+    with open(os.path.join(CUR_DIR, "ogphl_default_parameters.json")) as f:
+        base = json.load(f)
+    chi_scale = k_units ** (base["sigma"] - 1.0)
+    chi_b = [float(v) * chi_scale for v in base["chi_b"]]
+    chi_n = [float(v) * chi_scale for v in base["chi_n"]]
     return {
         "M": int(n_ind),
         "I": int(n_cons),
@@ -83,6 +106,8 @@ def build_multisector_params():
         "Z": [[float(v) for v in Z.values()]],
         "cit_rate": [[0.25]],
         "tau_c": [[0.12]],
+        "chi_b": chi_b,
+        "chi_n": chi_n,
         "nu": TPI_NU,
     }
 
