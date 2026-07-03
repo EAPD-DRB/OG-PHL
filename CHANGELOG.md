@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Enabled a debt-elastic sovereign premium in `ogphl_default_parameters.json`, the crowding-out-via-risk channel that OG-Core's defaults and the other country calibrations leave off (`r_gov_DY = r_gov_DY2 = 0`). It is a *centered* convex form, `r_gov_DY2 * (D/Y - 0.6)^2`, flat at the 0.60 debt target and steepening only as debt rises away — `r_gov_DY2 = 0.04`, `r_gov_DY = -0.048`, with `r_gov_shift` recentered from -0.0338 to -0.0482 so the premium is exactly zero at the target and the steady state is unchanged. This matches Philippine experience (stable spreads at 40-70% debt, blowouts only at 1980s-crisis levels). See the macro calibration chapter for the lineage and sources.
+- `ogphl/update_baseline.py`: regenerates the packaged single-industry JSON from the live calibration (UN demographics, World Bank `g_y_annual`), so the offline default reproduces the connected run (`uv run python -m ogphl.update_baseline`). The packaged values are refreshed with it.
+
 ### Changed
 
 - Require `ogcore>=0.16.3` and Python 3.12+ (ogcore 0.16.3 supports Python 3.12-3.13). The floor keeps the packaged parameters and the installed ogcore from drifting apart: the demographic seed parameters below do not exist in older ogcore schemas.
 - Regenerated the packaged baseline demographics under ogcore 0.16.3, whose demographics rework (PSLmodels/OG-Core#1073) realigns the transition arrays by one period and adds the period-0 seeds `g_n_preTP`, `imm_rates_preTP`, and `rho_preTP` that the aggregation code now uses. Macro and industry parameters are unchanged.
+- Recalibrated the open-economy block to Philippine data, in `ogphl_default_parameters.json`. Capital openness `zeta_K` 0.9 -> 0.4 (normalized Chinn-Ito index; the old value implied a ~96% foreign-owned capital stock vs. the ~20% in the BSP International Investment Position, and also kept domestic capital so thin that the transition path failed the resource constraint). World interest rate `world_int_rate_annual` 0.04 -> 0.05, adding a ~100 bp Philippine sovereign country-risk premium to the global risk-free rate. Steady-state debt target `debt_ratio_ss` 1.10 -> 0.60, matching the Philippine debt-to-GDP ratio (and the model's initial ratio) instead of the US-style placeholder. These are economy-wide values, so they live in the base JSON and the single- and multi-industry models both inherit them; the macro calibration chapter documents the anchors.
+- Macro parameters are no longer clobbered by wrong-source API pulls: `get_macro_params` now refreshes only `g_y_annual` (World Bank, its documented source). The IMF GFS pull for `alpha_T`/`alpha_G` is removed — the Philippine central-government social-benefit series it differenced are zero, which set `alpha_T = 0` and made the steady-state solve divide by zero — as are the World Bank external-debt pull for `initial_foreign_debt_ratio`/`zeta_D` and the ILOSTAT `gamma` and `r_gov_*` overrides; those parameters are held at their documented values in the packaged JSON.
 
 ## [0.1.0] - 2026-06-02 12:00:00
 
