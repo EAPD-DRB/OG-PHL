@@ -77,7 +77,7 @@ def main():
     # Parameter change for the reform run: corporate income tax rate cut
     updated_params_ref = {
         "cit_rate": [[0.20]],
-        "debt_ratio_ss": 1.15,  # increase debt to GDP ratio to 115%
+        "debt_ratio_ss": 0.65,  # increase debt to GDP ratio to 65%
     }
     p2.update_specifications(updated_params_ref)
 
