@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Require `ogcore>=0.16.3` and Python 3.12+ (ogcore 0.16.3 supports Python 3.12-3.13). The floor keeps the packaged parameters and the installed ogcore from drifting apart: the demographic seed parameters below do not exist in older ogcore schemas.
+- Regenerated the packaged baseline demographics under ogcore 0.16.3, whose demographics rework (PSLmodels/OG-Core#1073) realigns the transition arrays by one period and adds the period-0 seeds `g_n_preTP`, `imm_rates_preTP`, and `rho_preTP` that the aggregation code now uses. Macro and industry parameters are unchanged.
+
 ## [0.1.0] - 2026-06-02 12:00:00
 
 ### Changed
