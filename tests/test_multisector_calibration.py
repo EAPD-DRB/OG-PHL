@@ -8,7 +8,10 @@ import json
 import numpy as np
 import pytest
 
-from ogphl.create_multisector_calibration import build_multisector_params
+from ogphl.create_multisector_calibration import (
+    build_calibration,
+    build_multisector_params,
+)
 
 
 def test_build_multisector_params():
@@ -40,10 +43,12 @@ def test_build_multisector_params():
     assert all(0.0 < g < 1.0 for g in p["gamma"])
 
 
-def test_packaged_multisector_json_in_sync():
+def test_packaged_multisector_json_is_self_sufficient_and_in_sync():
     """
-    The committed multisector JSON matches what the builder produces, so the
-    static artifact cannot silently drift from the tool that generates it.
+    The committed multisector JSON is a full, self-sufficient parameter set
+    (the single-industry base with the multi-industry values applied), and it
+    matches what the builder produces -- so the model can load it on its own,
+    and the static artifact cannot silently drift from its generating tool.
     """
     with (
         importlib.resources.files("ogphl")
@@ -51,6 +56,13 @@ def test_packaged_multisector_json_in_sync():
         .open() as f
     ):
         shipped = json.load(f)
+    # Self-sufficient: the complete key set of the base-merged calibration --
+    # far more than the ~14 multi-industry values, so it carries the whole
+    # single-industry base (a base-only parameter like sigma is present).
+    assert set(shipped.keys()) == set(build_calibration().keys())
+    assert "sigma" in shipped
+    assert len(shipped) > 5 * len(build_multisector_params())
+    # In sync: the computed multi-industry values match the builder.
     built = build_multisector_params()
     assert shipped["M"] == built["M"]
     assert shipped["I"] == built["I"]

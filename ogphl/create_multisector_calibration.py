@@ -2,19 +2,21 @@
 Build the OG-PHL multi-industry (M=8, I=5) calibration and write it to the
 packaged ``ogphl_multisector_default_parameters.json``.
 
-Calibration is a rare event. Run this ONLY to (re)generate the packaged
-multi-industry parameter overlay from the underlying data (the 2018 IFPRI SAM
-and the PSA Labor Force Survey):
+Calibration is a rare event. Run this ONLY to (re)generate the packaged,
+self-sufficient multi-industry parameter file from the underlying data (the
+2018 IFPRI SAM and the PSA Labor Force Survey):
 
     uv run python -m ogphl.create_multisector_calibration
 
 The model itself loads the JSON; it does not call these functions at run time.
 The construction tools live in ``ogphl.input_output`` (``get_alpha_c``,
 ``get_io_matrix_value_added``, ``get_gamma``, ``get_Z``, ``get_employment``);
-this module just assembles their output, with the documented production/fiscal
-choices, into an OG-Core parameter overlay and serializes it.
+this module assembles their output, with the documented production/fiscal
+choices, into the multi-industry values, merges them onto the single-industry
+base, and serializes the self-sufficient result.
 
-Values written (an overlay on top of ``ogphl_default_parameters.json``):
+Multi-industry values computed here and merged onto the single-industry base
+``ogphl_default_parameters.json`` to form the self-sufficient file:
   * ``M``, ``I``   - 8 production industries, 5 consumption goods
   * ``alpha_c``    - household consumption shares (SAM)
   * ``io_matrix``  - 5x8 domestic value-added content (SAM, Leontief)
@@ -35,11 +37,12 @@ Values written (an overlay on top of ``ogphl_default_parameters.json``):
   * ``nu``         - 0.2 TPI dampening (0.4 is marginally unstable here)
 
 The economy-wide open-economy values (``zeta_K`` = 0.4,
-``world_int_rate_annual`` = 0.05, ``debt_ratio_ss`` = 0.6) are not in this
-overlay -- they live in the base ``ogphl_default_parameters.json`` and are
-documented in the macro calibration chapter, because they describe the
-Philippine economy regardless of the industry split. The multi-industry run
-inherits them from the base.
+``world_int_rate_annual`` = 0.05, ``debt_ratio_ss`` = 0.6) are not
+multi-industry choices -- they are inherited unchanged from the
+single-industry base ``ogphl_default_parameters.json`` (and documented in the
+macro calibration chapter) because they describe the Philippine economy
+regardless of the industry split. The merge below bakes them into the
+self-sufficient file.
 """
 
 import json
@@ -112,12 +115,29 @@ def build_multisector_params():
     }
 
 
+def build_calibration():
+    """Full, self-sufficient multi-industry parameter set.
+
+    The single-industry base ``ogphl_default_parameters.json`` with the
+    multi-industry values (``build_multisector_params``) applied on top. The
+    model loads this one file and does not depend on the single-industry base
+    at run time.
+    """
+    with open(os.path.join(CUR_DIR, "ogphl_default_parameters.json")) as f:
+        params = json.load(f)
+    params.update(build_multisector_params())
+    return params
+
+
 def main():
-    params = build_multisector_params()
+    params = build_calibration()
     with open(MULTISECTOR_PARAMS_PATH, "w") as f:
         json.dump(params, f, indent=2)
         f.write("\n")
-    print(f"Wrote {MULTISECTOR_PARAMS_PATH}")
+    print(
+        f"Wrote {MULTISECTOR_PARAMS_PATH} "
+        f"(self-sufficient, {len(params)} parameters)"
+    )
     print(f"  M = {params['M']}, I = {params['I']}")
     print(f"  gamma = {np.round(params['gamma'], 4).tolist()}")
     print(f"  Z     = {np.round(params['Z'][0], 4).tolist()}")
