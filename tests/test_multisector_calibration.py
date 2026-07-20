@@ -8,31 +8,40 @@ import json
 import numpy as np
 import pytest
 
-from ogphl.create_multisector_calibration import (
-    build_calibration,
-    build_multisector_params,
-)
+from ogphl.create_multisector_calibration import build_multisector_params
+
+# The complete key set of the packaged overlay: only the parameters the
+# multi-industry calibration changes relative to the single-industry base.
+# A key appearing here must be a deliberate multi-industry choice; anything
+# else (demographics, tax functions, the fiscal/macro block, solver seeds)
+# is inherited from ogphl_default_parameters.json at load time.
+OVERLAY_KEYS = {
+    "M",
+    "I",
+    "alpha_c",
+    "io_matrix",
+    "c_min",
+    "gamma",
+    "epsilon",
+    "gamma_g",
+    "Z",
+    "chi_b",
+    "chi_n",
+    "nu",
+}
+
+
+def _load_packaged(name):
+    with importlib.resources.files("ogphl").joinpath(name).open() as f:
+        return json.load(f)
 
 
 def test_build_multisector_params():
     """The builder produces a well-formed 8-industry, 5-good overlay."""
     p = build_multisector_params()
+    assert set(p.keys()) == OVERLAY_KEYS
     assert p["M"] == 8
     assert p["I"] == 5
-    for key in (
-        "alpha_c",
-        "io_matrix",
-        "c_min",
-        "gamma",
-        "epsilon",
-        "gamma_g",
-        "Z",
-        "cit_rate",
-        "tau_c",
-        "chi_b",
-        "chi_n",
-    ):
-        assert key in p
     assert len(p["gamma"]) == 8
     assert len(p["Z"]) == 1 and len(p["Z"][0]) == 8
     assert np.shape(p["io_matrix"]) == (5, 8)
@@ -43,29 +52,20 @@ def test_build_multisector_params():
     assert all(0.0 < g < 1.0 for g in p["gamma"])
 
 
-def test_packaged_multisector_json_is_self_sufficient_and_in_sync():
+def test_packaged_overlay_is_lean_and_in_sync():
     """
-    The committed multisector JSON is a full, self-sufficient parameter set
-    (the single-industry base with the multi-industry values applied), and it
-    matches what the builder produces -- so the model can load it on its own,
-    and the static artifact cannot silently drift from its generating tool.
+    The committed multisector JSON is a lean overlay -- exactly the
+    whitelisted multi-industry keys, nothing else (so it can never silently
+    fatten back into a full parameter set or thin below what the example
+    needs) -- and every value matches what the builder produces, so the
+    static artifact cannot drift from its generating tool.
     """
-    with (
-        importlib.resources.files("ogphl")
-        .joinpath("ogphl_multisector_default_parameters.json")
-        .open() as f
-    ):
-        shipped = json.load(f)
-    # Self-sufficient: the complete key set of the base-merged calibration --
-    # far more than the ~14 multi-industry values, so it carries the whole
-    # single-industry base (a base-only parameter like sigma is present).
-    assert set(shipped.keys()) == set(build_calibration().keys())
-    assert "sigma" in shipped
-    assert len(shipped) > 5 * len(build_multisector_params())
-    # In sync: the computed multi-industry values match the builder.
+    shipped = _load_packaged("ogphl_multisector_default_parameters.json")
+    assert set(shipped.keys()) == OVERLAY_KEYS
     built = build_multisector_params()
     assert shipped["M"] == built["M"]
     assert shipped["I"] == built["I"]
+    assert shipped["nu"] == built["nu"]
     np.testing.assert_allclose(shipped["gamma"], built["gamma"], rtol=1e-9)
     np.testing.assert_allclose(shipped["Z"][0], built["Z"][0], rtol=1e-9)
     np.testing.assert_allclose(
@@ -74,8 +74,39 @@ def test_packaged_multisector_json_is_self_sufficient_and_in_sync():
         rtol=1e-9,
     )
     np.testing.assert_allclose(shipped["alpha_c"], built["alpha_c"], rtol=1e-9)
+    np.testing.assert_allclose(shipped["c_min"], built["c_min"], rtol=1e-9)
+    np.testing.assert_allclose(shipped["epsilon"], built["epsilon"], rtol=1e-9)
+    np.testing.assert_allclose(shipped["gamma_g"], built["gamma_g"], rtol=1e-9)
     np.testing.assert_allclose(shipped["chi_b"], built["chi_b"], rtol=1e-9)
     np.testing.assert_allclose(shipped["chi_n"], built["chi_n"], rtol=1e-9)
+
+
+def test_overlay_applies_on_base():
+    """
+    The canonical two-step load -- the single-industry base, then the
+    multi-industry overlay -- produces a coherent M=8, I=5 parameter set
+    that keeps the base's economy-wide values (the overlay must be applied
+    on top of the base, never loaded alone).
+    """
+    from ogcore.parameters import Specifications
+
+    base = _load_packaged("ogphl_default_parameters.json")
+    overlay = _load_packaged("ogphl_multisector_default_parameters.json")
+    p = Specifications()
+    p.update_specifications(base)
+    p.update_specifications(overlay)
+    assert p.M == 8
+    assert p.I == 5
+    np.testing.assert_allclose(p.gamma, overlay["gamma"], rtol=1e-12)
+    np.testing.assert_allclose(p.Z[-1, :], overlay["Z"][0], rtol=1e-12)
+    np.testing.assert_allclose(p.alpha_c, overlay["alpha_c"], rtol=1e-12)
+    np.testing.assert_allclose(
+        p.io_matrix, np.array(overlay["io_matrix"]), rtol=1e-12
+    )
+    # Economy-wide values come from the base, untouched by the overlay.
+    assert p.debt_ratio_ss == pytest.approx(base["debt_ratio_ss"])
+    assert p.zeta_K[0] == pytest.approx(base["zeta_K"][0])
+    np.testing.assert_allclose(p.lambdas.flatten(), base["lambdas"])
 
 
 def test_chi_units_conversion():
@@ -85,12 +116,7 @@ def test_chi_units_conversion():
     composite-consumption units (k is the constant OG-Core's unnormalized
     price index picks up).
     """
-    with (
-        importlib.resources.files("ogphl")
-        .joinpath("ogphl_default_parameters.json")
-        .open() as f
-    ):
-        base = json.load(f)
+    base = _load_packaged("ogphl_default_parameters.json")
     built = build_multisector_params()
     alpha = np.array(built["alpha_c"])
     k = float(np.prod(alpha**-alpha))

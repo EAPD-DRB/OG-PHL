@@ -2,14 +2,16 @@
 Run a SAM-calibrated multi-industry (M=8, I=5) version of OG-PHL.
 
 Unlike ``run_og_phl_multi_industry.py`` (a hand-coded 2-sector informal/formal
-demo), this example loads the packaged, self-sufficient multi-industry
-calibration ``ogphl_multisector_default_parameters.json`` -- generated (rarely)
-by ``ogphl.create_multisector_calibration`` from the 2018 IFPRI SAM and the PSA
-Labor Force Survey -- and runs a full baseline plus a trivial reform scenario
-(a corporate-income-tax cut), comparing them as the other examples do. It is a
-full OG-Core parameter set (the single-industry base with the multi-industry
-values applied), so the run depends on no other parameter file. The calibration
-contains:
+demo), this example loads the single-industry calibration
+``ogphl_default_parameters.json`` and applies the packaged multi-industry
+overlay ``ogphl_multisector_default_parameters.json`` on top -- generated
+(rarely) by ``ogphl.create_multisector_calibration`` from the 2018 IFPRI SAM
+and the PSA Labor Force Survey -- then runs a full baseline plus a trivial
+reform scenario (a corporate-income-tax cut), comparing them as the other
+examples do. The overlay contains only the parameters the multi-industry
+calibration changes; everything economy-wide (demographics, earnings, tax
+functions, the fiscal and open-economy blocks, solver seeds) is inherited
+from the single-industry base at load time. The overlay contains:
 
   * ``alpha_c``   - household consumption shares across the 5 consumption goods
   * ``io_matrix`` - 5x8 domestic value-added content of each consumption good
@@ -135,24 +137,29 @@ def _load_params(name):
         return json.load(f)
 
 
+def _load_defaults():
+    return _load_params("ogphl_default_parameters.json")
+
+
 def _load_multisector():
-    """Load the packaged, self-sufficient multi-industry calibration.
+    """Load the packaged multi-industry calibration overlay.
 
     Built by ``ogphl.create_multisector_calibration`` (a rare event); the
-    model run only reads it. It is a full OG-Core parameter set -- the
-    single-industry base with the multi-industry values applied -- so the run
-    loads this one file alone (no dependency on the single-industry JSON).
+    model run only reads it. It contains ONLY the parameters the
+    multi-industry calibration changes, so it must be applied on top of the
+    single-industry base (see ``build_specifications``) -- loaded alone it
+    would leave every omitted parameter at OG-Core's US-calibrated defaults.
     """
     return _load_params("ogphl_multisector_default_parameters.json")
 
 
 def build_specifications(gamma, Z, baseline, output_base, baseline_dir=None):
     """
-    Build a Specifications object from the packaged, self-sufficient
-    multi-industry calibration JSON and the supplied gamma and Z (which the
-    continuation morphs toward the calibrated values). Only gamma and Z vary
-    along the homotopy; M, I, io_matrix, alpha_c, gamma_g, epsilon, cit_rate
-    and tau_c come from the calibration JSON.
+    Build a Specifications object from the packaged single-industry defaults,
+    the packaged multi-industry overlay, and the supplied gamma and Z (which
+    the continuation morphs toward the calibrated values). Only gamma and Z
+    vary along the homotopy; M, I, io_matrix, alpha_c, gamma_g and epsilon
+    come from the overlay, and everything economy-wide from the base.
     """
     p = Specifications(
         baseline=baseline,
@@ -160,6 +167,7 @@ def build_specifications(gamma, Z, baseline, output_base, baseline_dir=None):
         baseline_dir=baseline_dir or output_base,
         output_base=output_base,
     )
+    p.update_specifications(_load_defaults())
     p.update_specifications(_load_multisector())
     p.update_specifications({"gamma": list(gamma), "Z": [list(Z)]})
     return p
