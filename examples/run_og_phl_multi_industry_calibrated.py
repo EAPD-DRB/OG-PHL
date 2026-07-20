@@ -20,7 +20,7 @@ from the single-industry base at load time. The overlay contains:
   * ``gamma``     - per-industry capital share of value added (from SAM factor
                     rows), the one production parameter the SAM identifies
 
-The remaining production parameters are set to defensible, documented values
+The remaining overlay parameters are set to defensible, documented values
 (matching the practice of the sibling country models OG-IDN/ETH/ZAF):
 
   * ``epsilon = 1``   - Cobb-Douglas; no Philippine substitution-elasticity
@@ -41,9 +41,6 @@ The remaining production parameters are set to defensible, documented values
                         allocated by capital-income share (national level
                         from the Penn World Table K/Y); normalized so
                         Manufacturing = 1. See input_output.get_Z.
-  * ``cit_rate = .25``- CREATE Act statutory corporate income tax, applied
-                        uniformly (sector-effective rates are not published).
-  * ``tau_c = .12``   - standard VAT, applied uniformly across goods.
   * ``chi_b``/``chi_n`` - the base utility weights converted for the
                         multi-good composite-consumption units. OG-Core's
                         composite price index is unnormalized, so I=5 shrinks
@@ -54,6 +51,10 @@ The remaining production parameters are set to defensible, documented values
                         FOC-preserving conversion and keeps household saving
                         and labor supply aligned with the single-industry
                         baseline (see create_multisector_calibration).
+
+The tax rates (the CREATE Act 25% CIT and the 12% VAT, both applied
+uniformly) equal the single-industry values, so they are not in the overlay
+-- they are inherited from the base at load time.
 
 The 8 industries (Manufacturing kept last as the OG-Core numeraire / sole
 investment-good producer) are: Agriculture & Fishing, Mining, Electricity,
