@@ -423,28 +423,58 @@
 <p><strong>macro_params.py modules</strong></p>
 <section id="module-ogphl.macro_params">
 <span id="ogphl-macro-params"></span><h2>ogphl.macro_params<a class="headerlink" href="#module-ogphl.macro_params" title="Link to this heading">#</a></h2>
-<p>This module uses data from World Bank WDI, the IMF, and UN ILO to find
-values for parameters for the OG-PHL model that rely on macro data for
-calibration.</p>
+<p>Macro parameters for the OG-PHL model.</p>
+<p>Most OG-PHL macro parameters are documented, point-in-time Philippine values
+held in the packaged default-parameter JSON. Only a parameter whose documented
+source is genuinely a live API is refreshed here when <code class="docutils literal notranslate"><span class="pre">update_from_api=True</span></code>;
+the rest stay in the JSON so a live update cannot clobber a value we source
+elsewhere. In particular the IMF GFS and World-Bank external-debt calls are NOT
+used: the values they overwrote come from other sources (World Bank WDI, DBM
+budget tables, the Bureau of the Treasury), and the IMF GFS social-benefit
+series is zero for the Philippines, which set <code class="docutils literal notranslate"><span class="pre">alpha_T=0</span></code> and broke the
+steady-state solve. Demographics stay live (UN) in <code class="docutils literal notranslate"><span class="pre">ogphl.calibrate</span></code>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ogphl.macro_params.get_macro_params">
 <span class="sig-prename descclassname"><span class="pre">ogphl.macro_params.</span></span><span class="sig-name descname"><span class="pre">get_macro_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1947,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2023,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_iso</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PHL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_from_api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imf_data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ogphl/macro_params.html#get_macro_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ogphl.macro_params.get_macro_params" title="Link to this definition">#</a></dt>
-<dd><p>Compute values of parameters that are derived from macro data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_start_date</strong> (<em>datetime</em>) – start date for data</p></li>
-<li><p><strong>data_end_date</strong> (<em>datetime</em>) – end date for data</p></li>
-<li><p><strong>country_iso</strong> (<em>str</em>) – ISO code for country</p></li>
-<li><p><strong>update_from_api</strong> (<em>bool</em>) – Set True to pull updated macro data</p></li>
-<li><p><strong>imf_data_path</strong> (<em>str</em><em> | </em><em>Path</em><em> | </em><em>None</em>) – optional path to save IMF CSV data</p></li>
+<dd><p>Return macro-parameter overrides for the OG-PHL calibration.</p>
+<p>Only <code class="docutils literal notranslate"><span class="pre">g_y_annual</span></code> is refreshed from a live API – World Bank
+GDP-per-capita growth over the pre-pandemic 2000-2019 window, its
+documented source. Every other macro parameter is held in the packaged
+JSON and is NOT pulled here, so a live update cannot clobber a value
+sourced elsewhere:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>alpha_T                    – World Bank WDI (not the IMF GFS series,</dt><dd><p>which is 0 for PH)</p>
+</dd>
+</dl>
+</li>
+<li><p>alpha_G                    – DBM BESF FY2026, Table A2 (not an API)</p></li>
+<li><dl class="simple">
+<dt>initial_foreign_debt_ratio, zeta_D, initial_debt_ratio – Bureau of the</dt><dd><p>Treasury (not an API)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gamma                      – ILOSTAT-based private capital share,</dt><dd><p>frozen at the documented 0.53785
+(0.588 total, less gamma_g=0.05)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>r_gov_shift, r_gov_scale   – IMF / Li et al. (2021), frozen at the</dt><dd><p>recentered documented values</p>
+</dd>
+</dl>
+</li>
 </ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>macro-parameter overlay (only <code class="docutils literal notranslate"><span class="pre">g_y_annual</span></code> when
+<code class="docutils literal notranslate"><span class="pre">update_from_api</span></code> and the World Bank call succeeds)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>dictionary of parameter values</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>macro_parameters (dict)</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
