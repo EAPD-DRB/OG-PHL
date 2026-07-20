@@ -118,8 +118,7 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         e_new
         / (
             e_new
-            * usa_params.omega_SS.reshape(usa_params.S, 1)
-            * usa_params.lambdas.reshape(1, usa_params.J)
+            * usa_params.omega_SS
         ).sum()
     )
     # Now interpolate for the cases where S and/or J not the same in the
@@ -182,7 +181,7 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         )
         emat_new_scaled = (
             emat_new
-            / (emat_new * age_wgts.reshape(S, 1) * lambdas.reshape(1, J)).sum()
+            / (emat_new * age_wgts).sum()
         )
 
         if plot:
