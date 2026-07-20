@@ -122,3 +122,23 @@ def test_get_macro_params_update_from_api_true_returns_only_g_y(monkeypatch):
     # frozen params must never be overwritten from an API
     for k in FROZEN:
         assert k not in result
+
+
+def test_get_macro_params_wb_failure_keeps_packaged_value(monkeypatch):
+    def offline(*args, **kwargs):
+        raise requests.ConnectionError("offline")
+
+    monkeypatch.setattr(macro_params.requests, "get", offline)
+    # the World Bank pull failing must not raise; g_y stays packaged
+    assert macro_params.get_macro_params(update_from_api=True) == {}
+
+
+def test_fetch_wb_data_rejects_unsupported_source():
+    with pytest.raises(ValueError, match="Unsupported World Bank source"):
+        macro_params._fetch_wb_data(
+            {"GDP per capita (constant 2015 US$)": "NY.GDP.PCAP.KD"},
+            "PHL",
+            2022,
+            2024,
+            source=99,
+        )
