@@ -50,6 +50,8 @@ The overlay contains:
                      like base preference parameters -- the conversion is
                      derived from alpha_c, so it belongs to the overlay.
   * ``nu``         - 0.2 dampening (0.4 is marginally unstable here)
+  * ``TPI_outer_method`` - "anderson", the anchored Anderson accelerator
+                     for the TPI outer loop (ogcore >= 0.16.4)
 
 Deliberately NOT in the overlay: parameters the multi-industry calibration
 leaves unchanged (e.g. ``cit_rate``, ``tau_c`` -- the CREATE Act 25% CIT and
@@ -73,6 +75,13 @@ MULTISECTOR_PARAMS_PATH = os.path.join(
 # calibration (the price update locks into a constant-amplitude period-2
 # cycle); 0.2 puts the iteration comfortably inside the unit circle.
 NU = 0.2
+
+# Anderson acceleration for the TPI outer loop. It extrapolates the damped
+# nu-step from the residual history, so it needs the calibrated NU above:
+# with nu = 0.2 the baseline transition converges in 25 outer iterations;
+# at nu = 0.4 the accelerator spends the run in trust-region resets (70
+# iterations on the baseline) and the reform transition stalls outright.
+TPI_OUTER_METHOD = "anderson"
 
 
 def build_multisector_params():
@@ -121,6 +130,7 @@ def build_multisector_params():
         "chi_b": chi_b,
         "chi_n": chi_n,
         "nu": NU,
+        "TPI_outer_method": TPI_OUTER_METHOD,
     }
 
 

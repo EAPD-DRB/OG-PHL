@@ -28,6 +28,7 @@ OVERLAY_KEYS = {
     "chi_b",
     "chi_n",
     "nu",
+    "TPI_outer_method",
 }
 
 
@@ -66,6 +67,7 @@ def test_packaged_overlay_is_lean_and_in_sync():
     assert shipped["M"] == built["M"]
     assert shipped["I"] == built["I"]
     assert shipped["nu"] == built["nu"]
+    assert shipped["TPI_outer_method"] == built["TPI_outer_method"]
     np.testing.assert_allclose(shipped["gamma"], built["gamma"], rtol=1e-9)
     np.testing.assert_allclose(shipped["Z"][0], built["Z"][0], rtol=1e-9)
     np.testing.assert_allclose(

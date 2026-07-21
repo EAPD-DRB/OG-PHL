@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Require `ogcore>=0.17.0` and enable the anchored Anderson accelerator for the multi-industry transition path: the overlay now sets `TPI_outer_method = "anderson"` (an ogcore 0.16.4 parameter; older schemas reject it, hence the floor). Anderson extrapolates the damped `nu`-step from the residual history, so it complements — not replaces — the overlay's calibrated `nu = 0.2`: at that value the baseline transition converges in 25 outer iterations, while at the OG-Core default `nu = 0.4` the accelerator spends the run in trust-region resets (70 iterations on the baseline) and the reform transition stalls before the iteration cap. Verified end to end on ogcore 0.17.0 through the packaged example (baseline + reform: steady state unchanged, transition RC errors 0.0045, reform responses matching the damped run).
+
 ### Added
 
 - SAM-derived per-industry capital share via `input_output.get_gamma()`, with an optional `target_avg` that rescales the (value-added-weighted) shares, correcting the upward bias from self-employed mixed income in the raw SAM. The multi-industry calibration rescales to the economy-wide *total* capital share (`constants.TOTAL_CAPITAL_SHARE`) and then subtracts public capital's share (`PUBLIC_CAPITAL_SHARE`) to leave the private share `gamma_m`, so public capital is carved out of capital rather than labor and the economy-wide labor share matches the national accounts. The calibration builder and the `Calibration` class (`M > 1`) import those shared constants and apply the same construction, so they cannot drift.
