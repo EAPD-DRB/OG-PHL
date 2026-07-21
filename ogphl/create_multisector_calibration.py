@@ -49,7 +49,7 @@ The overlay contains:
                      These ARE multi-industry changes even though they look
                      like base preference parameters -- the conversion is
                      derived from alpha_c, so it belongs to the overlay.
-  * ``nu``         - 0.2 TPI dampening (0.4 is marginally unstable here)
+  * ``nu``         - 0.2 dampening (0.4 is marginally unstable here)
 
 Deliberately NOT in the overlay: parameters the multi-industry calibration
 leaves unchanged (e.g. ``cit_rate``, ``tau_c`` -- the CREATE Act 25% CIT and
@@ -69,10 +69,10 @@ MULTISECTOR_PARAMS_PATH = os.path.join(
     CUR_DIR, "ogphl_multisector_default_parameters.json"
 )
 
-# TPI dampening. The default 0.4 sits on the marginal-stability boundary
-# for this calibration (the price update locks into a constant-amplitude
-# period-2 cycle); 0.2 puts the iteration comfortably inside the unit circle.
-TPI_NU = 0.2
+# The default 0.4 sits on the marginal-stability boundary for this
+# calibration (the price update locks into a constant-amplitude period-2
+# cycle); 0.2 puts the iteration comfortably inside the unit circle.
+NU = 0.2
 
 
 def build_multisector_params():
@@ -120,7 +120,7 @@ def build_multisector_params():
         "Z": [[float(v) for v in Z.values()]],
         "chi_b": chi_b,
         "chi_n": chi_n,
-        "nu": TPI_NU,
+        "nu": NU,
     }
 
 
