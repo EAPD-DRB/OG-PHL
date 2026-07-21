@@ -30,6 +30,26 @@ tax functions, the fiscal and open-economy blocks, the solver seeds -- is
 inherited from the base at load time, so a base recalibration flows into the
 multi-industry model automatically, with nothing to regenerate.
 
+The overlay JSON is a BUILD ARTIFACT: every value in it is computed, and a
+test asserts the committed file matches this builder's output, so never
+edit the JSON by hand. What to edit instead:
+
+  * The calibration's inputs -- edit, then rerun this builder:
+      - ``data/002_IFPRI_SAM_PHL_2018_SAM.csv``: the 2018 IFPRI SAM extract
+        (replace for a new SAM vintage)
+      - ``data/employment_by_psic_section.csv``: PSA Labor Force Survey
+        employment by PSIC section (extend for a new survey year)
+      - ``constants.PROD_DICT`` / ``constants.CONS_DICT``: how SAM activities
+        and commodities aggregate into the 8 industries and 5 goods
+      - ``constants.TOTAL_CAPITAL_SHARE`` / ``constants.PUBLIC_CAPITAL_SHARE``:
+        the economy-wide factor-share anchors
+      - the choices set in this module (``NU``, ``TPI_OUTER_METHOD``, the
+        Cobb-Douglas ``epsilon``, the uniform ``c_min``)
+  * One-off experiments -- touch neither the JSON nor this builder; override
+    at load time in a run script,
+    e.g. ``p.update_specifications({"cit_rate": [[0.20]]})``, exactly as the
+    example's reform scenario does.
+
 The overlay contains:
   * ``M``, ``I``   - 8 production industries, 5 consumption goods
   * ``alpha_c``    - household consumption shares (SAM)
