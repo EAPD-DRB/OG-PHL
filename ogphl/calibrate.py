@@ -1,5 +1,6 @@
 from ogphl import macro_params, income
 from ogphl import input_output as io
+from ogphl.constants import PUBLIC_CAPITAL_SHARE, TOTAL_CAPITAL_SHARE
 import os
 import warnings
 import numpy as np
@@ -48,6 +49,9 @@ class Calibration:
         self.e = None
         self.alpha_c = np.array([1.0]) if p.I == 1 else None
         self.io_matrix = np.array([[1.0]]) if p.M == 1 else None
+        # gamma (capital share by industry) is only overlaid for the
+        # multi-industry model; for M == 1 the packaged baseline value is kept.
+        self.gamma = None
 
         if not update_from_api:
             return
@@ -73,12 +77,29 @@ class Calibration:
                 warnings.warn(f"alpha_c update failed: {exc}", stacklevel=2)
         if p.M > 1:
             try:
-                io_df = io.get_io_matrix()
+                # value-added content of consumption by industry (see
+                # input_output.get_io_matrix_value_added); the legacy
+                # get_io_matrix is retained only as a comparison baseline
+                io_df = io.get_io_matrix_value_added()
                 # check that model dimensions are consistent with io_matrix
                 assert p.M == len(list(io_df.keys()))
                 self.io_matrix = io_df.values
             except Exception as exc:
                 warnings.warn(f"io_matrix update failed: {exc}", stacklevel=2)
+            try:
+                # private capital share by industry, the same construction as
+                # create_multisector_calibration: rescale the SAM's total
+                # capital shares to the economy-wide total, then carve out
+                # public capital, so the live and packaged calibrations agree.
+                gamma_total = io.get_gamma(target_avg=TOTAL_CAPITAL_SHARE)
+                gamma_dict = {
+                    k: v - PUBLIC_CAPITAL_SHARE for k, v in gamma_total.items()
+                }
+                # check that model dimensions are consistent with gamma
+                assert p.M == len(list(gamma_dict.keys()))
+                self.gamma = np.array(list(gamma_dict.values()))
+            except Exception as exc:
+                warnings.warn(f"gamma update failed: {exc}", stacklevel=2)
 
         # Demographics and income are atomic because e depends on demography.
         try:
@@ -93,6 +114,7 @@ class Calibration:
                 country_id=UN_COUNTRY_CODE,
                 initial_data_year=p.start_year - 1,
                 final_data_year=p.start_year + 1,
+                income_percentiles=p.lambdas.flatten(),
                 GraphDiag=False,
                 download_path=demographic_data_path,
             )
@@ -107,6 +129,7 @@ class Calibration:
                 country_id=UN_COUNTRY_CODE,
                 initial_data_year=p.start_year - 1,
                 final_data_year=p.start_year + 1,
+                income_percentiles=p.lambdas.flatten(),
                 GraphDiag=False,
             )
 
@@ -136,5 +159,7 @@ class Calibration:
             d["alpha_c"] = self.alpha_c
         if self.io_matrix is not None:
             d["io_matrix"] = self.io_matrix
+        if self.gamma is not None:
+            d["gamma"] = self.gamma
 
         return d
