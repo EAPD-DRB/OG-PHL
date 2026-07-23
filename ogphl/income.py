@@ -3,7 +3,6 @@ import scipy.optimize as opt
 import scipy.interpolate as si
 from ogcore import parameter_plots as pp
 from ogcore import utils
-from ogcore.parameters import Specifications
 import os
 import json
 import urllib.request
@@ -35,7 +34,9 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         lambdas (Numpy array): distribution of population in each
             ability group, length J
         age_wgts (Numpy array): distribution of population in each age
-            group, length S
+            group, length S; an SxJ age-by-income distribution (as
+            returned by ogcore >= 0.18) is also accepted, in which case
+            the age distribution is its sum over income groups
         gini_to_match (float): Gini coefficient to match, default is
             40.7, the Gini coefficient for PHL in 2023
             https://data.worldbank.org/indicator/SI.POV.GINI
@@ -48,16 +49,35 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
 
     """
     assert lambdas.shape[0] == J
+    age_wgts = np.asarray(age_wgts)
+    if age_wgts.ndim == 2:  # SxJ from ogcore >= 0.18: age dist is the J-sum
+        age_wgts = age_wgts.sum(axis=1)
     assert age_wgts.shape[0] == S
-    # Load USA e matrix as a baseline
-    usa_params = Specifications()
-    usa_params.update_specifications(
-        json.load(
-            urllib.request.urlopen(
-                "https://raw.githubusercontent.com/PSLmodels/OG-USA/master/ogusa/ogusa_default_parameters.json"
-            )
+    # Load the USA e matrix as a baseline. Read the raw JSON values directly:
+    # loading the snapshot through a Specifications object would couple this
+    # function to the installed ogcore's array schema, which rejects the
+    # snapshot whenever OG-USA and ogcore sit on different demographic
+    # conventions (e.g. ogcore 0.18's SxJ arrays vs OG-USA's 1-D ones).
+    usa_json = json.load(
+        urllib.request.urlopen(
+            "https://raw.githubusercontent.com/PSLmodels/OG-USA/master/ogusa/ogusa_default_parameters.json"
         )
     )
+    usa_S = int(usa_json["S"])
+    usa_J = int(usa_json["J"])
+    # E is not stored in the JSON; derive it the way ogcore's
+    # Specifications does from the ages and S.
+    usa_E = int(
+        usa_json["starting_age"]
+        * (usa_S / (usa_json["ending_age"] - usa_json["starting_age"]))
+    )
+    usa_lambdas = np.array(usa_json["lambdas"])
+    usa_e = np.array(usa_json["e"])
+    if usa_e.ndim == 3:  # TxSxJ snapshot: use the first model period
+        usa_e = usa_e[0, :, :]
+    usa_omega_SS = np.array(usa_json["omega_SS"])
+    if usa_omega_SS.ndim == 2:  # SxJ snapshot: age dist is the J-sum
+        usa_omega_SS = usa_omega_SS.sum(axis=1)
 
     # Define a function that will find the "a" in the equation:
     # e_Y = e_USA * exp(a * e_USA)
@@ -91,19 +111,19 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
     gini_usa_data = 41.5
     # Find the model implied Gini for the USA
     gini_usa_model = utils.Inequality(
-        usa_params.e[0, :, :],
-        usa_params.omega_SS,
-        usa_params.lambdas,
-        usa_params.S,
-        usa_params.J,
+        usa_e,
+        usa_omega_SS,
+        usa_lambdas,
+        usa_S,
+        usa_J,
     ).gini()
 
     x = opt.root_scalar(
         f,
         args=(
-            usa_params.e[0, :, :],
-            usa_params.omega_SS,
-            usa_params.lambdas,
+            usa_e,
+            usa_omega_SS,
+            usa_lambdas,
             gini_to_match,
             gini_usa_data,
             gini_usa_model,
@@ -113,20 +133,21 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         xtol=1e-10,
     )
     a = x.root
-    e_new = usa_params.e[0, :, :] * np.exp(a * usa_params.e[0, :, :])
+    e_new = usa_e * np.exp(a * usa_e)
     emat_new_scaled = (
         e_new
         / (
             e_new
-            * usa_params.omega_SS
+            * usa_omega_SS.reshape(usa_S, 1)
+            * usa_lambdas.reshape(1, usa_J)
         ).sum()
     )
     # Now interpolate for the cases where S and/or J not the same in the
     # country parameterization as in the default USA parameterization
     if (
-        S == usa_params.S
+        S == usa_S
         and np.array_equal(
-            usa_params.lambdas,
+            usa_lambdas,
             lambdas,
         )
         is True
@@ -140,28 +161,28 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
             abil_midp[j] = pct_lb + 0.5 * lambdas[j]
             pct_lb += lambdas[j]
         # generate vector of mid points for the USA ability groups
-        M = usa_params.lambdas.shape[0]
+        M = usa_lambdas.shape[0]
         emat_j_midp = np.zeros(M)
         pct_lb = 0.0
         for m in range(M):
-            emat_j_midp[m] = pct_lb + 0.5 * usa_params.lambdas[m]
-            pct_lb += usa_params.lambdas[m]
+            emat_j_midp[m] = pct_lb + 0.5 * usa_lambdas[m]
+            pct_lb += usa_lambdas[m]
 
         # Make sure that values in abil_midp are within interpolating
         # bounds
         if abil_midp.min() < emat_j_midp.min() or abil_midp.max() > (
-            1 - usa_params.lambdas[-1]
+            1 - usa_lambdas[-1]
         ):
             err = (
                 "One or more entries in abilities vector (lambdas) is "
                 + "outside the allowable bounds for interpolation."
             )
             raise RuntimeError(err)
-        usa_step = 80 / usa_params.S
+        usa_step = 80 / usa_S
         emat_s_midp = np.linspace(
-            usa_params.E + 0.5 * usa_step,
-            usa_params.E + usa_params.S - 0.5 * usa_step,
-            usa_params.S,
+            usa_E + 0.5 * usa_step,
+            usa_E + usa_S - 0.5 * usa_step,
+            usa_S,
         )
         emat_j_mesh, emat_s_mesh = np.meshgrid(emat_j_midp, emat_s_midp)
         newstep = 80 / S
@@ -169,8 +190,8 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         new_j_mesh, new_s_mesh = np.meshgrid(abil_midp, new_s_midp)
         newcoords = np.hstack(
             (
-                emat_s_mesh.reshape((usa_params.S * usa_params.J, 1)),
-                emat_j_mesh.reshape((usa_params.S * usa_params.J, 1)),
+                emat_s_mesh.reshape((usa_S * usa_J, 1)),
+                emat_j_mesh.reshape((usa_S * usa_J, 1)),
             )
         )
         emat_new = si.griddata(
@@ -181,7 +202,7 @@ def get_e_interp(E, S, J, lambdas, age_wgts, gini_to_match=40.7, plot=False):
         )
         emat_new_scaled = (
             emat_new
-            / (emat_new * age_wgts).sum()
+            / (emat_new * age_wgts.reshape(S, 1) * lambdas.reshape(1, J)).sum()
         )
 
         if plot:

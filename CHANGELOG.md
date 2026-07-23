@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Require `ogcore>=0.18.0` and migrate the calibration to its income-group-varying demographics (PSLmodels/OG-Core#1165): the packaged demographic arrays (`omega`, `omega_SS`, `rho`, `imm_rates` and their preTP seeds) are regenerated in the new age-by-income shape with `update_baseline_demographics` (macro and industry parameters untouched, enforced by the tool's clobber guard), and both `get_pop_objs` call sites pass `income_percentiles=p.lambdas` as 0.18 requires (from PR #78). OG-PHL's demographics do not vary by income group, so the new arrays are the old ones spread across groups by `lambdas`: the age distribution and the regenerated earnings matrix reproduce the previous values to machine precision, and model results are unchanged. `income.get_e_interp` now reads the OG-USA snapshot's raw JSON values instead of loading them through a `Specifications` object, which decouples it from the installed ogcore's array schema (the 0.18 schema rejects OG-USA's not-yet-migrated shapes) and accepts age weights in either the 1-D or the new age-by-income shape.
+
 ### Added
 
 - Enabled a debt-elastic sovereign premium in `ogphl_default_parameters.json`, the crowding-out-via-risk channel that OG-Core's defaults and the other country calibrations leave off (`r_gov_DY = r_gov_DY2 = 0`). It is a *centered* convex form, `r_gov_DY2 * (D/Y - 0.6)^2`, flat at the 0.60 debt target and steepening only as debt rises away — `r_gov_DY2 = 0.04`, `r_gov_DY = -0.048`, with `r_gov_shift` recentered from -0.0338 to -0.0482 so the premium is exactly zero at the target and the steady state is unchanged. This matches Philippine experience (stable spreads at 40-70% debt, blowouts only at 1980s-crisis levels). See the macro calibration chapter for the lineage and sources.
