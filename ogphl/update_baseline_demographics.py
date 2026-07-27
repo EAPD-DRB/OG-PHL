@@ -40,8 +40,28 @@ def regenerate():
     json_path = files("ogphl").joinpath("ogphl_default_parameters.json")
     before = json.loads(json_path.read_text())
 
+    # Bootstrap: across an ogcore demographics-convention change the packaged
+    # arrays still have the PREVIOUS ogcore's shapes, which the installed
+    # schema rejects -- and they are exactly the keys being regenerated.
+    # Load the base without them; the tool only needs the non-demographic
+    # scalars (E, S, T, J, lambdas, start_year) to drive the regeneration.
+    demog_keys = {
+        "omega",
+        "omega_SS",
+        "omega_S_preTP",
+        "rho",
+        "rho_preTP",
+        "imm_rates",
+        "imm_rates_preTP",
+        "g_n",
+        "g_n_ss",
+        "g_n_preTP",
+        _DERIVED,
+    }
     p = Specifications()
-    p.update_specifications(before)  # single-sector base (M=1, I=1)
+    p.update_specifications(
+        {k: v for k, v in before.items() if k not in demog_keys}
+    )  # single-sector base (M=1, I=1)
 
     pop = demographics.get_pop_objs(
         p.E,
@@ -52,6 +72,7 @@ def regenerate():
         country_id=UN_COUNTRY_CODE,
         initial_data_year=p.start_year - 1,
         final_data_year=p.start_year + 1,
+        income_percentiles=p.lambdas.flatten(),
         GraphDiag=False,
     )
     demog80 = demographics.get_pop_objs(
@@ -63,6 +84,7 @@ def regenerate():
         country_id=UN_COUNTRY_CODE,
         initial_data_year=p.start_year - 1,
         final_data_year=p.start_year + 1,
+        income_percentiles=p.lambdas.flatten(),
         GraphDiag=False,
     )
     e = income.get_e_interp(p.E, p.S, p.J, p.lambdas, demog80["omega_SS"])
