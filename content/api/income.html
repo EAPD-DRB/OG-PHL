@@ -448,7 +448,9 @@ up to E+S, &gt;= 3</p></li>
 <li><p><strong>lambdas</strong> (<em>Numpy array</em>) – distribution of population in each
 ability group, length J</p></li>
 <li><p><strong>age_wgts</strong> (<em>Numpy array</em>) – distribution of population in each age
-group, length S</p></li>
+group, length S; an SxJ age-by-income distribution (as
+returned by ogcore &gt;= 0.18) is also accepted, in which case
+the age distribution is its sum over income groups</p></li>
 <li><p><strong>gini_to_match</strong> (<em>float</em>) – Gini coefficient to match, default is
 40.7, the Gini coefficient for PHL in 2023
 <a class="reference external" href="https://data.worldbank.org/indicator/SI.POV.GINI">https://data.worldbank.org/indicator/SI.POV.GINI</a></p></li>
