@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Recalibrated remittances in `ogphl_default_parameters.json` to the right measure and put them on a growth path that holds their calibrated share. Two separate errors: the level was *cash* remittances and the growth rate was in the wrong units.
+
+  `alpha_RM_1` and `alpha_RM_T` 0.072 -> 0.0812. BSP publishes a GDP ratio only for cash remittances — money through banks and formal couriers — and that headline number is what the 7.2% came from. The model's `RM` is a household income inflow, which is the broader personal (BPM6) measure: BSP reports 2025 personal remittances of US$39.62bn against US$35.63bn in cash remittances, the latter being the 7.3% of GDP they publish, so personal remittances are 0.073 * 39.62/35.63 = 8.12% of GDP on that same denominator. This lands inside the 8.0-9.0% band BSP's own researchers report for personal remittances since 2017, where the cash series runs 7.0-8.0%.
+
+  `g_RM` 0.03 -> a path tracking `g_n`. The 3.0% was the year-over-year growth of remittances in US dollars, but OG-Core advances detrended remittances by `(1 + g_RM) / (exp(g_y) * (1 + g_n))`, so a dollar growth rate is not the input the model wants. Against a denominator running about 5.7% early in the transition, remittances shrank ~2.7% a year in model units: the remittance share of GDP fell from 7.2% to a trough of 4.68% around period 24 — 35% below its calibrated level — and did not recover until roughly period 100. Nothing in the calibration intended that. `g_RM` is now set so the ratio is exactly one in every period, holding remittances at their calibrated share throughout. Because `g_n` falls over the transition this has to be a path, not a scalar; no constant holds the share flat. Note that `alpha_RM_1 = alpha_RM_T` alone does not achieve this — those pin the endpoints, `g_RM` governs everything between them. Steady-state results are unaffected: `get_RM` uses `alpha_RM_T * Y` directly in the steady state and never consults `g_RM`.
+
+  `update_baseline_demographics` now regenerates `g_RM` alongside the demographic arrays, since it is derived from `g_n` and would otherwise go stale after a regeneration, and `tests/test_remittances.py` asserts the share stays flat and that the packaged `g_RM` matches the packaged `g_n`.
+
+### Changed
+
+- Documented the remittance calibration in the households and macro chapters: which BSP measure the model needs and why the published ratio is the wrong one, how `g_RM` is defined in the model's growth units, and — newly stated — that `eta_RM`, the allocation of remittances across households, is left at OG-Core's population-proportional default and is **not** calibrated to the Philippines. Philippine evidence indicates remittances skew toward higher-income households, so the model currently spreads them more evenly than the data suggest; closing that gap needs PSA Family Income and Expenditure Survey microdata. The two chapters previously disagreed with each other and with the shipped values (households said 8.3% with a 3.0% growth story, macro said 7.2%).
+
 ## [0.1.1] - 2026-07-27 12:00:00
 
 ### Added

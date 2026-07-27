@@ -23,15 +23,37 @@ import json
 
 from importlib.resources import files
 
+import numpy as np
+
 from ogcore import demographics
 from ogcore.parameters import Specifications
 
 from ogphl import income
 from ogphl.calibrate import UN_COUNTRY_CODE
 
-# Demographic keys returned by get_pop_objs, plus the derived earnings profile.
+# Demographic keys returned by get_pop_objs, plus the derived earnings profile
+# and the remittance growth path (derived from g_n -- see flat_share_g_RM).
 # Only these are rewritten; anything else is a clobber and blocks the write.
 _DERIVED = "e"
+_DERIVED_RM = "g_RM"
+
+
+def flat_share_g_RM(g_y, g_n):
+    """Remittance growth path holding aggregate remittances at a fixed share
+    of GDP.
+
+    ``aggregates.get_RM`` advances detrended remittances by the factor
+    ``(1 + g_RM[t]) / (exp(g_y) * (1 + g_n[t-1]))``, so ``RM/Y`` holds at
+    ``alpha_RM`` only when that factor is 1. Setting ``alpha_RM_1 ==
+    alpha_RM_T`` is NOT sufficient on its own: with any other ``g_RM`` the
+    ratio drifts away from the calibrated share over the first ``tG2``
+    periods and only returns afterwards. ``g_n`` varies over the transition,
+    so no single scalar can hold the share flat -- the path has to track it.
+    """
+    g_n = np.asarray(g_n, dtype=float)
+    g_RM = np.exp(g_y) * (1.0 + np.roll(g_n, 1)) - 1.0
+    g_RM[0] = np.exp(g_y) * (1.0 + g_n[0]) - 1.0  # unused by get_RM; kept sane
+    return g_RM
 
 
 def regenerate():
@@ -57,6 +79,7 @@ def regenerate():
         "g_n_ss",
         "g_n_preTP",
         _DERIVED,
+        _DERIVED_RM,
     }
     p = Specifications()
     p.update_specifications(
@@ -94,6 +117,10 @@ def regenerate():
 
     overlay = {k: _jsonable(v) for k, v in pop.items()}
     overlay[_DERIVED] = _jsonable(e)
+    # Remittances are calibrated as a constant share of GDP, and that share is
+    # only held if g_RM tracks the regenerated g_n -- so it is rewritten here
+    # rather than left to go stale against new demographics.
+    overlay[_DERIVED_RM] = _jsonable(flat_share_g_RM(p.g_y, pop["g_n"]))
     return json_path, before, overlay
 
 

@@ -27,7 +27,9 @@ The small-open-economy block prices foreign capital and foreign debt at an exoge
 
 ### Remittances as a share of GDP
 
-Personal remittance inflows to the Philippines are a substantial component of household income. The ratio of aggregate remittances to GDP is governed by two parameters: $\alpha_{RM,1}$ for the model's start period and $\alpha_{RM,T}$ for the long run / steady state. Both are set to 0.072 (7.2%), based on Bangko Sentral ng Pilipinas (BSP) data for 2025 ([source](https://www.bsp.gov.ph/SitePages/MediaAndResearch/MediaDisp.aspx?ItemId=7821&MType=MediaReleases)). The long-run value is calibrated to equal the current-period value.
+Personal remittance inflows to the Philippines are a substantial component of household income. The ratio of aggregate remittances to GDP is governed by two parameters: $\alpha_{RM,1}$ for the model's start period and $\alpha_{RM,T}$ for the long run / steady state. Both are set to 0.0812 (8.12%), and the long-run value is calibrated to equal the current-period value so the calibration implies no remittance transition.
+
+The level is *personal* remittances, the BPM6 measure of household income from abroad, which is the concept the model's $RM$ represents. Bangko Sentral ng Pilipinas (BSP) reports full-year 2025 personal remittances of US\$39.62 billion and cash remittances of US\$35.63 billion, the latter equal to 7.3% of GDP. Applying BSP's own published ratio to the personal measure gives $0.073 \times 39.62/35.63 = 8.12\%$ of GDP, using one consistent GDP denominator throughout. This sits inside the 8.0–9.0% band BSP research reports for personal remittances since 2017 {cite}`BayangosLubangco:2025`; the narrower cash series runs 7.0–8.0%, and calibrating to it understates household income from abroad by roughly a percentage point of GDP. See {doc}`households` for the measurement distinction, the growth path $g_{RM}$, and the household allocation `eta_RM`.
 
 ## Government Debt, Spending and Transfers
 
