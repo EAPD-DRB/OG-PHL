@@ -5,10 +5,9 @@ This folder contains the python scripts that compute the solutions to [Exercise 
 - [`TPI.py`](https://github.com/EAPD-DRB/OG-PHL/blob/main/docs/book/content/UNtutorial/solutions/3perOG/TPI.py). Python module that has the functions for solving the transition path equilibrium questions of [Exercise 3](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/3perOG.html#ExerUNtut_3perOGTPI).
 
 You can run these computations that solve for the solutions to the three exercises by doing the following steps.
-1. Open your terminal windown (Mac or Linux) or Anaconda prompt (Windows).
-2. Activate your `ogphl-dev` conda environment: `conda activate ogphl-dev`
-3. Navigate to your `OG-PHL` repository directory.
-4. Navigate to the `/docs/book/content/UNtutorial/solutions/3perOG/` subfolder of this repository.
-5. Run the `execute.py` script: `python execute.py`.
+1. Open your terminal window (Mac or Linux) or command prompt (Windows).
+2. Navigate to your `OG-PHL` repository directory (where you have run `uv sync --extra dev`; see the [getting started](https://eapd-drb.github.io/OG-PHL/content/UNtutorial/getting_started.html) page).
+3. Navigate to the `/docs/book/content/UNtutorial/solutions/3perOG/` subfolder of this repository.
+4. Run the `execute.py` script: `uv run python execute.py`.
 
 Running the `execute.py` script will print all the answers to the exercises in the output of the terminal. It will also create an `images` folder in this directory that has some of the images from the steady state and transition path equilibrium solutions.
