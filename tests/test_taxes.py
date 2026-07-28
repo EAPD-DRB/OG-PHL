@@ -157,4 +157,19 @@ def test_fiscal_identity_alpha_g(packaged):
     pb_star = (r_gov_ss - g) / (1 + g) * packaged["debt_ratio_ss"]
     revenue = OECD_PIT + OECD_SSC + 0.0420 + 0.0794 + 0.0132 + 0.0007
     consistent = revenue - pb_star - packaged["alpha_T"][0] - 0.052
-    assert packaged["alpha_G"][0] == pytest.approx(consistent, abs=0.004)
+    assert packaged["alpha_G"][-1] == pytest.approx(consistent, abs=0.004)
+
+
+def test_alpha_g_glides_from_program_stance_to_identity(packaged):
+    """alpha_G is a declining path: it starts at the spending stance implied
+    by the MTFF primary-balance program for 2026 (deficit less interest, BESF
+    FY2026) and reaches the debt-stabilizing level by the year the program's
+    primary balance crosses the model's pb*. A flat identity-value alpha_G
+    makes the model consolidate ~4 years before the government's own plan and
+    sends the transition debt path far below target."""
+    path = packaged["alpha_G"]
+    assert len(path) > 1
+    assert all(a > b for a, b in zip(path, path[1:]))
+    pb_prog_2026 = -0.0222
+    expected_start = 0.1946 - pb_prog_2026 - packaged["alpha_T"][0] - 0.051
+    assert path[0] == pytest.approx(expected_start, abs=0.004)
