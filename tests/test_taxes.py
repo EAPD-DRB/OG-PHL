@@ -172,7 +172,22 @@ def test_alpha_g_glides_from_program_stance_to_identity(packaged):
     path = packaged["alpha_G"]
     assert len(path) > 1
     assert all(a > b for a, b in zip(path, path[1:]))
-    assert path == pytest.approx([0.1139, 0.1087, 0.1045], abs=1e-6)
+    assert path == pytest.approx([0.1122, 0.1092, 0.1045], abs=1e-6)
+
+
+def test_alpha_i_is_the_mtff_infrastructure_program(packaged):
+    """alpha_I maps the MTFF infrastructure program onto the 2025 start:
+    5.3% (2025), 5.1/5.1 (2026-27), 5.2 (2028+)."""
+    assert packaged["alpha_I"] == pytest.approx(
+        [0.053, 0.051, 0.051, 0.052], abs=1e-6
+    )
+
+
+def test_initial_public_capital_matches_icsd(packaged):
+    """initial_Kg_ratio 0.38 is the ICSD/PIMA-informed public capital stock
+    (~0.35-0.40 of GDP), the same figure subtracted in the initial-wealth
+    construction -- the two must stay consistent."""
+    assert packaged["initial_Kg_ratio"] == pytest.approx(0.38, abs=1e-6)
 
 
 def test_initial_wealth_is_data_anchored(packaged):
@@ -186,7 +201,7 @@ def test_initial_wealth_is_data_anchored(packaged):
     than its steady-state counterpart and retirees consume the windfall."""
     data_target = (3.97 - 0.38) * 0.8 + 0.8 * 0.6
     assert data_target == pytest.approx(3.35, abs=0.005)
-    assert packaged["initial_wealth_ratio"] == pytest.approx(2.677, abs=1e-6)
+    assert packaged["initial_wealth_ratio"] == pytest.approx(2.783, abs=1e-6)
     # parameter < data target because Y(0) < Y_ss for a converging economy
     assert packaged["initial_wealth_ratio"] < data_target
 
