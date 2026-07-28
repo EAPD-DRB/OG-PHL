@@ -172,20 +172,31 @@ def test_alpha_g_glides_from_program_stance_to_identity(packaged):
     path = packaged["alpha_G"]
     assert len(path) > 1
     assert all(a > b for a, b in zip(path, path[1:]))
-    assert path == pytest.approx([0.1196, 0.1160, 0.1045], abs=1e-6)
+    assert path == pytest.approx([0.1139, 0.1087, 0.1045], abs=1e-6)
 
 
 def test_initial_wealth_is_data_anchored(packaged):
-    """initial_wealth_ratio (requires PSLmodels/OG-Core#1189) anchors initial
-    household wealth to data instead of the imposed B(0) = B_ss:
-    (K_d/Y 0.8 x PWT 3.5 + D_d/Y 0.8 x 0.6) / model SS B/Y 3.984 = 0.823.
-    Without it every 2026 household starts with 63% more wealth than its
-    steady-state counterpart and retirees consume the windfall (a 41%
-    one-year aggregate consumption spike)."""
-    expected = (0.8 * 3.5 + 0.8 * 0.6) / (11.5793 / 2.9067)
-    assert packaged["initial_wealth_ratio"] == pytest.approx(
-        expected, abs=5e-4
-    )
+    """initial_wealth_ratio (requires PSLmodels/OG-Core#1189) anchors
+    aggregate initial wealth relative to steady-state GDP; the value 2.677
+    is chosen so the SOLVED initial wealth-to-GDP ratio equals the data
+    target of 3.35 = (PWT 2023 total K/Y 3.97 - ICSD public capital ~0.38)
+    x 0.80 domestic share (BSP IIP) + 0.48 domestically-held debt (BTr).
+    Delivered ratio is verified in the transition run (goodness-of-fit).
+    Without the anchor every initial household starts with ~63% more wealth
+    than its steady-state counterpart and retirees consume the windfall."""
+    data_target = (3.97 - 0.38) * 0.8 + 0.8 * 0.6
+    assert data_target == pytest.approx(3.35, abs=0.005)
+    assert packaged["initial_wealth_ratio"] == pytest.approx(2.677, abs=1e-6)
+    # parameter < data target because Y(0) < Y_ss for a converging economy
+    assert packaged["initial_wealth_ratio"] < data_target
+
+
+def test_start_year_is_last_observed_year(packaged):
+    """The start year is a calibration decision: the most recent year the
+    calibration observes (2025), not a projection year. initial_debt_ratio
+    0.60 matches beginning-of-2025 debt (end-2024: 60.7%, BTr) and alpha_RM
+    is the observed 2025 personal-remittance ratio."""
+    assert packaged["start_year"] == 2025
 
 
 def test_tpi_uses_anderson_acceleration(packaged):

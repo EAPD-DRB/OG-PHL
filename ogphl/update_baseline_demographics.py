@@ -127,9 +127,12 @@ def regenerate():
         _DERIVED_ETA_RM,
     }
     p = Specifications()
-    p.update_specifications(
-        {k: v for k, v in before.items() if k not in demog_keys}
-    )  # single-sector base (M=1, I=1)
+    spec = {k: v for k, v in before.items() if k not in demog_keys}
+    if not hasattr(p, "initial_wealth_ratio"):
+        # Installed ogcore predates PSLmodels/OG-Core#1189; the parameter
+        # plays no role in the demographic regeneration.
+        spec.pop("initial_wealth_ratio", None)
+    p.update_specifications(spec)  # single-sector base (M=1, I=1)
 
     pop = demographics.get_pop_objs(
         p.E,
