@@ -161,15 +161,35 @@ def test_fiscal_identity_alpha_g(packaged):
 
 
 def test_alpha_g_glides_from_program_stance_to_identity(packaged):
-    """alpha_G is a declining path: it starts at the spending stance implied
-    by the MTFF primary-balance program for 2026 (deficit less interest, BESF
-    FY2026) and reaches the debt-stabilizing level by the year the program's
-    primary balance crosses the model's pb*. A flat identity-value alpha_G
-    makes the model consolidate ~4 years before the government's own plan and
-    sends the transition debt path far below target."""
+    """alpha_G is a declining path: each early value reproduces the MTFF's
+    programmed primary balance (deficit less BESF interest) given the model's
+    realized transition revenue under the data-anchored initial wealth, and
+    the path reaches the debt-stabilizing level by 2028. A flat
+    identity-value alpha_G makes the model consolidate years ahead of the
+    government's own plan. Values re-derived on the solved transition:
+    revenue 19.32/19.58 in 2026/27, program pb -2.22/-1.60, alpha_T 4.48,
+    alpha_I 5.1."""
     path = packaged["alpha_G"]
     assert len(path) > 1
     assert all(a > b for a, b in zip(path, path[1:]))
-    pb_prog_2026 = -0.0222
-    expected_start = 0.1946 - pb_prog_2026 - packaged["alpha_T"][0] - 0.051
-    assert path[0] == pytest.approx(expected_start, abs=0.004)
+    assert path == pytest.approx([0.1196, 0.1160, 0.1045], abs=1e-6)
+
+
+def test_initial_wealth_is_data_anchored(packaged):
+    """initial_wealth_ratio (requires PSLmodels/OG-Core#1189) anchors initial
+    household wealth to data instead of the imposed B(0) = B_ss:
+    (K_d/Y 0.8 x PWT 3.5 + D_d/Y 0.8 x 0.6) / model SS B/Y 3.984 = 0.823.
+    Without it every 2026 household starts with 63% more wealth than its
+    steady-state counterpart and retirees consume the windfall (a 41%
+    one-year aggregate consumption spike)."""
+    expected = (0.8 * 3.5 + 0.8 * 0.6) / (11.5793 / 2.9067)
+    assert packaged["initial_wealth_ratio"] == pytest.approx(
+        expected, abs=5e-4
+    )
+
+
+def test_tpi_uses_anderson_acceleration(packaged):
+    """Anderson cuts the transition solve ~10x on this model (11-12
+    iterations / ~2 min vs ~30-70 / ~20 min damped), validated on both the
+    baseline and the initial-wealth comparison runs."""
+    assert packaged["TPI_outer_method"] == "anderson"

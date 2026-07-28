@@ -43,7 +43,12 @@ def packaged():
 @pytest.fixture(scope="module")
 def params(packaged):
     p = Specifications()
-    p.update_specifications(packaged)
+    spec = dict(packaged)
+    if not hasattr(p, "initial_wealth_ratio"):
+        # Installed ogcore predates PSLmodels/OG-Core#1189; the parameter
+        # does not affect anything these tests assert (g_RM / eta_RM).
+        spec.pop("initial_wealth_ratio", None)
+    p.update_specifications(spec)
     return p
 
 
