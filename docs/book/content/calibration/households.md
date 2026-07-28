@@ -59,13 +59,38 @@ parameters pin the endpoints, while $g_{RM}$ governs everything in between.
 ### Distribution across households
 
 `eta_RM` allocates aggregate remittances across ages and lifetime-income
-groups. It is left at OG-Core's default, which distributes remittances in
-proportion to population, so every lifetime-income group receives exactly its
-population share. **This is an uncalibrated placeholder, not a Philippine
-estimate.** The evidence points the other way: income from abroad is a larger
-share of household income for higher-income households, and remittance-driven
-spending shifts are "significantly more pronounced among wealthier households"
-{cite}`BayangosLubangco:2025`. Published sources report this direction but not
-the shares by income decile needed to build the matrix; that requires the PSA
-Family Income and Expenditure Survey microdata. Until then the model spreads
-remittances more evenly across the distribution than the data suggest.
+groups. It is calibrated to the distribution of remittance *value* across the
+Philippine income distribution, which is heavily concentrated at the top —
+OG-Core's default of population-proportional allocation (every group receives
+exactly its population share) is rejected by every FIES-based source.
+
+The construction uses {cite}`AngSugiyartoJha:2009` (ADB Economics Working
+Paper 188), Table 4, which reports average family income and the remittance
+share of income by per-capita income quintile for FIES 2000, 2003, and 2006.
+Because PSA quintiles hold equal family counts, each quintile's share of total
+remittance value is its mean income times its remittance share of income,
+normalized; averaging the three survey rounds gives quintile value shares of
+0.5%, 2.0%, 6.3%, 18.7%, and 72.5% from bottom to top. The gradient is stable
+across all three rounds — receipt incidence in FIES 2006 rises from about 7%
+of bottom-quintile households to about 44% at the top — and cross-validates
+against FIES 2018: the remittance share of income among receiving households
+rises from 16% in the lowest quintile to 31% in the highest
+{cite}`KikkawaEtAl:2024`.
+The quintile shares are mapped onto the model's seven lifetime-income groups
+by linear interpolation of the cumulative distribution (uniform density
+within each quintile), and spread per capita across ages within each group —
+the surveys say nothing about the age profile of receipt. The matrix is
+rebuilt with the demographics by `ogphl.update_baseline_demographics`, and
+`tests/test_remittances.py` pins the group shares.
+
+Two caveats are worth recording. FIES quintiles rank households by *current*
+income, and remittances are part of that income, so a household can sit in a
+higher quintile *because* it receives remittances — concentration measured
+this way overstates concentration with respect to the *lifetime* income
+concept the model's groups represent. And the top quintile's 72.5% is spread
+uniformly across its percentiles, which is conservative in the other
+direction (it understates whatever concentration exists within the top 1%).
+The two biases push opposite ways and neither can be resolved without the
+FIES microdata; either way, the calibrated matrix is far closer to the data
+than the uniform default, under which the bottom quarter of households would
+receive 25% of remittance value instead of the ~1% the surveys show.

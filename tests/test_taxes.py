@@ -107,9 +107,27 @@ def test_frac_tax_payroll_is_the_reporting_split(packaged):
 
 def test_cit_is_statutory_rate_with_collections_adjustment(packaged):
     """The statutory CREATE rate stays visible in cit_rate; the effective rate
-    comes from the adjustment factor tuned to collections."""
+    comes from the adjustment factor tuned so the business-tax line collects
+    CIT proper (2.90) + BTr income from government capital (GOCC/BSP
+    dividends, PAGCOR share, ~1.00) + unallocable income taxes (0.30)."""
     assert packaged["cit_rate"][0][0] == 0.25
-    assert 0.3 < packaged["adjustment_factor_for_cit_receipts"][0] < 0.5
+    assert 0.5 < packaged["adjustment_factor_for_cit_receipts"][0] < 0.7
+
+
+def test_wealth_tax_captures_property_type_taxes(packaged):
+    """The wealth tax is the instrument for OECD 'other taxes' less estate
+    (property taxes, DST, LGU levies, 1.32% of GDP): near-flat effective rate
+    p_wealth on wealth (m_wealth tiny), zero at zero wealth."""
+    assert packaged["h_wealth"][0] == 1.0
+    assert packaged["m_wealth"][0] == pytest.approx(0.001)
+    assert 0.002 < packaged["p_wealth"][0] < 0.006
+
+
+def test_zeta_k_is_level_validated_against_iip(packaged):
+    """zeta_K is a marginal fill share tuned so the solved foreign share of
+    capital matches the BSP IIP (~20%); the Chinn-Ito index (~0.4) is the
+    prior, not the target."""
+    assert 0.4 <= packaged["zeta_K"][0] <= 0.55
 
 
 def test_bequest_tax_is_effective_not_statutory(packaged):
@@ -129,14 +147,14 @@ def test_fiscal_identity_alpha_g(packaged):
     """alpha_G is set to the level consistent with the debt target: revenue
     minus the debt-stabilizing primary balance minus transfers and public
     investment. Uses the model's own SS growth rate and the calibrated
-    steady-state r_gov of ~2.5% (real effective rate on Treasury debt)."""
-    r_gov_ss = 0.025
+    steady-state r_gov of ~2.0% (BTr FY2024: interest P763.3bn on ~P15.3tn
+    average debt, less ~3% expected inflation). Revenue includes the captured
+    non-tax lines: BTr income + unallocable income taxes on the CIT side
+    (4.20 total), fees on the indirect side (7.94), and property-type taxes
+    via the wealth tax (1.32)."""
+    r_gov_ss = 0.020
     g = np.exp(0.0371282577980211) * (1 + packaged["g_n_ss"]) - 1
     pb_star = (r_gov_ss - g) / (1 + g) * packaged["debt_ratio_ss"]
-    revenue = OECD_PIT + OECD_SSC + OECD_CIT + OECD_INDIRECT + 0.0008
-    consistent = (
-        revenue - pb_star - packaged["alpha_T"][0] - packaged["alpha_I"][0]
-        if "alpha_I" in packaged
-        else revenue - pb_star - packaged["alpha_T"][0] - 0.052
-    )
+    revenue = OECD_PIT + OECD_SSC + 0.0420 + 0.0794 + 0.0132 + 0.0007
+    consistent = revenue - pb_star - packaged["alpha_T"][0] - 0.052
     assert packaged["alpha_G"][0] == pytest.approx(consistent, abs=0.004)

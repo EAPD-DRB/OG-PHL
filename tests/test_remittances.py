@@ -99,3 +99,45 @@ def test_steady_state_remittances_equal_alpha_rm_times_output(params):
     assert aggr.get_RM(np.ones(1), params, "SS") == pytest.approx(
         params.alpha_RM_T
     )
+
+
+def test_eta_rm_is_a_distribution(packaged):
+    """eta_RM allocates all of aggregate remittances: (S, J), sums to 1."""
+    eta = np.array(packaged["eta_RM"])
+    assert eta.shape == (80, 7)
+    assert eta.min() >= 0
+    assert eta.sum() == pytest.approx(1.0)
+
+
+def test_eta_rm_reproduces_fies_concentration(packaged):
+    """The group split must reproduce the FIES quintile mapping: the top
+    ~20% of households (j5+j6+j7, lambdas 0.10+0.09+0.01) receive the top
+    quintile's ~72% of remittance value; the bottom quarter receives ~1%.
+    Guards against reverting to ogcore's population-proportional default
+    (which would give them 20% and 25%)."""
+    eta = np.array(packaged["eta_RM"])
+    by_group = eta.sum(axis=0)
+    assert by_group[4:].sum() == pytest.approx(0.7248, abs=0.01)
+    assert by_group[0] == pytest.approx(0.0103, abs=0.005)
+
+
+def test_eta_rm_is_per_capita_within_groups(packaged):
+    """Within a lifetime-income group every household of every age receives
+    the same amount: eta proportional to the group's age distribution."""
+    eta = np.array(packaged["eta_RM"])
+    omega = np.array(packaged["omega_SS"])
+    per_hh = eta / np.maximum(omega, 1e-30)
+    for j in range(7):
+        assert np.allclose(per_hh[:, j], per_hh[0, j], rtol=1e-8)
+
+
+def test_eta_rm_regenerates_from_packaged_demographics(packaged):
+    """The packaged matrix must match the constructor applied to the packaged
+    omega_SS -- a demographics regeneration that forgets eta_RM leaves the
+    two inconsistent."""
+    from ogphl.update_baseline_demographics import remittance_eta
+
+    expected = remittance_eta(
+        np.array(packaged["omega_SS"]), np.array(packaged["lambdas"])
+    )
+    assert np.allclose(np.array(packaged["eta_RM"]), expected, atol=1e-12)
