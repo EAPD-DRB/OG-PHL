@@ -1659,7 +1659,7 @@ wheels = [
 
 [[package]]
 name = "ogcore"
-version = "0.18.0"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dask" },
@@ -1673,9 +1673,9 @@ dependencies = [
     { name = "requests" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/94/4233e540a57be74717f804b65e9524157937a0d872aed9093382958bbc17/ogcore-0.18.0.tar.gz", hash = "sha256:ab6f34e46b36b6c1d27d25bb40c264fc8c61c4aea335ebdb437e584cb1cc2e60", size = 1052486, upload-time = "2026-07-22T14:36:07.87Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/1f/b9ecfc292ed84454d7cc95c0c6bfa458583cfb74f47ecb724bf914e11532/ogcore-0.19.0.tar.gz", hash = "sha256:54c76bdaa64c8266e68b0f3a0d25a09b6c6cbb71f7132cc04a9d7299c5a53939", size = 1053206, upload-time = "2026-08-03T17:34:40.593Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/99/32951ba44765e860127e45fdfb07e4cdd2852d62e0b91c6cfa321508ca6e/ogcore-0.18.0-py3-none-any.whl", hash = "sha256:33711bee0e3b1f430c6012009f5a79178cf76280b01b779437229147b94603ac", size = 1119754, upload-time = "2026-07-22T14:36:06.319Z" },
+    { url = "https://files.pythonhosted.org/packages/db/4c/c69a3f06b778ff5d66a0496f9a01f944128478955534f811dece62698189/ogcore-0.19.0-py3-none-any.whl", hash = "sha256:3f76c029b9b118f0caeeddc100a513f94c1c969f7c92cf3cddc342e775cf4d89", size = 1120214, upload-time = "2026-08-03T17:34:38.987Z" },
 ]
 
 [[package]]
@@ -1880,7 +1880,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
