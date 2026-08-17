@@ -23,15 +23,81 @@ import json
 
 from importlib.resources import files
 
+import numpy as np
+
 from ogcore import demographics
 from ogcore.parameters import Specifications
 
 from ogphl import income
 from ogphl.calibrate import UN_COUNTRY_CODE
 
-# Demographic keys returned by get_pop_objs, plus the derived earnings profile.
+# Demographic keys returned by get_pop_objs, plus the derived earnings profile
+# and the remittance growth path (derived from g_n -- see flat_share_g_RM).
 # Only these are rewritten; anything else is a clobber and blocks the write.
 _DERIVED = "e"
+_DERIVED_RM = "g_RM"
+_DERIVED_ETA_RM = "eta_RM"
+
+# Share of total remittance VALUE received by each per-capita income quintile.
+# Average of FIES 2000/2003/2006, computed from Ang, Sugiyarto & Jha (ADB
+# Economics WP 188), Table 4: quintile mean income x remittance share of
+# income (quintiles hold equal family counts, so relative value follows
+# directly). The gradient cross-validates against FIES 2018 (ADB WP 714,
+# Fig. 1): remittance share of income among receiving households rises
+# 16% -> 31% from bottom to top quintile.
+RM_QUINTILE_VALUE_SHARES = [0.00523, 0.02020, 0.06313, 0.18667, 0.72483]
+
+
+def remittance_eta(omega_SS, lambdas):
+    """Allocation matrix eta_RM distributing aggregate remittances across
+    households, shaped (S, J) as the parameter schema requires (ogcore tiles
+    it over time; each group's total share is exact in every period).
+
+    The lifetime-income-group split comes from mapping the FIES quintile
+    value shares onto the model's J groups, assuming a uniform density of
+    remittance value within each quintile (conservative at the top: the top
+    quintile's share is spread evenly across its percentiles, which
+    understates concentration within the top 1%). Within a group, remittances
+    are spread per capita across ages -- the surveys say nothing about the
+    age profile of receipt. ogcore's default is population-proportional
+    everywhere (each group receives exactly its population share), which the
+    Philippine data reject: the top quintile receives ~72% of remittance
+    value, not 20%.
+    """
+    omega_SS = np.asarray(omega_SS, dtype=float)
+    lambdas = np.asarray(lambdas, dtype=float).flatten()
+    q = np.asarray(RM_QUINTILE_VALUE_SHARES, dtype=float)
+    q = q / q.sum()
+    # Cumulative remittance value at each population percentile (uniform
+    # within quintile), evaluated at the lambdas group boundaries.
+    cum_pop = np.concatenate([[0.0], np.cumsum(np.full(q.size, 1 / q.size))])
+    cum_val = np.concatenate([[0.0], np.cumsum(q)])
+    bounds = np.concatenate([[0.0], np.cumsum(lambdas)])
+    group_share = np.diff(np.interp(bounds, cum_pop, cum_val))
+    group_share = group_share / group_share.sum()
+    # eta[s, j] = group share x age-population share within the group, so
+    # every household in group j receives the same amount and the group total
+    # is its data share (sum_s omega_SS[s, j] = lambdas[j]).
+    within = omega_SS / omega_SS.sum(axis=0, keepdims=True)
+    return within * group_share.reshape(1, -1)
+
+
+def flat_share_g_RM(g_y, g_n):
+    """Remittance growth path holding aggregate remittances at a fixed share
+    of GDP.
+
+    ``aggregates.get_RM`` advances detrended remittances by the factor
+    ``(1 + g_RM[t]) / (exp(g_y) * (1 + g_n[t-1]))``, so ``RM/Y`` holds at
+    ``alpha_RM`` only when that factor is 1. Setting ``alpha_RM_1 ==
+    alpha_RM_T`` is NOT sufficient on its own: with any other ``g_RM`` the
+    ratio drifts away from the calibrated share over the first ``tG2``
+    periods and only returns afterwards. ``g_n`` varies over the transition,
+    so no single scalar can hold the share flat -- the path has to track it.
+    """
+    g_n = np.asarray(g_n, dtype=float)
+    g_RM = np.exp(g_y) * (1.0 + np.roll(g_n, 1)) - 1.0
+    g_RM[0] = np.exp(g_y) * (1.0 + g_n[0]) - 1.0  # unused by get_RM; kept sane
+    return g_RM
 
 
 def regenerate():
@@ -57,11 +123,16 @@ def regenerate():
         "g_n_ss",
         "g_n_preTP",
         _DERIVED,
+        _DERIVED_RM,
+        _DERIVED_ETA_RM,
     }
     p = Specifications()
-    p.update_specifications(
-        {k: v for k, v in before.items() if k not in demog_keys}
-    )  # single-sector base (M=1, I=1)
+    spec = {k: v for k, v in before.items() if k not in demog_keys}
+    if not hasattr(p, "initial_wealth_ratio"):
+        # Installed ogcore predates PSLmodels/OG-Core#1189; the parameter
+        # plays no role in the demographic regeneration.
+        spec.pop("initial_wealth_ratio", None)
+    p.update_specifications(spec)  # single-sector base (M=1, I=1)
 
     pop = demographics.get_pop_objs(
         p.E,
@@ -94,6 +165,15 @@ def regenerate():
 
     overlay = {k: _jsonable(v) for k, v in pop.items()}
     overlay[_DERIVED] = _jsonable(e)
+    # Remittances are calibrated as a constant share of GDP, and that share is
+    # only held if g_RM tracks the regenerated g_n -- so it is rewritten here
+    # rather than left to go stale against new demographics.
+    overlay[_DERIVED_RM] = _jsonable(flat_share_g_RM(p.g_y, pop["g_n"]))
+    # The remittance allocation matrix is omega-derived (per-capita within
+    # lifetime-income groups), so it too is rebuilt with the demographics.
+    overlay[_DERIVED_ETA_RM] = _jsonable(
+        remittance_eta(pop["omega_SS"], p.lambdas)
+    )
     return json_path, before, overlay
 
 
