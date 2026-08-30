@@ -3,10 +3,10 @@ revision = 3
 requires-python = ">=3.12, <3.14"
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version >= '3.13' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version >= '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -1649,7 +1649,7 @@ wheels = [
 
 [[package]]
 name = "ogcore"
-version = "0.19.2"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dask" },
@@ -1663,9 +1663,9 @@ dependencies = [
     { name = "requests" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ee/02/687d200cdef16cc5360f7a5315472df2d586db3dde3dd38f41426130ad7b/ogcore-0.19.2.tar.gz", hash = "sha256:db300deef44c1bd103c22b48164380700a3bca18ec3023414891a9610db4f6b5", size = 1057418, upload-time = "2026-08-18T21:03:13.304Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ca/a7/cfb46571d24330effc1e44fbf7141c7a2759ee19c7bf6b105192bdb5c321/ogcore-0.20.0.tar.gz", hash = "sha256:bcac551584635fac332c1b0f5166d53ab9a60faeed6f01a534eec274334dcbc8", size = 1065083, upload-time = "2026-08-24T15:00:28.811Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/2b/c833965bb4909c561c150e959248323623a6be5551a2f46f41cf62eadc29/ogcore-0.19.2-py3-none-any.whl", hash = "sha256:11b15e560ca321e31d55537664825d3497b897297d991e50cab24f1459558ea5", size = 1122803, upload-time = "2026-08-18T21:03:11.765Z" },
+    { url = "https://files.pythonhosted.org/packages/17/4f/fa2979ba9eededb6345e728ae2737ece297beb4b99a6a8aa9db7d10c0fb2/ogcore-0.20.0-py3-none-any.whl", hash = "sha256:8379299e2c6f93ff4d696cc181c2369ccc06ea6b1a732ce3a2dcd6a44eccdbf6", size = 1126646, upload-time = "2026-08-24T15:00:27.219Z" },
 ]
 
 [[package]]
