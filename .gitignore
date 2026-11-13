@@ -46,4 +46,6 @@ docs/book/_build/*
 *ogphl_example_output.csv
 */OG-PHL-Example/*
 */OG-PHL-MultiExample/*
+*/OG-PHL-MultiIndustry/*
+*/OG-PHL-Tune/*
 *un_api_token.txt

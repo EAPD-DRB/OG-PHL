@@ -13,8 +13,8 @@ from ogcore import output_tables as ot
 from ogcore import output_plots as op
 from ogcore.execute import runner
 from ogcore.utils import safe_read_pickle
-from ogphl.calibrate import Calibration
-from ogphl.utils import is_connected
+from ogphl import warm_start
+from ogphl.targets import EXTERNAL_DEBT_SHARE, MODEL_PER_MARKET_GDP
 
 # Use a custom matplotlib style file for plots
 plt.style.use("ogcore.OGcorePlots")
@@ -52,11 +52,18 @@ def main():
     ) as file:
         defaults = json.load(file)
     p.update_specifications(defaults)
-    # Update parameters from calibrate.py Calibration class
-    if is_connected():  # only update if connected to internet
-        c = Calibration(p, update_from_api=True)
-        updated_params = c.get_dict()
-        p.update_specifications(updated_params)
+    # The packaged JSON is the calibration: the run makes no live data calls,
+    # so online and offline runs of the same commit give the same results.
+    # To refresh the API-sourced values (UN demographics, the earnings
+    # profile, World Bank g_y_annual), run `python -m ogphl.update_baseline`,
+    # review the diff of the JSON, and commit it.
+
+    # Seed the steady state from the shipped solved state
+    # (ogphl/warm_start.py); without a seed it cold-starts.
+    if warm_start.enable():
+        print("Warm start enabled (ogphl/data/ss_warm_start.pkl).")
+    else:
+        print("No warm-start seed found; cold-starting the steady state.")
 
     # Run model
     start_time = time.time()
@@ -77,7 +84,11 @@ def main():
     # Parameter change for the reform run: corporate income tax rate cut
     updated_params_ref = {
         "cit_rate": [[0.20]],
-        "debt_ratio_ss": 0.65,  # increase debt to GDP ratio to 65%
+        # raise the long-run debt ratio to 65% of GDP at market prices;
+        # debt_ratio_ss is market debt, so the external debt is taken off,
+        # and the model's GDP excludes the consumption tax, so convert as
+        # the packaged debt ratios are (see ogphl/targets.py)
+        "debt_ratio_ss": (0.65 - EXTERNAL_DEBT_SHARE) * MODEL_PER_MARKET_GDP,
     }
     p2.update_specifications(updated_params_ref)
 

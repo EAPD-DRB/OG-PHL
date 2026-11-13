@@ -84,6 +84,11 @@ class Calibration:
         try:
             from ogcore import demographics
 
+            from ogphl.demographic_gradients import demographic_gradients
+
+            gradients = demographic_gradients(
+                p.E, p.S, p.T, p.start_year, p.g_y_annual
+            )
             self.demographic_params = demographics.get_pop_objs(
                 p.E,
                 p.S,
@@ -94,6 +99,7 @@ class Calibration:
                 initial_data_year=p.start_year - 1,
                 final_data_year=p.start_year + 1,
                 income_percentiles=p.lambdas.flatten(),
+                **gradients,
                 GraphDiag=False,
                 download_path=demographic_data_path,
             )
@@ -109,6 +115,7 @@ class Calibration:
                 initial_data_year=p.start_year - 1,
                 final_data_year=p.start_year + 1,
                 income_percentiles=p.lambdas.flatten(),
+                **gradients,
                 GraphDiag=False,
             )
 

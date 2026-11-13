@@ -26,7 +26,7 @@ OG-PHL is a Philippines country calibration of the OG-Core overlapping-generatio
 
 - Default suite (matches CI, skips the long example run): `uv run python -m pytest -m 'not local' -q` (or `make test`).
 - Targeted (fast): `uv run python -m pytest tests/test_macro_params.py tests/test_income.py tests/test_input_output.py tests/test_calibrate.py -q`.
-- Full example run (slow, ~35 min – 2 hr): `uv run python examples/run_og_phl.py`.
+- Full example run (~9 min on a 10-core laptop with the pinned OG-Core build, ~25 min on released 0.24.4; baseline plus reform): `uv run python examples/run_og_phl.py`.
 
 ## Repo conventions
 

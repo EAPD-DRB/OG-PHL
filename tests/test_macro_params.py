@@ -104,11 +104,11 @@ def test_get_macro_params_update_from_api_false_returns_empty_dict():
 
 
 def test_get_macro_params_update_from_api_true_returns_only_g_y(monkeypatch):
-    # 25%/yr GDP-per-capita growth over the pre-pandemic window
+    # 25%/yr growth of GDP per person employed over the pre-pandemic window
     _mock_wb(
         monkeypatch,
         {
-            "NY.GDP.PCAP.KD": _wb_payload(
+            "SL.GDP.PCAP.EM.KD": _wb_payload(
                 [("2000", 100.0), ("2001", 125.0), ("2002", 156.25)]
             )
         },

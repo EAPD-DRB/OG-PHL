@@ -93,7 +93,7 @@ uv run python examples/run_og_phl.py
 
 #### What happens
 
-The first `uv run` creates the project environment if it does not exist yet — downloading a compatible Python interpreter if needed and installing the exact locked dependencies — and then runs the example. Early in the run you may be asked for a UN API token; just press return, and the model reads the same population data from a public mirror and continues. A full baseline-plus-reform run takes from 35 minutes to more than two hours; when it finishes, its plots and tables are saved under `./examples/OG-PHL-Example/` (see the list of outputs below).
+The first `uv run` creates the project environment if it does not exist yet — downloading a compatible Python interpreter if needed and installing the exact locked dependencies — and then runs the example. A full baseline-plus-reform run takes about 9 minutes on a 10-core laptop with 4 performance cores (4.5 for the baseline, 4.3 for the reform). That is with the OG-Core build this repo pins: master plus government debt contracted abroad ([PSLmodels/OG-Core#1279](https://github.com/PSLmodels/OG-Core/pull/1279)) and three open speed fixes ([#1276](https://github.com/PSLmodels/OG-Core/pull/1276), [#1277](https://github.com/PSLmodels/OG-Core/pull/1277) and [#1280](https://github.com/PSLmodels/OG-Core/pull/1280)), which leave results unchanged. When it finishes, its plots and tables are saved under `./examples/OG-PHL-Example/` (see the list of outputs below).
 
 ### Installing for development or contributing
 
@@ -122,21 +122,20 @@ The first `uv run` creates the project environment if it does not exist yet — 
     * See [`ogcore.TPI.py`](https://github.com/PSLmodels/OG-Core/blob/master/ogcore/TPI.py) for what is in the dictionary object in this pickle file
   * An analogous set of files in the `./examples/OG-PHL-Example/OUTPUT_REFORM` directory, which represent objects from the simulation of the reform policy
 
-Note that, depending on your machine, a full model run (solving for the full time path equilibrium for the baseline and reform policies) can take from 35 minutes to more than two hours of compute time.
+Note that, depending on your machine, a full model run (solving for the full time path equilibrium for the baseline and reform policies) takes about 9 minutes on a 10-core laptop with 4 performance cores. That is with the OG-Core build this repo pins (see above).
 
 If you run into errors running the example script, please open a new issue in the OG-PHL repo with a description of the issue and any relevant tracebacks you receive.
 
-Once the package is installed, one can adjust parameters in the OG-Core `Specifications` object using the `Calibration` class as follows:
+The calibration is the packaged parameter file, `ogphl/ogphl_default_parameters.json`. The example loads it and makes no live data calls, so a run gives the same results online or offline. To change a parameter for your own run, update the `Specifications` object after loading the file, the way the example sets up its reform:
 
 ```
-from ogcore.parameters import Specifications
-from ogphl.calibrate import Calibration
-from ogphl.utils import is_connected
-p = Specifications()
-if is_connected():
-    c = Calibration(p, update_from_api=True)
-    updated_params = c.get_dict()
-    p.update_specifications(updated_params)
+p.update_specifications({"cit_rate": [[0.20]]})
+```
+
+A few values come from public data services: the UN population data, the earnings profile derived from it, and World Bank growth (`g_y_annual`). To refresh them, run the following from the repository root, then review the changes to the parameter file before committing them:
+
+```
+uv run python -m ogphl.update_baseline
 ```
 
 ## Disclaimer

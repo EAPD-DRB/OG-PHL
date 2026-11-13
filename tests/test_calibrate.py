@@ -128,3 +128,12 @@ class TestOnlinePartialFailure:
         assert d["g_y_annual"] == 0.01
         assert "alpha_c" in d
         assert "io_matrix" in d
+
+
+def test_un_country_code_is_philippines():
+    """Regression guard for the family's #1 copy-paste error: calibrate.py
+    refreshed from a sibling repo once shipped the wrong country's UN code
+    (OG-ETH carried South Africa's 710, twice). The Philippines is M49 608."""
+    from ogphl.calibrate import UN_COUNTRY_CODE
+
+    assert UN_COUNTRY_CODE == "608"
