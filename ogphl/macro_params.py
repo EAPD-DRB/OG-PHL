@@ -118,10 +118,14 @@ def get_macro_params(
     """
     Return macro-parameter overrides for the OG-PHL calibration.
 
-    Only ``g_y_annual`` is refreshed from a live API -- World Bank
-    GDP-per-capita growth over the pre-pandemic 2000-2019 window, its
-    documented source. Every other macro parameter is held in the packaged
-    JSON and is NOT pulled here, so a live update cannot clobber a value
+    Only ``g_y_annual`` is refreshed from a live API -- World Bank growth
+    of GDP per person employed over the pre-pandemic 2000-2019 window, its
+    documented source. Per person employed, not per capita: g_y is
+    labor-augmenting productivity growth, and the rise in the share of the
+    population at work (the demographic dividend) is already produced by the
+    model's own demographics, so per-capita growth would count it twice.
+    Every other macro parameter is held in the packaged JSON and is NOT
+    pulled here, so a live update cannot clobber a value
     sourced elsewhere:
 
       * alpha_T                    -- World Bank WDI (not the IMF GFS series,
@@ -144,7 +148,11 @@ def get_macro_params(
         try:
             wb_data = _annual_index(
                 _fetch_wb_data(
-                    {"GDP per capita (constant 2015 US$)": "NY.GDP.PCAP.KD"},
+                    {
+                        "GDP per person employed (constant 2021 PPP $)": (
+                            "SL.GDP.PCAP.EM.KD"
+                        )
+                    },
                     country_iso,
                     data_start_date.year,
                     data_end_date.year,
@@ -154,7 +162,7 @@ def get_macro_params(
             # Pre-pandemic window avoids COVID-era volatility distorting the
             # steady-state productivity target (docs/calibration/macro.md).
             macro_parameters["g_y_annual"] = (
-                wb_data["GDP per capita (constant 2015 US$)"]
+                wb_data["GDP per person employed (constant 2021 PPP $)"]
                 .loc[GDP_GROWTH_START_YEAR:GDP_GROWTH_END_YEAR]
                 .pct_change()
                 .mean()

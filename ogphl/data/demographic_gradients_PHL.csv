@@ -1,0 +1,4 @@
+indicator,year,slope,ratio,q1,q2,q3,q4,q5,source
+IMR,2022,-1.6039533967488122,4.0,24.0,17.0,23.0,11.0,6.0,"DHS Program indicator API, wealth-quintile breakdown (EAPD-DRB/Demographic-Gradients, data/gradient_library_latest.csv)"
+TFR,2022,-0.9864260009979409,2.2142857142857144,3.1,2.2,2.0,1.5,1.4,"DHS Program indicator API, wealth-quintile breakdown (EAPD-DRB/Demographic-Gradients, data/gradient_library_latest.csv)"
+U5MR,2022,-1.7611789490433825,4.375,35.0,23.0,25.0,13.0,8.0,"DHS Program indicator API, wealth-quintile breakdown (EAPD-DRB/Demographic-Gradients, data/gradient_library_latest.csv)"

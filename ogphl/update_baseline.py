@@ -14,6 +14,10 @@ Documented, non-API macro parameters (``alpha_T``, ``alpha_G``, the
 open-economy block, ``gamma``, ``r_gov_*`` ...) are held in the JSON and left
 unchanged; see ``ogphl.macro_params`` and the calibration docs.
 
+This is the only way API data reaches the model: the example scripts load
+the packaged JSON and make no live calls, so a refresh is a deliberate,
+reviewable change to the JSON rather than a side effect of being online.
+
 Usage::
 
     uv run python -m ogphl.update_baseline

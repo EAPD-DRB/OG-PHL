@@ -1,3 +1,13 @@
+# Economy-wide capital share of value added (private + public), from the
+# ILOSTAT labor share converted to the model's factor-income basis (see the
+# firms chapter of the documentation). The packaged gamma is this total less
+# public capital's share, gamma_g.
+TOTAL_CAPITAL_SHARE = 0.51494
+
+# Public (infrastructure) capital's output share, gamma_g, the single-industry
+# OG-PHL value. It is carved out of TOTAL_CAPITAL_SHARE, not out of labor.
+PUBLIC_CAPITAL_SHARE = 0.05
+
 SHOW_RUNTIME = False  # Flag to display RuntimeWarnings when run model
 
 REFORM_DIR = "OUTPUT_REFORM"

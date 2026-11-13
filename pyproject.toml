@@ -47,7 +47,7 @@ dependencies = [
     "statsmodels",
     "linearmodels",
     "linecheck",
-    "ogcore>=0.18.0",
+    "ogcore>=0.24.4",
 ]
 
 [project.urls]
@@ -103,3 +103,14 @@ testpaths = ["tests"]
 markers = [
     "local: marks tests that are run locally only and not on GH Actions",
 ]
+
+[tool.uv.sources]
+# OG-Core master plus four open pull requests, merged on the branch
+# integrate/eth-external-debt of marcelolafleur/OG-Core (the same commit
+# OG-ETH pins): PSLmodels/OG-Core#1279 (government debt contracted abroad at
+# its own interest rate, alpha_D_ext and r_D_ext_annual, with the debt
+# premium on all government debt), #1280 (initial household wealth
+# accelerated with the prices under Anderson), and the speed fixes #1276 and
+# #1277 (results unchanged). uv-only; the PyPI requirement above stays
+# ogcore>=0.24.4. Move to a release once they merge.
+ogcore = { git = "https://github.com/marcelolafleur/OG-Core", rev = "5b5c9c7279619112e88c7d165e17da9f178bc40c" }
